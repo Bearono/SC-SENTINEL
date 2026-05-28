@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: sentinel_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sentinel_admin
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: sentinel_db # 默认创建的数据库名称
+      TZ: Asia/Shanghai
+    ports:
+      - "5433:5432" # 映射到宿主机 5433 端口，防止与本地 5432 端口冲突
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # 数据持久化，防止重启后数据丢失
+
+volumes:
+  postgres_data:
