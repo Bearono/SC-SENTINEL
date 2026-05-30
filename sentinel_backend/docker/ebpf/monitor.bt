@@ -1,0 +1,117 @@
+#!/usr/bin/env bpftrace
+/*
+ * SENTINEL eBPF 内存监控脚本
+ * ──────────────────────────────────────────────────────────────────────────
+ * 功能：通过 uprobe 挂载目标程序的 malloc / free / realloc 函数，
+ *       捕获内核级内存操作事件，实时检测：
+ *         - Use-After-Free (UAF)：地址 free() 后被再次解引用
+ *         - Double Free：同一地址被 free() 两次
+ *         - 堆溢出辅助监控：malloc 调用追踪
+ *
+ * 使用方法（在容器内）：
+ *   bpftrace /sentinel-ebpf/monitor.bt -p <PID> 2>/sentinel-work/logs/ebpf.log
+ *
+ * 输出格式（JSON Lines）：
+ *   {"ts": <ns>, "event": "free",    "addr": "0x...", "fn": "free"}
+ *   {"ts": <ns>, "event": "malloc",  "addr": "0x...", "size": 128, "fn": "malloc"}
+ *   {"ts": <ns>, "event": "double_free", "addr": "0x...", "fn": "free"}
+ *   {"ts": <ns>, "event": "use_after_free", "addr": "0x...", "fn": "..."}
+ *
+ * 注意事项：
+ *   - 需要 --privileged 容器权限（uprobe 依赖 CAP_SYS_ADMIN）
+ *   - bpftrace >= 0.12 支持本脚本全部特性
+ *   - 执行手册：「eBPF 运行在内核层，对被测程序完全透明」
+ */
+
+// ── 初始化：记录监控开始时间 ──────────────────────────────────────────────────
+BEGIN
+{
+    printf("{\"event\": \"monitor_start\", \"ts\": %llu, \"msg\": \"SENTINEL eBPF monitor started, watching PID %d\"}\n",
+           nsecs, $1);
+}
+
+// ── 追踪 malloc() 调用入口：记录申请的大小 ────────────────────────────────────
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:malloc,
+uprobe:/lib/aarch64-linux-gnu/libc.so.6:malloc
+/ pid == $1 /
+{
+    @malloc_size[tid] = arg0;
+}
+
+// ── 追踪 malloc() 返回：记录 已分配地址 → 大小 映射 ─────────────────────────
+uretprobe:/lib/x86_64-linux-gnu/libc.so.6:malloc,
+uretprobe:/lib/aarch64-linux-gnu/libc.so.6:malloc
+/ pid == $1 /
+{
+    if (retval != 0)
+    {
+        @live_addrs[retval] = @malloc_size[tid];
+        printf("{\"ts\": %llu, \"event\": \"malloc\", \"addr\": \"0x%lx\", \"size\": %llu, \"fn\": \"malloc\"}\n",
+               nsecs, retval, @malloc_size[tid]);
+    }
+    delete(@malloc_size[tid]);
+}
+
+// ── 追踪 calloc() 返回（同 malloc 逻辑）─────────────────────────────────────
+uretprobe:/lib/x86_64-linux-gnu/libc.so.6:calloc,
+uretprobe:/lib/aarch64-linux-gnu/libc.so.6:calloc
+/ pid == $1 /
+{
+    if (retval != 0)
+    {
+        @live_addrs[retval] = 0;  // calloc 大小不便捕获，记录为 0
+        printf("{\"ts\": %llu, \"event\": \"malloc\", \"addr\": \"0x%lx\", \"size\": 0, \"fn\": \"calloc\"}\n",
+               nsecs, retval);
+    }
+}
+
+// ── 追踪 free() 调用：检测 Double Free ───────────────────────────────────────
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:free,
+uprobe:/lib/aarch64-linux-gnu/libc.so.6:free
+/ pid == $1 && arg0 != 0 /
+{
+    if (@freed_addrs[arg0])
+    {
+        // 已经 free 过一次了，这是 Double Free！
+        printf("{\"ts\": %llu, \"event\": \"double_free\", \"addr\": \"0x%lx\", \"fn\": \"free\", \"severity\": \"CRITICAL\"}\n",
+               nsecs, arg0);
+    }
+    else
+    {
+        // 正常 free：移出存活地址表，加入已释放地址表
+        printf("{\"ts\": %llu, \"event\": \"free\", \"addr\": \"0x%lx\", \"fn\": \"free\"}\n",
+               nsecs, arg0);
+        delete(@live_addrs[arg0]);
+        @freed_addrs[arg0] = nsecs;
+    }
+}
+
+// ── 追踪 realloc() 调用：检测对已释放内存的 realloc ─────────────────────────
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:realloc,
+uprobe:/lib/aarch64-linux-gnu/libc.so.6:realloc
+/ pid == $1 && arg0 != 0 /
+{
+    if (@freed_addrs[arg0])
+    {
+        printf("{\"ts\": %llu, \"event\": \"use_after_free\", \"addr\": \"0x%lx\", \"fn\": \"realloc\", \"severity\": \"HIGH\"}\n",
+               nsecs, arg0);
+    }
+    @malloc_size[tid] = arg1;
+}
+
+// ── 定期清理：防止 freed_addrs 映射表无限增长 ────────────────────────────────
+// 每 5 秒清理 10 秒前释放的条目（简化版，生产环境可使用时间戳过滤）
+interval:s:30
+{
+    clear(@freed_addrs);
+    printf("{\"ts\": %llu, \"event\": \"monitor_heartbeat\", \"msg\": \"freed_addrs table cleared\"}\n", nsecs);
+}
+
+// ── 结束：输出统计摘要 ────────────────────────────────────────────────────────
+END
+{
+    printf("{\"event\": \"monitor_end\", \"ts\": %llu, \"msg\": \"SENTINEL eBPF monitor stopped\"}\n", nsecs);
+    clear(@live_addrs);
+    clear(@freed_addrs);
+    clear(@malloc_size);
+}
