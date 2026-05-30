@@ -1,0 +1,110 @@
+# ============================================================
+# SENTINEL 动态验证沙箱 Dockerfile
+# 基础镜像：Ubuntu 22.04 LTS
+# 内容：gcc/g++ + AFL++ + bpftrace + eBPF 工具链
+# 构建命令：
+#   docker build -f docker/Dockerfile.sandbox -t sentinel-sandbox:latest .
+# ============================================================
+
+FROM ubuntu:22.04
+
+# 避免交互式提示
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+
+# ── 1. 更新软件源 + 安装基础编译和调试环境 ──────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # 编译环境
+    gcc \
+    g++ \
+    gdb \
+    make \
+    cmake \
+    clang \
+    clang-tools \
+    llvm \
+    # 构建依赖
+    build-essential \
+    git \
+    curl \
+    wget \
+    ca-certificates \
+    pkg-config \
+    # Python（用于日志解析脚本）
+    python3 \
+    python3-pip \
+    # 工具
+    jq \
+    file \
+    binutils \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── 2. 安装 AFL++ 依赖项 ─────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # AFL++ 核心依赖
+    libssl-dev \
+    libglib2.0-dev \
+    libpixman-1-dev \
+    # AFL++ 可选依赖（增强功能）
+    libsqlite3-dev \
+    liblzma-dev \
+    libbz2-dev \
+    libzstd-dev \
+    # 用于 AFL++ QEMU 模式（黑盒 Fuzzing）
+    qemu-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── 3. 从源码编译安装 AFL++ ──────────────────────────────────────────────────
+# AFL++ 官方推荐从源码构建以获得最新版本和最佳兼容性
+ARG AFLPP_VERSION=v4.21c
+RUN git clone --depth 1 --branch ${AFLPP_VERSION} \
+        https://github.com/AFLplusplus/AFLplusplus.git /tmp/aflpp \
+    && cd /tmp/aflpp \
+    # 构建所有工具：afl-fuzz, afl-gcc, afl-clang, afl-clang-fast 等
+    && make all \
+    && make install \
+    && cd / \
+    && rm -rf /tmp/aflpp \
+    # 验证安装
+    && afl-fuzz --version
+
+# ── 4. 安装 eBPF 内核观测工具链 ──────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # bpftrace：高层次 eBPF 脚本语言（类似 DTrace）
+    bpftrace \
+    # libbpf：低层次 eBPF 库
+    libbpf-dev \
+    # BPF 工具集
+    bpfcc-tools \
+    # 内核头文件（eBPF 程序编译依赖）
+    linux-headers-generic \
+    # 调试符号（提升 uprobe 解析精度）
+    linux-tools-generic \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── 5. 配置工作目录和默认路径 ────────────────────────────────────────────────
+WORKDIR /sentinel-work
+
+# AFL++ 环境变量配置
+ENV AFL_SKIP_CPUFREQ=1           \
+    AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
+    AFL_SKIP_BIN_CHECK=1
+
+# ── 6. 复制 eBPF 监控脚本到镜像内 ───────────────────────────────────────────
+COPY docker/ebpf/ /sentinel-ebpf/
+
+# ── 7. 创建目录结构 ───────────────────────────────────────────────────────────
+# /sentinel-work/target/   → 挂载用户源码（只读）
+# /sentinel-work/build/    → 编译插桩后的二进制
+# /sentinel-work/seeds/    → AFL++ 初始种子
+# /sentinel-work/findings/ → AFL++ 崩溃输出
+# /sentinel-work/logs/     → eBPF 事件日志输出
+RUN mkdir -p \
+    /sentinel-work/target \
+    /sentinel-work/build \
+    /sentinel-work/seeds \
+    /sentinel-work/findings \
+    /sentinel-work/logs
+
+# ── 8. 默认命令（容器启动后等待指令，由 sandbox_manager.py 下达）────────────
+CMD ["bash"]
