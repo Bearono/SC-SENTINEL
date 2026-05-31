@@ -1,4 +1,5 @@
 # SENTINEL Frontend
+让ai生成了一个试试的，后面再改
 
 ## 选用技术栈
 - Vue 3 + Vite
@@ -9,7 +10,6 @@
 - ECharts 
 - Tailwind CSS 
 
-目前已完成所有的前端页面开发并与后端 API 接口完成了对齐。
 
 ## 1. 页面模块实现
 
