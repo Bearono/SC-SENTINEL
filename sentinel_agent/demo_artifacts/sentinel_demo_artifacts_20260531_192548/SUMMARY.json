@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-05-31T19:25:48",
+  "project_root": "/mnt/vmshare/sentinel",
+  "final_summary": {
+    "total_components": 6,
+    "total_static_findings": 4,
+    "total_harness_packages": 4,
+    "confirmed_findings": 4,
+    "need_review_findings": 0,
+    "asan_confirmed_findings": 4
+  },
+  "overall_risk": "high",
+  "asan_summary": {
+    "total_harness_packages": 4,
+    "total_logs": 4,
+    "confirmed_findings": 4,
+    "failed_or_unconfirmed": 0
+  },
+  "final_findings": [
+    {
+      "finding_id": "FINDING-0001",
+      "file": "double_free_demo.c",
+      "function": "double_free_case",
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "dynamic_status": "confirmed",
+      "asan_bug_type": "double-free",
+      "asan_consistency": "matched_expected_cwe"
+    },
+    {
+      "finding_id": "FINDING-0002",
+      "file": "heap_overflow_demo.c",
+      "function": "heap_overflow_case",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "dynamic_status": "confirmed",
+      "asan_bug_type": "heap-buffer-overflow",
+      "asan_consistency": "matched_expected_cwe"
+    },
+    {
+      "finding_id": "FINDING-0003",
+      "file": "stack_overflow_demo.c",
+      "function": "stack_overflow_case",
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "dynamic_status": "confirmed",
+      "asan_bug_type": "stack-buffer-overflow",
+      "asan_consistency": "matched_expected_cwe"
+    },
+    {
+      "finding_id": "FINDING-0004",
+      "file": "uaf_demo.c",
+      "function": "uaf_case",
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "dynamic_status": "confirmed",
+      "asan_bug_type": "heap-use-after-free",
+      "asan_consistency": "matched_expected_cwe"
+    }
+  ]
+}

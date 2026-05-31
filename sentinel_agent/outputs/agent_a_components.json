@@ -1,0 +1,3317 @@
+{
+  "agent": "Agent A - Dependency Risk Identification",
+  "components": [
+    {
+      "name": "libpng",
+      "version": "1.6.39",
+      "purl_name": "libpng",
+      "source_types": [
+        "Makefile",
+        "conanfile.txt",
+        "include"
+      ],
+      "evidence": [
+        {
+          "source": "include",
+          "file": "multi_component_demo.c",
+          "evidence": "#include <png.h>",
+          "version_hint": null
+        },
+        {
+          "source": "conanfile.txt",
+          "file": "conanfile.txt",
+          "evidence": "libpng/1.6.39",
+          "version_hint": "1.6.39"
+        },
+        {
+          "source": "Makefile",
+          "file": "Makefile",
+          "evidence": "png",
+          "version_hint": null
+        }
+      ],
+      "matched_vulnerabilities": [],
+      "matched_cves": [],
+      "top_vulnerabilities": [],
+      "risk_level": "unknown",
+      "summary": {
+        "vulnerability_count": 0,
+        "highest_risk": "unknown",
+        "high_or_critical_count": 0,
+        "queried_sources": [
+          "OSV",
+          "NVD"
+        ]
+      }
+    },
+    {
+      "name": "zlib",
+      "version": "1.2.13",
+      "purl_name": "zlib",
+      "source_types": [
+        "conanfile.txt",
+        "include",
+        "vcpkg.json"
+      ],
+      "evidence": [
+        {
+          "source": "include",
+          "file": "multi_component_demo.c",
+          "evidence": "#include <zlib.h>",
+          "version_hint": null
+        },
+        {
+          "source": "conanfile.txt",
+          "file": "conanfile.txt",
+          "evidence": "zlib/1.2.13",
+          "version_hint": "1.2.13"
+        },
+        {
+          "source": "vcpkg.json",
+          "file": "vcpkg.json",
+          "evidence": "zlib",
+          "version_hint": null
+        }
+      ],
+      "matched_vulnerabilities": [],
+      "matched_cves": [],
+      "top_vulnerabilities": [],
+      "risk_level": "unknown",
+      "summary": {
+        "vulnerability_count": 0,
+        "highest_risk": "unknown",
+        "high_or_critical_count": 0,
+        "queried_sources": [
+          "OSV",
+          "NVD"
+        ]
+      }
+    },
+    {
+      "name": "curl",
+      "version": "unknown",
+      "purl_name": "curl",
+      "source_types": [
+        "Makefile",
+        "include",
+        "vcpkg.json"
+      ],
+      "evidence": [
+        {
+          "source": "include",
+          "file": "multi_component_demo.c",
+          "evidence": "#include <curl/curl.h>",
+          "version_hint": null
+        },
+        {
+          "source": "Makefile",
+          "file": "Makefile",
+          "evidence": "curl",
+          "version_hint": null
+        },
+        {
+          "source": "vcpkg.json",
+          "file": "vcpkg.json",
+          "evidence": "curl",
+          "version_hint": null
+        }
+      ],
+      "matched_vulnerabilities": [
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-657",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in ftp_pp_statemachine",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=439473053\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nftp_pp_statemachine\nftp_doing\nmulti_runsingle\n```\n",
+          "modified": "2025-08-20T00:12:09.700264Z",
+          "published": "2025-08-20T00:12:09.699805Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=439473053"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1065",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52517\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nCurl_output_aws_sigv4\noutput_auth_headers\nCurl_http_output_auth\n```\n",
+          "modified": "2022-10-20T00:02:08.349709Z",
+          "published": "2022-10-20T00:02:08.349463Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52517"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1046",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52349\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nCurl_output_aws_sigv4\noutput_auth_headers\nCurl_http_output_auth\n```\n",
+          "modified": "2022-10-14T00:02:17.850216Z",
+          "published": "2022-10-14T00:02:17.849957Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52349"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-450",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_headers_push",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=47767\n\n```\nCrash type: Heap-buffer-overflow WRITE 5\nCrash state:\nCurl_headers_push\nCurl_client_write\nCurl_http_readwrite_headers\n```\n",
+          "modified": "2022-06-02T00:01:55.821619Z",
+          "published": "2022-06-02T00:01:55.821368Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=47767"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-141",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in nghttp2_hd_deflate_hd_bufs",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44517\n\n```\nCrash type: Heap-use-after-free READ 3\nCrash state:\nnghttp2_hd_deflate_hd_bufs\nnghttp2_frame_pack_headers\nnghttp2_session_mem_send_internal\n```\n",
+          "modified": "2022-04-13T03:04:42.872996Z",
+          "published": "2022-02-11T00:01:56.941272Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44517"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-139",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in nghttp2_http_record_request_method",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44516\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nnghttp2_http_record_request_method\nnghttp2_session_mem_send_internal\nnghttp2_session_send\n```\n",
+          "modified": "2022-04-13T03:04:42.843414Z",
+          "published": "2022-02-11T00:01:42.562895Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44516"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1796",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43186\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\npop3_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.901090Z",
+          "published": "2022-01-02T00:01:47.989011Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43186"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1793",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43160\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.917888Z",
+          "published": "2022-01-01T00:01:01.779206Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43160"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1758",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42892\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.895414Z",
+          "published": "2021-12-25T00:01:59.000146Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42892"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1756",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42901\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\npop3_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.912178Z",
+          "published": "2021-12-25T00:01:47.005391Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42901"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1747",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42808\n\n```\nCrash type: Heap-buffer-overflow READ 16\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.889719Z",
+          "published": "2021-12-24T00:00:40.494852Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42808"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1737",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42727\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\npop3_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.934553Z",
+          "published": "2021-12-22T00:01:51.212187Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42727"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1730",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42708\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.940270Z",
+          "published": "2021-12-21T00:01:40.506935Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42708"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1629",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41403\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\nsmtp_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.952015Z",
+          "published": "2021-11-27T00:01:35.152286Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41403"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1625",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in junkscan",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41390\n\n```\nCrash type: Heap-buffer-overflow READ 16\nCrash state:\njunkscan\nseturl\nparseurl\n```\n",
+          "modified": "2022-04-13T03:04:42.946027Z",
+          "published": "2021-11-26T00:01:33.118188Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41390"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2017-79",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in fuzz_read_callback",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4785\n\n```\nCrash type: Heap-buffer-overflow WRITE {*}\nCrash state:\nfuzz_read_callback\nCurl_fillreadbuffer\nreadwrite_upload\n```\n",
+          "modified": "2022-04-13T03:04:42.850130Z",
+          "published": "2021-01-13T21:57:35.291125Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4785"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2018-230",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in rtsp_rtp_readwrite",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7105\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nrtsp_rtp_readwrite\nreadwrite_data\nCurl_readwrite\n```\n",
+          "modified": "2022-04-13T03:04:42.832436Z",
+          "published": "2021-01-13T00:01:35.017548Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7105"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2018-209",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in loop",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=5251\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nloop\nloop\nftp_pl_insert_finfo\n```\n",
+          "modified": "2022-04-13T03:23:36.724121Z",
+          "published": "2021-01-13T00:01:25.235178Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=5251"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2017-8",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in setcharset",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4161\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nsetcharset\nloop\nloop\n```\n",
+          "modified": "2022-04-13T03:04:42.906669Z",
+          "published": "2021-01-13T00:00:08.384698Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4161"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1230",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in to_u32",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16734\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nto_u32\nfuzz_get_tlv_comn\nfuzz_add_mime_part\n```\n",
+          "modified": "2022-04-13T03:04:42.884077Z",
+          "published": "2020-07-22T21:49:58.592376Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16734"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-600",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in dprintf_formatf",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16699\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\ndprintf_formatf\ncurl_mvsnprintf\ncurl_msnprintf\n```\n",
+          "modified": "2022-04-13T03:04:42.862628Z",
+          "published": "2020-07-01T00:00:19.594728Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16699"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-389",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in smtp_state_ehlo_resp",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16918\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\nsmtp_state_ehlo_resp\nsmtp_statemach_act\nCurl_pp_statemach\n```\n",
+          "modified": "2022-04-13T03:04:42.827258Z",
+          "published": "2020-07-01T00:00:06.761801Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16918"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-696",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "UNKNOWN READ in ntlm_decode_type2_target",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=33720\n\n```\nCrash type: UNKNOWN READ\nCrash state:\nntlm_decode_type2_target\nCurl_auth_decode_ntlm_type2_message\nCurl_sasl_continue\n```\n",
+          "modified": "2022-04-13T03:04:42.867684Z",
+          "published": "2021-04-28T00:00:54.883431Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=33720"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2018-40",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "UNKNOWN READ in ftp_disconnect",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12173\n\n```\nCrash type: UNKNOWN READ\nCrash state:\nftp_disconnect\nCurl_disconnect\nConnectionExists\n```\n",
+          "modified": "2022-04-13T03:04:42.929064Z",
+          "published": "2021-01-13T00:00:22.110168Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12173"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2017-1",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Index-out-of-bounds in fuzz_send_next_response",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3956\n\n```\nCrash type: Index-out-of-bounds\nCrash state:\nfuzz_send_next_response\nfuzz_handle_transfer\n_start\n```\n",
+          "modified": "2022-04-13T03:04:42.923505Z",
+          "published": "2021-01-13T00:00:01.695158Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3956"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1347",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Negative-size-param in fuzz_tlv_to_string",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16703\n\n```\nCrash type: Negative-size-param\nCrash state:\nfuzz_tlv_to_string\nfuzz_parse_mime_tlv\nfuzz_add_mime_part\n```\n",
+          "modified": "2022-04-13T03:04:42.837836Z",
+          "published": "2020-07-22T21:50:08.310638Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16703"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1080",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Negative-size-param in fuzz_tlv_to_string",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16696\n\n```\nCrash type: Negative-size-param\nCrash state:\nfuzz_tlv_to_string\nfuzz_parse_tlv\ncurl_fuzzer.cc\n```\n",
+          "modified": "2022-04-13T03:04:42.878556Z",
+          "published": "2020-07-22T21:49:45.752151Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16696"
+          ],
+          "risk_inference": "unknown"
+        }
+      ],
+      "matched_cves": [
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-657",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in ftp_pp_statemachine",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=439473053\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nftp_pp_statemachine\nftp_doing\nmulti_runsingle\n```\n",
+          "modified": "2025-08-20T00:12:09.700264Z",
+          "published": "2025-08-20T00:12:09.699805Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=439473053"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1065",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52517\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nCurl_output_aws_sigv4\noutput_auth_headers\nCurl_http_output_auth\n```\n",
+          "modified": "2022-10-20T00:02:08.349709Z",
+          "published": "2022-10-20T00:02:08.349463Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52517"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1046",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52349\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nCurl_output_aws_sigv4\noutput_auth_headers\nCurl_http_output_auth\n```\n",
+          "modified": "2022-10-14T00:02:17.850216Z",
+          "published": "2022-10-14T00:02:17.849957Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52349"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-450",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_headers_push",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=47767\n\n```\nCrash type: Heap-buffer-overflow WRITE 5\nCrash state:\nCurl_headers_push\nCurl_client_write\nCurl_http_readwrite_headers\n```\n",
+          "modified": "2022-06-02T00:01:55.821619Z",
+          "published": "2022-06-02T00:01:55.821368Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=47767"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-141",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in nghttp2_hd_deflate_hd_bufs",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44517\n\n```\nCrash type: Heap-use-after-free READ 3\nCrash state:\nnghttp2_hd_deflate_hd_bufs\nnghttp2_frame_pack_headers\nnghttp2_session_mem_send_internal\n```\n",
+          "modified": "2022-04-13T03:04:42.872996Z",
+          "published": "2022-02-11T00:01:56.941272Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44517"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-139",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in nghttp2_http_record_request_method",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44516\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nnghttp2_http_record_request_method\nnghttp2_session_mem_send_internal\nnghttp2_session_send\n```\n",
+          "modified": "2022-04-13T03:04:42.843414Z",
+          "published": "2022-02-11T00:01:42.562895Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44516"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1796",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43186\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\npop3_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.901090Z",
+          "published": "2022-01-02T00:01:47.989011Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43186"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1793",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43160\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.917888Z",
+          "published": "2022-01-01T00:01:01.779206Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43160"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1758",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42892\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.895414Z",
+          "published": "2021-12-25T00:01:59.000146Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42892"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1756",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42901\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\npop3_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.912178Z",
+          "published": "2021-12-25T00:01:47.005391Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42901"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1747",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42808\n\n```\nCrash type: Heap-buffer-overflow READ 16\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.889719Z",
+          "published": "2021-12-24T00:00:40.494852Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42808"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1737",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42727\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\npop3_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.934553Z",
+          "published": "2021-12-22T00:01:51.212187Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42727"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1730",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in seturl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42708\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nseturl\nparseurl\ncurl_url_set\n```\n",
+          "modified": "2022-04-13T03:04:42.940270Z",
+          "published": "2021-12-21T00:01:40.506935Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42708"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1629",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41403\n\n```\nCrash type: Heap-buffer-overflow READ 10\nCrash state:\nCurl_sasl_decode_mech\nCurl_sasl_parse_url_auth_option\nsmtp_parse_url_options\n```\n",
+          "modified": "2022-04-13T03:04:42.952015Z",
+          "published": "2021-11-27T00:01:35.152286Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41403"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-1625",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in junkscan",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41390\n\n```\nCrash type: Heap-buffer-overflow READ 16\nCrash state:\njunkscan\nseturl\nparseurl\n```\n",
+          "modified": "2022-04-13T03:04:42.946027Z",
+          "published": "2021-11-26T00:01:33.118188Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41390"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2017-79",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in fuzz_read_callback",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4785\n\n```\nCrash type: Heap-buffer-overflow WRITE {*}\nCrash state:\nfuzz_read_callback\nCurl_fillreadbuffer\nreadwrite_upload\n```\n",
+          "modified": "2022-04-13T03:04:42.850130Z",
+          "published": "2021-01-13T21:57:35.291125Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4785"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2018-230",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in rtsp_rtp_readwrite",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7105\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nrtsp_rtp_readwrite\nreadwrite_data\nCurl_readwrite\n```\n",
+          "modified": "2022-04-13T03:04:42.832436Z",
+          "published": "2021-01-13T00:01:35.017548Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7105"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2018-209",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in loop",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=5251\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nloop\nloop\nftp_pl_insert_finfo\n```\n",
+          "modified": "2022-04-13T03:23:36.724121Z",
+          "published": "2021-01-13T00:01:25.235178Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=5251"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2017-8",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in setcharset",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4161\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nsetcharset\nloop\nloop\n```\n",
+          "modified": "2022-04-13T03:04:42.906669Z",
+          "published": "2021-01-13T00:00:08.384698Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4161"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1230",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in to_u32",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16734\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nto_u32\nfuzz_get_tlv_comn\nfuzz_add_mime_part\n```\n",
+          "modified": "2022-04-13T03:04:42.884077Z",
+          "published": "2020-07-22T21:49:58.592376Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16734"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-600",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in dprintf_formatf",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16699\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\ndprintf_formatf\ncurl_mvsnprintf\ncurl_msnprintf\n```\n",
+          "modified": "2022-04-13T03:04:42.862628Z",
+          "published": "2020-07-01T00:00:19.594728Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16699"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-389",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in smtp_state_ehlo_resp",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16918\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\nsmtp_state_ehlo_resp\nsmtp_statemach_act\nCurl_pp_statemach\n```\n",
+          "modified": "2022-04-13T03:04:42.827258Z",
+          "published": "2020-07-01T00:00:06.761801Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16918"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-696",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "UNKNOWN READ in ntlm_decode_type2_target",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=33720\n\n```\nCrash type: UNKNOWN READ\nCrash state:\nntlm_decode_type2_target\nCurl_auth_decode_ntlm_type2_message\nCurl_sasl_continue\n```\n",
+          "modified": "2022-04-13T03:04:42.867684Z",
+          "published": "2021-04-28T00:00:54.883431Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=33720"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2018-40",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "UNKNOWN READ in ftp_disconnect",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12173\n\n```\nCrash type: UNKNOWN READ\nCrash state:\nftp_disconnect\nCurl_disconnect\nConnectionExists\n```\n",
+          "modified": "2022-04-13T03:04:42.929064Z",
+          "published": "2021-01-13T00:00:22.110168Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12173"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2017-1",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Index-out-of-bounds in fuzz_send_next_response",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3956\n\n```\nCrash type: Index-out-of-bounds\nCrash state:\nfuzz_send_next_response\nfuzz_handle_transfer\n_start\n```\n",
+          "modified": "2022-04-13T03:04:42.923505Z",
+          "published": "2021-01-13T00:00:01.695158Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3956"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1347",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Negative-size-param in fuzz_tlv_to_string",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16703\n\n```\nCrash type: Negative-size-param\nCrash state:\nfuzz_tlv_to_string\nfuzz_parse_mime_tlv\nfuzz_add_mime_part\n```\n",
+          "modified": "2022-04-13T03:04:42.837836Z",
+          "published": "2020-07-22T21:50:08.310638Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16703"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1080",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Negative-size-param in fuzz_tlv_to_string",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16696\n\n```\nCrash type: Negative-size-param\nCrash state:\nfuzz_tlv_to_string\nfuzz_parse_tlv\ncurl_fuzzer.cc\n```\n",
+          "modified": "2022-04-13T03:04:42.878556Z",
+          "published": "2020-07-22T21:49:45.752151Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16696"
+          ],
+          "risk_inference": "unknown"
+        }
+      ],
+      "top_vulnerabilities": [
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-657",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in ftp_pp_statemachine",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=439473053\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nftp_pp_statemachine\nftp_doing\nmulti_runsingle\n```\n",
+          "modified": "2025-08-20T00:12:09.700264Z",
+          "published": "2025-08-20T00:12:09.699805Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=439473053"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1065",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52517\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nCurl_output_aws_sigv4\noutput_auth_headers\nCurl_http_output_auth\n```\n",
+          "modified": "2022-10-20T00:02:08.349709Z",
+          "published": "2022-10-20T00:02:08.349463Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52517"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1046",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52349\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nCurl_output_aws_sigv4\noutput_auth_headers\nCurl_http_output_auth\n```\n",
+          "modified": "2022-10-14T00:02:17.850216Z",
+          "published": "2022-10-14T00:02:17.849957Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52349"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-450",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in Curl_headers_push",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=47767\n\n```\nCrash type: Heap-buffer-overflow WRITE 5\nCrash state:\nCurl_headers_push\nCurl_client_write\nCurl_http_readwrite_headers\n```\n",
+          "modified": "2022-06-02T00:01:55.821619Z",
+          "published": "2022-06-02T00:01:55.821368Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=47767"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-141",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in nghttp2_hd_deflate_hd_bufs",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44517\n\n```\nCrash type: Heap-use-after-free READ 3\nCrash state:\nnghttp2_hd_deflate_hd_bufs\nnghttp2_frame_pack_headers\nnghttp2_session_mem_send_internal\n```\n",
+          "modified": "2022-04-13T03:04:42.872996Z",
+          "published": "2022-02-11T00:01:56.941272Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44517"
+          ],
+          "risk_inference": "text_keyword"
+        }
+      ],
+      "risk_level": "high",
+      "summary": {
+        "vulnerability_count": 27,
+        "highest_risk": "high",
+        "high_or_critical_count": 20,
+        "queried_sources": [
+          "OSV",
+          "NVD"
+        ]
+      }
+    },
+    {
+      "name": "sqlite",
+      "version": "3.45.0",
+      "purl_name": "sqlite",
+      "source_types": [
+        "Makefile",
+        "include",
+        "vcpkg.json"
+      ],
+      "evidence": [
+        {
+          "source": "include",
+          "file": "multi_component_demo.c",
+          "evidence": "#include <sqlite3.h>",
+          "version_hint": null
+        },
+        {
+          "source": "Makefile",
+          "file": "Makefile",
+          "evidence": "sqlite",
+          "version_hint": null
+        },
+        {
+          "source": "Makefile",
+          "file": "Makefile",
+          "evidence": "sqlite3",
+          "version_hint": null
+        },
+        {
+          "source": "vcpkg.json",
+          "file": "vcpkg.json",
+          "evidence": "sqlite3",
+          "version_hint": "3.45.0"
+        }
+      ],
+      "matched_vulnerabilities": [],
+      "matched_cves": [],
+      "top_vulnerabilities": [],
+      "risk_level": "unknown",
+      "summary": {
+        "vulnerability_count": 0,
+        "highest_risk": "unknown",
+        "high_or_critical_count": 0,
+        "queried_sources": [
+          "OSV",
+          "NVD"
+        ]
+      }
+    },
+    {
+      "name": "libxml2",
+      "version": "unknown",
+      "purl_name": "libxml2",
+      "source_types": [
+        "Makefile",
+        "include"
+      ],
+      "evidence": [
+        {
+          "source": "include",
+          "file": "multi_component_demo.c",
+          "evidence": "#include <libxml/parser.h>",
+          "version_hint": null
+        },
+        {
+          "source": "Makefile",
+          "file": "Makefile",
+          "evidence": "xml2",
+          "version_hint": null
+        }
+      ],
+      "matched_vulnerabilities": [
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2026-565",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlFAParsePosCharGroup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=501547873\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nxmlFAParsePosCharGroup\nxmlFAParseCharGroup\nxmlFAParseCharGroup\n```\n",
+          "modified": "2026-04-12T00:05:45.925675Z",
+          "published": "2026-04-12T00:05:45.925380Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=501547873"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-457",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlParsePubidLiteral",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=424242614\n\n```\nCrash type: Heap-buffer-overflow WRITE 1\nCrash state:\nxmlParsePubidLiteral\nxmlParseExternalID\nxmlParseEntityDecl\n```\n",
+          "modified": "2025-06-14T00:04:11.417116Z",
+          "published": "2025-06-14T00:04:11.416575Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=424242614"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-74",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in xmlValidateElementContent",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=392687022\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nxmlValidateElementContent\nxmlValidateOneElement\nxmlValidateElement\n```\n",
+          "modified": "2025-01-29T00:13:55.386629Z",
+          "published": "2025-01-29T00:13:55.386256Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=392687022"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-1209",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlValidateOneElement",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=372547409\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlValidateOneElement\nxmlValidateElement\napi.c\n```\n",
+          "modified": "2025-03-18T00:30:11.577855Z",
+          "published": "2024-10-11T00:15:43.610812Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=372547409"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-698",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlCharEncCloseFunc",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlCharEncCloseFunc\nhtmlSaveFileFormat\nparseAndPrintFile\n```\n",
+          "modified": "2026-05-29T14:26:08.399963Z",
+          "published": "2024-07-31T00:12:19.254629Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-634",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in htmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70297\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nhtmlCurrentChar\nhtmlParseCharData\nhtmlParseContentInternal\n```\n",
+          "modified": "2024-07-13T00:03:44.049863Z",
+          "published": "2024-07-13T00:03:44.049545Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70297"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-217",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in dropNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67670\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\ndropNode\napi.c\nxmlFreeNodeList\n```\n",
+          "modified": "2024-03-30T00:03:20.549358Z",
+          "published": "2024-03-30T00:03:20.549054Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67670"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-198",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlCopyPropInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67586\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlCopyPropInternal\nxmlCopyPropList\nxmlStaticCopyNode\n```\n",
+          "modified": "2024-03-25T00:05:53.628547Z",
+          "published": "2024-03-25T00:05:53.628217Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67586"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-194",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlDOMWrapNSNormAcquireNormalizedNs",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67560\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlDOMWrapNSNormAcquireNormalizedNs\nxmlDOMWrapReconcileNamespaces\napi.c\n```\n",
+          "modified": "2024-03-24T00:06:16.876833Z",
+          "published": "2024-03-24T00:06:16.876227Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67560"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-103",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66679\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNode\n```\n",
+          "modified": "2024-02-15T00:00:51.271973Z",
+          "published": "2024-02-15T00:00:51.271367Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66679"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-82",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlValidatePopElement",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66154\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlValidatePopElement\nxmlTextReaderValidatePop\nxmlTextReaderRead\n```\n",
+          "modified": "2024-02-08T00:02:35.343044Z",
+          "published": "2024-02-08T00:02:35.342535Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66154"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-81",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66502\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNodeList\n```\n",
+          "modified": "2024-02-08T00:02:18.079086Z",
+          "published": "2024-02-08T00:02:18.078478Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66502"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-77",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66446\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNodeList\n```\n",
+          "modified": "2024-02-06T00:06:09.285249Z",
+          "published": "2024-02-06T00:06:09.284671Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66446"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1373",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65409\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNodeList\n```\n",
+          "modified": "2023-12-31T00:01:26.816606Z",
+          "published": "2023-12-31T00:01:26.816109Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65409"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1365",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlStaticCopyNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65363\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlStaticCopyNode\nxmlDocCopyNode\nxmlParseReference\n```\n",
+          "modified": "2023-12-28T00:07:29.259296Z",
+          "published": "2023-12-28T00:07:29.258949Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65363"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1315",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in htmlParseDocument",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65112\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nhtmlParseDocument\nhtmlDoRead\nhtmlCtxtReadMemory\n```\n",
+          "modified": "2023-12-17T00:02:06.165194Z",
+          "published": "2023-12-17T00:02:06.164794Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65112"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1303",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in htmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65043\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nhtmlCurrentChar\nhtmlParseComment\nhtmlParseDocument\n```\n",
+          "modified": "2023-12-15T00:00:06.314002Z",
+          "published": "2023-12-15T00:00:06.313566Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65043"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1000",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63157\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nxmlParserPrintFileContextInternal\nxmlReportError\n__xmlRaiseError\n```\n",
+          "modified": "2023-10-11T13:01:01.024042Z",
+          "published": "2023-10-11T13:01:01.023722Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63157"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-999",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlParseCommentComplex",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63127\n\n```\nCrash type: Heap-buffer-overflow WRITE 1\nCrash state:\nxmlParseCommentComplex\nxmlParseComment\nxmlParseMisc\n```\n",
+          "modified": "2023-10-10T13:03:42.827194Z",
+          "published": "2023-10-10T13:03:42.825694Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63127"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-990",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in __xmlRaiseError",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63092\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\n__xmlRaiseError\nxmlFatalErr\nxmlStringDecodeEntitiesInt\n```\n",
+          "modified": "2023-10-08T13:03:35.608892Z",
+          "published": "2023-10-08T13:03:35.608592Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63092"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-988",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlCopyCharMultiByte",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63086\n\n```\nCrash type: Heap-buffer-overflow WRITE 1\nCrash state:\nxmlCopyCharMultiByte\nxmlParseCommentComplex\nxmlParseComment\n```\n",
+          "modified": "2023-10-08T13:03:08.264696Z",
+          "published": "2023-10-08T13:03:08.264286Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63086"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-969",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlStaticCopyNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62996\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlStaticCopyNode\nxmlDocCopyNode\nxmlParseReference\n```\n",
+          "modified": "2023-10-06T13:01:29.969714Z",
+          "published": "2023-10-06T13:01:29.969398Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62996"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-953",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlDictLookupInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62911\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nxmlDictLookupInternal\nxmlDictLookup\nhtmlParseNameComplex\n```\n",
+          "modified": "2023-10-03T13:01:18.896661Z",
+          "published": "2023-10-03T13:01:18.896337Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62911"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-684",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in __xmlRaiseError",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=61337\n\n```\nCrash type: Heap-use-after-free READ 2\nCrash state:\n__xmlRaiseError\nhtmlParseErr\nhtmlCurrentChar\n```\n",
+          "modified": "2023-08-11T14:02:03.986997Z",
+          "published": "2023-08-11T14:02:03.986718Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=61337"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-61",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlParseTryOrFinish",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=55980\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nxmlParseTryOrFinish\nxmlParseChunk\nxml.c\n```\n",
+          "modified": "2023-02-15T13:02:21.069046Z",
+          "published": "2023-02-15T13:02:21.068814Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=55980"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1120",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXIncludeDoProcess",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52869\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXIncludeDoProcess\nxmlXIncludeProcessNode\nxmlTextReaderRead\n```\n",
+          "modified": "2022-10-31T00:01:06.206161Z",
+          "published": "2022-10-31T00:01:06.205897Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52869"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1071",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXIncludeCopyXPointer",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52554\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXIncludeCopyXPointer\nxmlXIncludeDoProcess\nxmlXIncludeProcessTreeFlagsData\n```\n",
+          "modified": "2022-10-21T00:02:26.399509Z",
+          "published": "2022-10-21T00:02:26.399267Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52554"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-777",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlAddNextSibling",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=34461\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlAddNextSibling\nxmlXIncludeCopyRange\nxmlXIncludeCopyXPointer\n```\n",
+          "modified": "2026-05-29T14:14:01.860546Z",
+          "published": "2021-05-20T00:00:30.166614Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=34461"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1885",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlStaticCopyNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=26022\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlStaticCopyNode\nxmlCopyNode\nxmlXIncludeLoadTxt\n```\n",
+          "modified": "2022-04-13T03:04:39.952934Z",
+          "published": "2020-09-29T00:00:43.015893Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=26022"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1726",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXPathNodeSetAdd",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25536\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXPathNodeSetAdd\nxmlXPathGetElementsByIds\nxmlXPathIdFunction\n```\n",
+          "modified": "2022-04-13T03:04:39.942783Z",
+          "published": "2020-09-11T00:00:07.083398Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25536"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1667",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlTextReaderRead",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25210\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlTextReaderRead\nxml.c\nxmlTextReaderFreeNode\n```\n",
+          "modified": "2022-04-13T03:04:39.916971Z",
+          "published": "2020-08-27T00:00:24.605339Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25210"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1623",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXIncludeIncludeNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24925\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXIncludeIncludeNode\nxmlXIncludeDoProcess\nxmlXIncludeLoadFallback\n```\n",
+          "modified": "2022-04-13T03:04:39.927181Z",
+          "published": "2020-08-16T00:01:16.093615Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24925"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-908",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24055\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nxmlParserPrintFileContextInternal\nxmlReportError\n__xmlRaiseError\n```\n",
+          "modified": "2022-04-13T03:04:39.932469Z",
+          "published": "2020-07-21T00:00:26.575286Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24055"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-755",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23765\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nxmlParserPrintFileContextInternal\nxmlReportError\n__xmlRaiseError\n```\n",
+          "modified": "2022-04-13T03:04:39.958030Z",
+          "published": "2020-07-09T00:00:05.574034Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23765"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-89",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in __xmlRaiseError",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23120\n\n```\nCrash type: Heap-use-after-free READ 2\nCrash state:\n__xmlRaiseError\nxmlErrValidNode\nxmlValidateRef\n```\n",
+          "modified": "2022-04-13T03:04:39.922037Z",
+          "published": "2020-06-24T01:51:13.556119Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23120"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-193",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in api.c",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67552\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\napi.c\nxmlSearchNsByHref\n```\n",
+          "modified": "2024-03-24T00:04:56.515126Z",
+          "published": "2024-03-24T00:04:56.514783Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67552"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-215",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in xmlStrdup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23144\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\nxmlStrdup\n__xmlRaiseError\nxmlErrValidNode\n```\n",
+          "modified": "2022-04-13T03:04:39.947858Z",
+          "published": "2020-06-24T01:51:19.309469Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23144"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1301",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlDictLookupInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65012\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlDictLookupInternal\nxmlDictLookupHashed\nxmlParseNCName\n```\n",
+          "modified": "2023-12-14T00:13:26.533280Z",
+          "published": "2023-12-14T00:13:26.532719Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65012"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-477",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseHTMLAttribute",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59718\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseHTMLAttribute\nhtmlParseStartTag\nhtmlParseContentInternal\n```\n",
+          "modified": "2023-06-11T14:01:44.850846Z",
+          "published": "2023-06-11T14:01:44.850599Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59718"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-474",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlDictLookup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59701\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlDictLookup\nxmlParseNCName\nxmlParseQName\n```\n",
+          "modified": "2023-06-10T14:00:15.864439Z",
+          "published": "2023-06-10T14:00:15.864157Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59701"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-249",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlStrndup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57469\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlStrndup\nhtmlParseSystemLiteral\nhtmlParseDocTypeDecl\n```\n",
+          "modified": "2023-03-28T13:00:29.942832Z",
+          "published": "2023-03-28T13:00:29.942556Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57469"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-215",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParsePI",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57304\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParsePI\nhtmlParseDocument\nhtmlDoRead\n```\n",
+          "modified": "2023-03-23T13:00:45.604628Z",
+          "published": "2023-03-23T13:00:45.604359Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57304"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-213",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseDocument",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57288\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseDocument\nhtmlDoRead\nhtmlReadMemory\n```\n",
+          "modified": "2023-03-22T13:01:53.257458Z",
+          "published": "2023-03-22T13:01:53.257203Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57288"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-212",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseEntityDecl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57294\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseEntityDecl\nxmlParseMarkupDecl\nxmlParseInternalSubset\n```\n",
+          "modified": "2023-03-22T13:01:34.391485Z",
+          "published": "2023-03-22T13:01:34.391238Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57294"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-211",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlStrndup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57284\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlStrndup\nhtmlParseSystemLiteral\nhtmlParseDocTypeDecl\n```\n",
+          "modified": "2023-03-22T13:00:29.358840Z",
+          "published": "2023-03-22T13:00:29.358592Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57284"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-206",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseContentInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57225\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseContentInternal\nxmlParseExternalEntityPrivate\nxmlParseReference\n```\n",
+          "modified": "2023-03-19T13:02:12.599543Z",
+          "published": "2023-03-19T13:02:12.599313Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57225"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-204",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseChunk",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57224\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseChunk\nhtml.c\n```\n",
+          "modified": "2023-03-19T13:02:08.092478Z",
+          "published": "2023-03-19T13:02:08.092138Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57224"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-199",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseQName",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57151\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseQName\nxmlParseStartTag2\nxmlParseTryOrFinish\n```\n",
+          "modified": "2023-03-18T13:02:06.280552Z",
+          "published": "2023-03-18T13:02:06.280323Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57151"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-196",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlDictLookup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57110\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlDictLookup\nxmlParseNCName\nxmlParseQName\n```\n",
+          "modified": "2023-03-17T13:02:09.789649Z",
+          "published": "2023-03-17T13:02:09.789411Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57110"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-195",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseDocument",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57089\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseDocument\nhtmlDoRead\nhtmlReadMemory\n```\n",
+          "modified": "2023-03-17T13:01:21.932172Z",
+          "published": "2023-03-17T13:01:21.931934Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57089"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-193",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseContentInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57084\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseContentInternal\nxmlParseExternalEntityPrivate\nxmlParseReference\n```\n",
+          "modified": "2023-03-17T13:00:33.314968Z",
+          "published": "2023-03-17T13:00:33.314698Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57084"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-191",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlSkipBlankChars",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57080\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlSkipBlankChars\nxmlParseMisc\nxmlParseDocument\n```\n",
+          "modified": "2023-03-17T13:00:17.480275Z",
+          "published": "2023-03-17T13:00:17.480046Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57080"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-188",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseQName",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57077\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseQName\nxmlParseStartTag2\nxmlParseElementStart\n```\n",
+          "modified": "2023-03-17T13:00:10.915924Z",
+          "published": "2023-03-17T13:00:10.915642Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57077"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-185",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlNextChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57073\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlNextChar\nhtmlParseStartTag\nhtmlParseChunk\n```\n",
+          "modified": "2023-03-17T13:00:07.286262Z",
+          "published": "2023-03-17T13:00:07.286019Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57073"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-174",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56964\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlCurrentChar\nhtmlParseNameComplex\nhtmlParseName\n```\n",
+          "modified": "2023-03-14T13:00:07.970462Z",
+          "published": "2023-03-14T13:00:07.970213Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56964"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-162",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56841\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlCurrentChar\nxmlParseNCName\nxmlParseQName\n```\n",
+          "modified": "2023-03-11T13:00:07.265090Z",
+          "published": "2023-03-11T13:00:07.264827Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56841"
+          ],
+          "risk_inference": "unknown"
+        }
+      ],
+      "matched_cves": [
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2026-565",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlFAParsePosCharGroup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=501547873\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nxmlFAParsePosCharGroup\nxmlFAParseCharGroup\nxmlFAParseCharGroup\n```\n",
+          "modified": "2026-04-12T00:05:45.925675Z",
+          "published": "2026-04-12T00:05:45.925380Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=501547873"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-457",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlParsePubidLiteral",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=424242614\n\n```\nCrash type: Heap-buffer-overflow WRITE 1\nCrash state:\nxmlParsePubidLiteral\nxmlParseExternalID\nxmlParseEntityDecl\n```\n",
+          "modified": "2025-06-14T00:04:11.417116Z",
+          "published": "2025-06-14T00:04:11.416575Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=424242614"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-74",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in xmlValidateElementContent",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=392687022\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nxmlValidateElementContent\nxmlValidateOneElement\nxmlValidateElement\n```\n",
+          "modified": "2025-01-29T00:13:55.386629Z",
+          "published": "2025-01-29T00:13:55.386256Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=392687022"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-1209",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlValidateOneElement",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=372547409\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlValidateOneElement\nxmlValidateElement\napi.c\n```\n",
+          "modified": "2025-03-18T00:30:11.577855Z",
+          "published": "2024-10-11T00:15:43.610812Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=372547409"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-698",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlCharEncCloseFunc",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlCharEncCloseFunc\nhtmlSaveFileFormat\nparseAndPrintFile\n```\n",
+          "modified": "2026-05-29T14:26:08.399963Z",
+          "published": "2024-07-31T00:12:19.254629Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-634",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in htmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70297\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nhtmlCurrentChar\nhtmlParseCharData\nhtmlParseContentInternal\n```\n",
+          "modified": "2024-07-13T00:03:44.049863Z",
+          "published": "2024-07-13T00:03:44.049545Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70297"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-217",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in dropNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67670\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\ndropNode\napi.c\nxmlFreeNodeList\n```\n",
+          "modified": "2024-03-30T00:03:20.549358Z",
+          "published": "2024-03-30T00:03:20.549054Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67670"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-198",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlCopyPropInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67586\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlCopyPropInternal\nxmlCopyPropList\nxmlStaticCopyNode\n```\n",
+          "modified": "2024-03-25T00:05:53.628547Z",
+          "published": "2024-03-25T00:05:53.628217Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67586"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-194",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlDOMWrapNSNormAcquireNormalizedNs",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67560\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlDOMWrapNSNormAcquireNormalizedNs\nxmlDOMWrapReconcileNamespaces\napi.c\n```\n",
+          "modified": "2024-03-24T00:06:16.876833Z",
+          "published": "2024-03-24T00:06:16.876227Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67560"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-103",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66679\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNode\n```\n",
+          "modified": "2024-02-15T00:00:51.271973Z",
+          "published": "2024-02-15T00:00:51.271367Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66679"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-82",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlValidatePopElement",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66154\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlValidatePopElement\nxmlTextReaderValidatePop\nxmlTextReaderRead\n```\n",
+          "modified": "2024-02-08T00:02:35.343044Z",
+          "published": "2024-02-08T00:02:35.342535Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66154"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-81",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66502\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNodeList\n```\n",
+          "modified": "2024-02-08T00:02:18.079086Z",
+          "published": "2024-02-08T00:02:18.078478Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66502"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-77",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66446\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNodeList\n```\n",
+          "modified": "2024-02-06T00:06:09.285249Z",
+          "published": "2024-02-06T00:06:09.284671Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66446"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1373",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlRemoveID",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65409\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlRemoveID\nxmlFreeProp\nxmlFreeNodeList\n```\n",
+          "modified": "2023-12-31T00:01:26.816606Z",
+          "published": "2023-12-31T00:01:26.816109Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65409"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1365",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlStaticCopyNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65363\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\nxmlStaticCopyNode\nxmlDocCopyNode\nxmlParseReference\n```\n",
+          "modified": "2023-12-28T00:07:29.259296Z",
+          "published": "2023-12-28T00:07:29.258949Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65363"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1315",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in htmlParseDocument",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65112\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nhtmlParseDocument\nhtmlDoRead\nhtmlCtxtReadMemory\n```\n",
+          "modified": "2023-12-17T00:02:06.165194Z",
+          "published": "2023-12-17T00:02:06.164794Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65112"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1303",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in htmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65043\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nhtmlCurrentChar\nhtmlParseComment\nhtmlParseDocument\n```\n",
+          "modified": "2023-12-15T00:00:06.314002Z",
+          "published": "2023-12-15T00:00:06.313566Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65043"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1000",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63157\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nxmlParserPrintFileContextInternal\nxmlReportError\n__xmlRaiseError\n```\n",
+          "modified": "2023-10-11T13:01:01.024042Z",
+          "published": "2023-10-11T13:01:01.023722Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63157"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-999",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlParseCommentComplex",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63127\n\n```\nCrash type: Heap-buffer-overflow WRITE 1\nCrash state:\nxmlParseCommentComplex\nxmlParseComment\nxmlParseMisc\n```\n",
+          "modified": "2023-10-10T13:03:42.827194Z",
+          "published": "2023-10-10T13:03:42.825694Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63127"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-990",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in __xmlRaiseError",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63092\n\n```\nCrash type: Heap-use-after-free READ 8\nCrash state:\n__xmlRaiseError\nxmlFatalErr\nxmlStringDecodeEntitiesInt\n```\n",
+          "modified": "2023-10-08T13:03:35.608892Z",
+          "published": "2023-10-08T13:03:35.608592Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63092"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-988",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlCopyCharMultiByte",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63086\n\n```\nCrash type: Heap-buffer-overflow WRITE 1\nCrash state:\nxmlCopyCharMultiByte\nxmlParseCommentComplex\nxmlParseComment\n```\n",
+          "modified": "2023-10-08T13:03:08.264696Z",
+          "published": "2023-10-08T13:03:08.264286Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63086"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-969",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlStaticCopyNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62996\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlStaticCopyNode\nxmlDocCopyNode\nxmlParseReference\n```\n",
+          "modified": "2023-10-06T13:01:29.969714Z",
+          "published": "2023-10-06T13:01:29.969398Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62996"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-953",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlDictLookupInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62911\n\n```\nCrash type: Heap-buffer-overflow READ {*}\nCrash state:\nxmlDictLookupInternal\nxmlDictLookup\nhtmlParseNameComplex\n```\n",
+          "modified": "2023-10-03T13:01:18.896661Z",
+          "published": "2023-10-03T13:01:18.896337Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62911"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-684",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in __xmlRaiseError",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=61337\n\n```\nCrash type: Heap-use-after-free READ 2\nCrash state:\n__xmlRaiseError\nhtmlParseErr\nhtmlCurrentChar\n```\n",
+          "modified": "2023-08-11T14:02:03.986997Z",
+          "published": "2023-08-11T14:02:03.986718Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=61337"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-61",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlParseTryOrFinish",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=55980\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nxmlParseTryOrFinish\nxmlParseChunk\nxml.c\n```\n",
+          "modified": "2023-02-15T13:02:21.069046Z",
+          "published": "2023-02-15T13:02:21.068814Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=55980"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1120",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXIncludeDoProcess",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52869\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXIncludeDoProcess\nxmlXIncludeProcessNode\nxmlTextReaderRead\n```\n",
+          "modified": "2022-10-31T00:01:06.206161Z",
+          "published": "2022-10-31T00:01:06.205897Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52869"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2022-1071",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXIncludeCopyXPointer",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52554\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXIncludeCopyXPointer\nxmlXIncludeDoProcess\nxmlXIncludeProcessTreeFlagsData\n```\n",
+          "modified": "2022-10-21T00:02:26.399509Z",
+          "published": "2022-10-21T00:02:26.399267Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52554"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2021-777",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlAddNextSibling",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=34461\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlAddNextSibling\nxmlXIncludeCopyRange\nxmlXIncludeCopyXPointer\n```\n",
+          "modified": "2026-05-29T14:14:01.860546Z",
+          "published": "2021-05-20T00:00:30.166614Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=34461"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1885",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlStaticCopyNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=26022\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlStaticCopyNode\nxmlCopyNode\nxmlXIncludeLoadTxt\n```\n",
+          "modified": "2022-04-13T03:04:39.952934Z",
+          "published": "2020-09-29T00:00:43.015893Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=26022"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1726",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXPathNodeSetAdd",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25536\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXPathNodeSetAdd\nxmlXPathGetElementsByIds\nxmlXPathIdFunction\n```\n",
+          "modified": "2022-04-13T03:04:39.942783Z",
+          "published": "2020-09-11T00:00:07.083398Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25536"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1667",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlTextReaderRead",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25210\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlTextReaderRead\nxml.c\nxmlTextReaderFreeNode\n```\n",
+          "modified": "2022-04-13T03:04:39.916971Z",
+          "published": "2020-08-27T00:00:24.605339Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25210"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-1623",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlXIncludeIncludeNode",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24925\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlXIncludeIncludeNode\nxmlXIncludeDoProcess\nxmlXIncludeLoadFallback\n```\n",
+          "modified": "2022-04-13T03:04:39.927181Z",
+          "published": "2020-08-16T00:01:16.093615Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24925"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-908",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24055\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nxmlParserPrintFileContextInternal\nxmlReportError\n__xmlRaiseError\n```\n",
+          "modified": "2022-04-13T03:04:39.932469Z",
+          "published": "2020-07-21T00:00:26.575286Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24055"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-755",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23765\n\n```\nCrash type: Heap-use-after-free READ 1\nCrash state:\nxmlParserPrintFileContextInternal\nxmlReportError\n__xmlRaiseError\n```\n",
+          "modified": "2022-04-13T03:04:39.958030Z",
+          "published": "2020-07-09T00:00:05.574034Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23765"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-89",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in __xmlRaiseError",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23120\n\n```\nCrash type: Heap-use-after-free READ 2\nCrash state:\n__xmlRaiseError\nxmlErrValidNode\nxmlValidateRef\n```\n",
+          "modified": "2022-04-13T03:04:39.922037Z",
+          "published": "2020-06-24T01:51:13.556119Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23120"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-193",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in api.c",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67552\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\napi.c\nxmlSearchNsByHref\n```\n",
+          "modified": "2024-03-24T00:04:56.515126Z",
+          "published": "2024-03-24T00:04:56.514783Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67552"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2020-215",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Use-of-uninitialized-value in xmlStrdup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23144\n\n```\nCrash type: Use-of-uninitialized-value\nCrash state:\nxmlStrdup\n__xmlRaiseError\nxmlErrValidNode\n```\n",
+          "modified": "2022-04-13T03:04:39.947858Z",
+          "published": "2020-06-24T01:51:19.309469Z",
+          "severity_score": null,
+          "risk_level": "medium",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23144"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-1301",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlDictLookupInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65012\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlDictLookupInternal\nxmlDictLookupHashed\nxmlParseNCName\n```\n",
+          "modified": "2023-12-14T00:13:26.533280Z",
+          "published": "2023-12-14T00:13:26.532719Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65012"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-477",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseHTMLAttribute",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59718\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseHTMLAttribute\nhtmlParseStartTag\nhtmlParseContentInternal\n```\n",
+          "modified": "2023-06-11T14:01:44.850846Z",
+          "published": "2023-06-11T14:01:44.850599Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59718"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-474",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlDictLookup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59701\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlDictLookup\nxmlParseNCName\nxmlParseQName\n```\n",
+          "modified": "2023-06-10T14:00:15.864439Z",
+          "published": "2023-06-10T14:00:15.864157Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59701"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-249",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlStrndup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57469\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlStrndup\nhtmlParseSystemLiteral\nhtmlParseDocTypeDecl\n```\n",
+          "modified": "2023-03-28T13:00:29.942832Z",
+          "published": "2023-03-28T13:00:29.942556Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57469"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-215",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParsePI",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57304\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParsePI\nhtmlParseDocument\nhtmlDoRead\n```\n",
+          "modified": "2023-03-23T13:00:45.604628Z",
+          "published": "2023-03-23T13:00:45.604359Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57304"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-213",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseDocument",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57288\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseDocument\nhtmlDoRead\nhtmlReadMemory\n```\n",
+          "modified": "2023-03-22T13:01:53.257458Z",
+          "published": "2023-03-22T13:01:53.257203Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57288"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-212",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseEntityDecl",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57294\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseEntityDecl\nxmlParseMarkupDecl\nxmlParseInternalSubset\n```\n",
+          "modified": "2023-03-22T13:01:34.391485Z",
+          "published": "2023-03-22T13:01:34.391238Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57294"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-211",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlStrndup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57284\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlStrndup\nhtmlParseSystemLiteral\nhtmlParseDocTypeDecl\n```\n",
+          "modified": "2023-03-22T13:00:29.358840Z",
+          "published": "2023-03-22T13:00:29.358592Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57284"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-206",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseContentInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57225\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseContentInternal\nxmlParseExternalEntityPrivate\nxmlParseReference\n```\n",
+          "modified": "2023-03-19T13:02:12.599543Z",
+          "published": "2023-03-19T13:02:12.599313Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57225"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-204",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseChunk",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57224\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseChunk\nhtml.c\n```\n",
+          "modified": "2023-03-19T13:02:08.092478Z",
+          "published": "2023-03-19T13:02:08.092138Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57224"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-199",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseQName",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57151\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseQName\nxmlParseStartTag2\nxmlParseTryOrFinish\n```\n",
+          "modified": "2023-03-18T13:02:06.280552Z",
+          "published": "2023-03-18T13:02:06.280323Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57151"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-196",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlDictLookup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57110\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlDictLookup\nxmlParseNCName\nxmlParseQName\n```\n",
+          "modified": "2023-03-17T13:02:09.789649Z",
+          "published": "2023-03-17T13:02:09.789411Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57110"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-195",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlParseDocument",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57089\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlParseDocument\nhtmlDoRead\nhtmlReadMemory\n```\n",
+          "modified": "2023-03-17T13:01:21.932172Z",
+          "published": "2023-03-17T13:01:21.931934Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57089"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-193",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseContentInternal",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57084\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseContentInternal\nxmlParseExternalEntityPrivate\nxmlParseReference\n```\n",
+          "modified": "2023-03-17T13:00:33.314968Z",
+          "published": "2023-03-17T13:00:33.314698Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57084"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-191",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlSkipBlankChars",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57080\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlSkipBlankChars\nxmlParseMisc\nxmlParseDocument\n```\n",
+          "modified": "2023-03-17T13:00:17.480275Z",
+          "published": "2023-03-17T13:00:17.480046Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57080"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-188",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlParseQName",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57077\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlParseQName\nxmlParseStartTag2\nxmlParseElementStart\n```\n",
+          "modified": "2023-03-17T13:00:10.915924Z",
+          "published": "2023-03-17T13:00:10.915642Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57077"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-185",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlNextChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57073\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlNextChar\nhtmlParseStartTag\nhtmlParseChunk\n```\n",
+          "modified": "2023-03-17T13:00:07.286262Z",
+          "published": "2023-03-17T13:00:07.286019Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57073"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-174",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in htmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56964\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nhtmlCurrentChar\nhtmlParseNameComplex\nhtmlParseName\n```\n",
+          "modified": "2023-03-14T13:00:07.970462Z",
+          "published": "2023-03-14T13:00:07.970213Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56964"
+          ],
+          "risk_inference": "unknown"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2023-162",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Global-buffer-overflow in xmlCurrentChar",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56841\n\n```\nCrash type: Global-buffer-overflow READ 1\nCrash state:\nxmlCurrentChar\nxmlParseNCName\nxmlParseQName\n```\n",
+          "modified": "2023-03-11T13:00:07.265090Z",
+          "published": "2023-03-11T13:00:07.264827Z",
+          "severity_score": null,
+          "risk_level": "unknown",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56841"
+          ],
+          "risk_inference": "unknown"
+        }
+      ],
+      "top_vulnerabilities": [
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2026-565",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlFAParsePosCharGroup",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=501547873\n\n```\nCrash type: Heap-buffer-overflow READ 1\nCrash state:\nxmlFAParsePosCharGroup\nxmlFAParseCharGroup\nxmlFAParseCharGroup\n```\n",
+          "modified": "2026-04-12T00:05:45.925675Z",
+          "published": "2026-04-12T00:05:45.925380Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=501547873"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-457",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-buffer-overflow in xmlParsePubidLiteral",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=424242614\n\n```\nCrash type: Heap-buffer-overflow WRITE 1\nCrash state:\nxmlParsePubidLiteral\nxmlParseExternalID\nxmlParseEntityDecl\n```\n",
+          "modified": "2025-06-14T00:04:11.417116Z",
+          "published": "2025-06-14T00:04:11.416575Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=424242614"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2025-74",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Stack-buffer-overflow in xmlValidateElementContent",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=392687022\n\n```\nCrash type: Stack-buffer-overflow WRITE {*}\nCrash state:\nxmlValidateElementContent\nxmlValidateOneElement\nxmlValidateElement\n```\n",
+          "modified": "2025-01-29T00:13:55.386629Z",
+          "published": "2025-01-29T00:13:55.386256Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=392687022"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-1209",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlValidateOneElement",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=372547409\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlValidateOneElement\nxmlValidateElement\napi.c\n```\n",
+          "modified": "2025-03-18T00:30:11.577855Z",
+          "published": "2024-10-11T00:15:43.610812Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=372547409"
+          ],
+          "risk_inference": "text_keyword"
+        },
+        {
+          "source": "OSV",
+          "ecosystem": "OSS-Fuzz",
+          "id": "OSV-2024-698",
+          "cve_id": null,
+          "aliases": [],
+          "summary": "Heap-use-after-free in xmlCharEncCloseFunc",
+          "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlCharEncCloseFunc\nhtmlSaveFileFormat\nparseAndPrintFile\n```\n",
+          "modified": "2026-05-29T14:26:08.399963Z",
+          "published": "2024-07-31T00:12:19.254629Z",
+          "severity_score": null,
+          "risk_level": "high",
+          "references": [
+            "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774"
+          ],
+          "risk_inference": "text_keyword"
+        }
+      ],
+      "risk_level": "high",
+      "summary": {
+        "vulnerability_count": 56,
+        "highest_risk": "high",
+        "high_or_critical_count": 35,
+        "queried_sources": [
+          "OSV",
+          "NVD"
+        ]
+      }
+    },
+    {
+      "name": "openssl",
+      "version": "1.1.1t",
+      "purl_name": "openssl",
+      "source_types": [
+        "CMakeLists.txt",
+        "Makefile",
+        "conanfile.txt",
+        "include"
+      ],
+      "evidence": [
+        {
+          "source": "include",
+          "file": "openssl_component_demo.c",
+          "evidence": "#include <openssl/ssl.h>",
+          "version_hint": null
+        },
+        {
+          "source": "include",
+          "file": "openssl_component_demo.c",
+          "evidence": "#include <openssl/crypto.h>",
+          "version_hint": null
+        },
+        {
+          "source": "CMakeLists.txt",
+          "file": "CMakeLists.txt",
+          "evidence": "find_package(OpenSSL)",
+          "version_hint": null
+        },
+        {
+          "source": "CMakeLists.txt",
+          "file": "CMakeLists.txt",
+          "evidence": "openssl",
+          "version_hint": null
+        },
+        {
+          "source": "CMakeLists.txt",
+          "file": "CMakeLists.txt",
+          "evidence": "ssl",
+          "version_hint": null
+        },
+        {
+          "source": "CMakeLists.txt",
+          "file": "CMakeLists.txt",
+          "evidence": "crypto",
+          "version_hint": null
+        },
+        {
+          "source": "CMakeLists.txt",
+          "file": "CMakeLists.txt",
+          "evidence": "openssl::ssl",
+          "version_hint": null
+        },
+        {
+          "source": "CMakeLists.txt",
+          "file": "CMakeLists.txt",
+          "evidence": "openssl::crypto",
+          "version_hint": null
+        },
+        {
+          "source": "conanfile.txt",
+          "file": "conanfile.txt",
+          "evidence": "openssl/1.1.1t",
+          "version_hint": "1.1.1t"
+        },
+        {
+          "source": "Makefile",
+          "file": "Makefile",
+          "evidence": "ssl",
+          "version_hint": null
+        },
+        {
+          "source": "Makefile",
+          "file": "Makefile",
+          "evidence": "crypto",
+          "version_hint": null
+        }
+      ],
+      "matched_vulnerabilities": [],
+      "matched_cves": [],
+      "top_vulnerabilities": [],
+      "risk_level": "unknown",
+      "summary": {
+        "vulnerability_count": 0,
+        "highest_risk": "unknown",
+        "high_or_critical_count": 0,
+        "queried_sources": [
+          "OSV",
+          "NVD"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_components": 6,
+    "high_risk_components": 2,
+    "queried_sources": [
+      "OSV",
+      "NVD"
+    ]
+  }
+}

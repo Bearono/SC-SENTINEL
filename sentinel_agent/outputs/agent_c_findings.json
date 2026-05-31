@@ -1,0 +1,262 @@
+{
+  "agent": "Agent C - Static Vulnerability Audit",
+  "audit_mode": "llm_with_rule_fallback",
+  "static_findings": [
+    {
+      "finding_id": "FINDING-0001",
+      "source_slice_id": "SLICE-0001",
+      "file": "double_free_demo.c",
+      "function": "double_free_case",
+      "line_range": [
+        8,
+        11
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "当函数参数 flag 为非零值时，程序进入条件分支并执行第二次 free 操作",
+      "evidence": [
+        "第3行：char *buf = (char *)malloc(32); 分配堆内存",
+        "第8行：free(buf); 首次释放该内存块",
+        "第11行：if (flag) { free(buf); } 在 flag 为真时再次释放同一指针，构成重复释放"
+      ],
+      "confidence": 0.95,
+      "suggested_fix": "在首次 free(buf) 后立即将 buf 赋值为 NULL，或重构逻辑移除条件分支中的重复 free 调用，确保指针仅被释放一次。",
+      "static_status": "suspected",
+      "audit_source": "llm",
+      "quality_control": {
+        "original_confidence": 0.95,
+        "calibrated_confidence": 0.95,
+        "confidence_adjusted": false,
+        "rule_consistency": "consistent",
+        "matched_rule_cwe": "CWE-415",
+        "matched_rule_line_range": [
+          8,
+          11
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0002",
+      "source_slice_id": "SLICE-0003",
+      "file": "heap_overflow_demo.c",
+      "function": "heap_overflow_case",
+      "line_range": [
+        4,
+        9
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "当输入参数 input 的字符串长度大于等于 8 字节时触发",
+      "evidence": [
+        "第4行：char *buf = (char *)malloc(8); 在堆上分配了固定大小为 8 字节的缓冲区",
+        "第9行：strcpy(buf, input); 使用不安全的 strcpy 将外部输入 input 复制到 buf，未进行长度边界检查，导致堆缓冲区溢出"
+      ],
+      "confidence": 0.95,
+      "suggested_fix": "使用 strncpy 或 snprintf 限制拷贝长度，或根据 input 的实际长度动态分配内存（如 malloc(strlen(input) + 1)）",
+      "static_status": "suspected",
+      "audit_source": "llm",
+      "quality_control": {
+        "original_confidence": 0.95,
+        "calibrated_confidence": 0.95,
+        "confidence_adjusted": false,
+        "rule_consistency": "consistent",
+        "matched_rule_cwe": "CWE-122",
+        "matched_rule_line_range": [
+          9,
+          9
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0003",
+      "source_slice_id": "SLICE-0007",
+      "file": "stack_overflow_demo.c",
+      "function": "stack_overflow_case",
+      "line_range": [
+        3,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "当输入参数 input 的字符串长度大于等于 8 字节（含空终止符）时",
+      "evidence": [
+        "第3行：在栈上分配了固定大小为8字节的局部缓冲区 char buf[8];",
+        "第4行：调用 strcpy(buf, input); 进行数据拷贝，该函数不执行边界检查，若 input 长度超过 7 字节将直接越界写入栈内存"
+      ],
+      "confidence": 0.95,
+      "suggested_fix": "使用带长度限制的拷贝函数（如 strncpy 或 snprintf），或在拷贝前严格校验 strlen(input) < sizeof(buf)",
+      "static_status": "suspected",
+      "audit_source": "llm",
+      "quality_control": {
+        "original_confidence": 0.95,
+        "calibrated_confidence": 0.95,
+        "confidence_adjusted": false,
+        "rule_consistency": "consistent",
+        "matched_rule_cwe": "CWE-121",
+        "matched_rule_line_range": [
+          4,
+          4
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0004",
+      "source_slice_id": "SLICE-0009",
+      "file": "uaf_demo.c",
+      "function": "uaf_case",
+      "line_range": [
+        10,
+        13
+      ],
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "trigger_condition": "当函数参数 flag 为非零值时，控制流进入 if 分支，执行第13行代码解引用指针 p。",
+      "evidence": [
+        "第4行：int *p = (int *)malloc(sizeof(int)); 分配堆内存并赋值给指针 p",
+        "第10行：free(p); 释放指针 p 指向的堆内存",
+        "第13行：printf(\"%d\\n\", *p); 在 free 之后再次解引用指针 p，访问已释放内存"
+      ],
+      "confidence": 0.95,
+      "suggested_fix": "在 free(p) 之后立即将指针置空（p = NULL;），或将对 *p 的访问移至 free(p) 之前。",
+      "static_status": "suspected",
+      "audit_source": "llm",
+      "quality_control": {
+        "original_confidence": 0.95,
+        "calibrated_confidence": 0.95,
+        "confidence_adjusted": false,
+        "rule_consistency": "consistent",
+        "matched_rule_cwe": "CWE-416",
+        "matched_rule_line_range": [
+          10,
+          13
+        ],
+        "warnings": []
+      }
+    }
+  ],
+  "audited_slices": [
+    {
+      "slice_id": "SLICE-0001",
+      "target_file": "double_free_demo.c",
+      "target_function": "double_free_case",
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0003",
+      "target_file": "heap_overflow_demo.c",
+      "target_function": "heap_overflow_case",
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "strcpy"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0007",
+      "target_file": "stack_overflow_demo.c",
+      "target_function": "stack_overflow_case",
+      "risk_keywords": [
+        "strcpy"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0009",
+      "target_file": "uaf_demo.c",
+      "target_function": "uaf_case",
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ]
+    }
+  ],
+  "skipped_slices": [
+    {
+      "slice_id": "SLICE-0002",
+      "target_file": "double_free_demo.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0004",
+      "target_file": "heap_overflow_demo.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0005",
+      "target_file": "multi_component_demo.c",
+      "target_function": "dependency_probe_demo",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0006",
+      "target_file": "openssl_component_demo.c",
+      "target_function": "init_openssl_demo",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0008",
+      "target_file": "stack_overflow_demo.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0010",
+      "target_file": "uaf_demo.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    }
+  ],
+  "llm_errors": [],
+  "quality_events": [
+    {
+      "slice_id": "SLICE-0001",
+      "event": "json_parse_success",
+      "attempt": 1
+    },
+    {
+      "slice_id": "SLICE-0003",
+      "event": "json_parse_success",
+      "attempt": 1
+    },
+    {
+      "slice_id": "SLICE-0007",
+      "event": "json_parse_success",
+      "attempt": 1
+    },
+    {
+      "slice_id": "SLICE-0009",
+      "event": "json_parse_success",
+      "attempt": 1
+    }
+  ],
+  "quality_summary": {
+    "total_quality_events": 4,
+    "json_retry_events": 0,
+    "confidence_adjusted_count": 0,
+    "consistent_with_rule_count": 4,
+    "cwe_conflict_count": 0,
+    "llm_error_count": 0
+  },
+  "summary": {
+    "total_input_slices": 10,
+    "audited_slices": 4,
+    "skipped_slices": 6,
+    "total_findings": 4,
+    "high_risk_findings": 4,
+    "llm_available": true,
+    "llm_error_count": 0,
+    "llm_findings": 4,
+    "rule_fallback_findings": 0
+  }
+}

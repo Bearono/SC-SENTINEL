@@ -1,0 +1,24 @@
+=================================================================
+==2877==ERROR: AddressSanitizer: attempting double-free on 0x503000000040 in thread T0:
+    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127
+    #1 0x61909c318461 in double_free_case ../../samples/vulnerable_project/double_free_demo.c:12
+    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61
+    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #4 0x7b8148e29e3f in __libc_start_main_impl ../csu/libc-start.c:392
+    #5 0x61909c318204 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/asan_target+0x1204)
+
+0x503000000040 is located 0 bytes inside of 32-byte region [0x503000000040,0x503000000060)
+freed by thread T0 here:
+    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127
+    #1 0x61909c31844f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:9
+    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61
+    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+previously allocated by thread T0 here:
+    #0 0x7b81492b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145
+    #1 0x61909c31843f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:4
+    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61
+    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+
+SUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127 in __interceptor_free
+==2877==ABORTING

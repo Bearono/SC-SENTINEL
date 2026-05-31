@@ -1,0 +1,533 @@
+import re
+from core.id_generator import make_id
+
+"""
+Agent B - Context Pruning and Code Slicing
+
+Part 1 upgraded version:
+1. Extract file-level context:
+   - #include
+   - #define
+   - typedef
+   - struct / enum
+   - simple global variables
+2. Extract function bodies with brace matching.
+3. Infer simple call relationships:
+   - callee_functions
+   - call_chain_upstream
+4. Add risk keywords for Agent C / LLM prompt prioritization.
+5. Build LLM-friendly code slices.
+"""
+
+FUNCTION_SIGNATURE_PATTERN = re.compile(
+    r'^\s*(?:static\s+)?(?:inline\s+)?(?:extern\s+)?'
+    r'(?:[A-Za-z_][\w\s\*\(\)]*?)\s+'
+    r'([A-Za-z_][A-Za-z0-9_]*)\s*\([^;]*\)\s*\{'
+)
+
+RISK_KEYWORDS = [
+    "malloc", "calloc", "realloc", "free",
+    "strcpy", "strncpy", "strcat", "sprintf", "snprintf",
+    "memcpy", "memmove", "memset",
+    "gets", "scanf", "sscanf",
+    "new", "delete"
+]
+
+CONTROL_KEYWORDS = {
+    "if", "for", "while", "switch", "return", "sizeof"
+}
+
+
+def run_agent_b(source_files):
+    """
+    Main entry for Agent B.
+
+    Input:
+        source_files: output of core.file_scanner.scan_source_files()
+
+    Output:
+        {
+          "agent": "...",
+          "slices": [...],
+          "summary": {...}
+        }
+    """
+    all_functions = []
+
+    for file_obj in source_files:
+        context = extract_file_context(file_obj)
+        functions = extract_functions_from_file(file_obj)
+
+        for fn in functions:
+            fn["context"] = context
+            all_functions.append(fn)
+
+    known_function_names = {fn["function_name"] for fn in all_functions}
+
+    for fn in all_functions:
+        fn["callee_functions"] = infer_callees(fn, known_function_names)
+        fn["call_chain_upstream"] = infer_callers(fn, all_functions)
+
+    slices = []
+    for idx, fn in enumerate(all_functions, start=1):
+        slice_id = make_id("SLICE", idx)
+
+        risk_keywords = find_risk_keywords(fn)
+        code_slice = build_slice_code(fn, risk_keywords)
+
+        slices.append({
+            "slice_id": slice_id,
+            "target_file": fn["file"],
+            "target_function": fn["function_name"],
+            "line_range": [fn["start_line"], fn["end_line"]],
+
+            "related_includes": fn["context"]["includes"],
+            "related_macros": fn["context"]["macros"],
+            "related_types": fn["context"]["types"],
+            "related_globals": fn["context"]["globals"],
+
+            "call_chain_upstream": fn["call_chain_upstream"],
+            "callee_functions": fn["callee_functions"],
+            "risk_keywords": risk_keywords,
+
+            "code": code_slice,
+            "notes": (
+                "Part 1 slice: function body + file-level context "
+                "+ simple call graph + memory-risk keywords."
+            )
+        })
+
+    return {
+        "agent": "Agent B - Context Pruning and Code Slicing",
+        "slices": slices,
+        "summary": {
+            "total_slices": len(slices),
+            "total_source_files": len(source_files),
+            "slices_with_risk_keywords": sum(1 for s in slices if s["risk_keywords"])
+        }
+    }
+
+
+# ----------------------------------------------------------------------
+# 1. File-level context extraction
+# ----------------------------------------------------------------------
+
+def extract_file_context(file_obj):
+    lines = file_obj["lines"]
+
+    includes = extract_includes(lines)
+    macros = extract_macros(lines)
+    types = extract_type_blocks(lines)
+    function_ranges = extract_function_ranges(file_obj)
+    globals_ = extract_global_variables(lines, function_ranges)
+
+    return {
+        "includes": includes,
+        "macros": macros,
+        "types": types,
+        "globals": globals_
+    }
+
+
+def extract_includes(lines):
+    result = []
+    for idx, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if stripped.startswith("#include"):
+            result.append({
+                "line": idx,
+                "code": stripped
+            })
+    return result
+
+
+def extract_macros(lines):
+    result = []
+    idx = 0
+
+    while idx < len(lines):
+        line = lines[idx]
+        stripped = line.strip()
+
+        if not stripped.startswith("#define"):
+            idx += 1
+            continue
+
+        start = idx
+        block = [line.rstrip()]
+
+        # Support multi-line macros ending with backslash.
+        while block[-1].rstrip().endswith("\\") and idx + 1 < len(lines):
+            idx += 1
+            block.append(lines[idx].rstrip())
+
+        result.append({
+            "line_range": [start + 1, idx + 1],
+            "code": "\n".join(block).strip()
+        })
+
+        idx += 1
+
+    return result
+
+
+def extract_type_blocks(lines):
+    """
+    Extract simple typedef / struct / enum blocks.
+
+    This is not a full C parser. It is a practical approximation for Part 1.
+    """
+    result = []
+    idx = 0
+
+    while idx < len(lines):
+        stripped = lines[idx].strip()
+
+        is_type_start = (
+            stripped.startswith("typedef ")
+            or re.match(r'^(struct|enum)\s+[A-Za-z_][A-Za-z0-9_]*\s*\{?', stripped)
+        )
+
+        if not is_type_start:
+            idx += 1
+            continue
+
+        start = idx
+        block = [lines[idx].rstrip()]
+        brace_balance = lines[idx].count("{") - lines[idx].count("}")
+
+        # Continue until semicolon if it is a type declaration.
+        while idx + 1 < len(lines):
+            if ";" in lines[idx] and brace_balance <= 0:
+                break
+
+            idx += 1
+            block.append(lines[idx].rstrip())
+            brace_balance += lines[idx].count("{") - lines[idx].count("}")
+
+            if ";" in lines[idx] and brace_balance <= 0:
+                break
+
+        result.append({
+            "line_range": [start + 1, idx + 1],
+            "code": "\n".join(block).strip()
+        })
+
+        idx += 1
+
+    return result
+
+
+def extract_global_variables(lines, function_ranges):
+    """
+    Extract simple global variable declarations outside function bodies.
+
+    Heuristic:
+    - only single-line declarations ending with ;
+    - skip preprocessor lines, typedef, struct, enum
+    - skip function prototypes / function calls containing '('
+    """
+    globals_ = []
+
+    for idx, line in enumerate(lines, start=1):
+        if is_line_inside_ranges(idx, function_ranges):
+            continue
+
+        stripped = line.strip()
+
+        if not stripped:
+            continue
+        if stripped.startswith("#"):
+            continue
+        if stripped.startswith(("typedef", "struct", "enum")):
+            continue
+        if not stripped.endswith(";"):
+            continue
+        if "(" in stripped or ")" in stripped:
+            continue
+
+        looks_like_decl = re.match(
+            r'^(static\s+|extern\s+|const\s+|unsigned\s+|signed\s+|long\s+|short\s+|int\s+|char\s+|float\s+|double\s+|size_t\s+|bool\s+|uint\d+_t\s+|int\d+_t\s+)+',
+            stripped
+        )
+
+        if looks_like_decl:
+            globals_.append({
+                "line": idx,
+                "code": stripped
+            })
+
+    return globals_
+
+
+# ----------------------------------------------------------------------
+# 2. Function extraction
+# ----------------------------------------------------------------------
+
+def extract_functions_from_file(file_obj):
+    lines = file_obj["lines"]
+    functions = []
+    idx = 0
+
+    while idx < len(lines):
+        maybe_signature, start_idx, open_brace_idx = collect_function_signature(lines, idx)
+
+        if maybe_signature is None:
+            idx += 1
+            continue
+
+        match = FUNCTION_SIGNATURE_PATTERN.match(maybe_signature)
+        if not match:
+            idx += 1
+            continue
+
+        function_name = match.group(1)
+
+        if function_name in CONTROL_KEYWORDS:
+            idx += 1
+            continue
+
+        end_idx = find_matching_brace(lines, open_brace_idx)
+        if end_idx is None:
+            idx += 1
+            continue
+
+        body_lines = lines[start_idx:end_idx + 1]
+
+        functions.append({
+            "file": file_obj["relative_path"],
+            "function_name": function_name,
+            "start_line": start_idx + 1,
+            "end_line": end_idx + 1,
+            "body": "\n".join(body_lines)
+        })
+
+        idx = end_idx + 1
+
+    return functions
+
+
+def extract_function_ranges(file_obj):
+    return [
+        [fn["start_line"], fn["end_line"]]
+        for fn in extract_functions_from_file(file_obj)
+    ]
+
+
+def collect_function_signature(lines, start_idx, max_signature_lines=6):
+    """
+    Support both one-line and simple multi-line signatures.
+
+    Example:
+        int foo(
+            int a,
+            char *b
+        ) {
+            ...
+        }
+    """
+    parts = []
+    idx = start_idx
+
+    while idx < len(lines) and idx < start_idx + max_signature_lines:
+        line = lines[idx]
+        parts.append(line.strip())
+
+        if "{" in line:
+            signature = " ".join(parts)
+            return signature, start_idx, idx
+
+        # A declaration ending with ; is not a function definition.
+        if ";" in line:
+            return None, None, None
+
+        idx += 1
+
+    return None, None, None
+
+
+def find_matching_brace(lines, open_brace_idx):
+    brace_balance = 0
+    seen_open = False
+
+    for idx in range(open_brace_idx, len(lines)):
+        line = strip_string_literals(lines[idx])
+
+        brace_balance += line.count("{")
+        brace_balance -= line.count("}")
+
+        if "{" in line:
+            seen_open = True
+
+        if seen_open and brace_balance == 0:
+            return idx
+
+    return None
+
+
+def strip_string_literals(line):
+    """
+    Remove string contents to reduce brace matching errors caused by "{...}" inside strings.
+    """
+    return re.sub(r'"(?:\\.|[^"\\])*"', '""', line)
+
+
+def is_line_inside_ranges(line_no, ranges):
+    for start, end in ranges:
+        if start <= line_no <= end:
+            return True
+    return False
+
+
+# ----------------------------------------------------------------------
+# 3. Call graph and risk keyword extraction
+# ----------------------------------------------------------------------
+
+def infer_callees(function_obj, known_function_names):
+    """
+    Infer functions called by the current function.
+
+    Important:
+    We only search inside the function body, not the function signature.
+    Otherwise, `int main()` will be wrongly treated as a call to main().
+    """
+    inner_body = get_function_inner_body(function_obj["body"])
+    body = remove_comments(inner_body)
+
+    candidates = set(re.findall(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(', body))
+
+    callees = sorted(
+        name for name in candidates
+        if name in known_function_names
+        and name != function_obj["function_name"]
+    )
+
+    return callees
+
+
+def infer_callers(target_fn, all_functions):
+    """
+    Infer upstream callers of the target function.
+
+    Important:
+    We search only inside each candidate function's inner body.
+    This avoids false positives caused by function signatures like `int main()`.
+    """
+    callers = []
+    target_name = target_fn["function_name"]
+
+    for fn in all_functions:
+        if fn is target_fn:
+            continue
+
+        inner_body = get_function_inner_body(fn["body"])
+        body = remove_comments(inner_body)
+
+        if re.search(rf'\b{re.escape(target_name)}\s*\(', body):
+            callers.append({
+                "function": fn["function_name"],
+                "file": fn["file"],
+                "line_range": [fn["start_line"], fn["end_line"]]
+            })
+
+    return callers
+
+
+def find_risk_keywords(function_obj):
+    body = remove_comments(function_obj["body"])
+    found = []
+
+    for keyword in RISK_KEYWORDS:
+        if re.search(rf'\b{re.escape(keyword)}\b', body):
+            found.append(keyword)
+
+    return found
+
+
+def remove_comments(code):
+    """
+    Remove // and /* */ comments for rough pattern matching.
+    """
+    code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
+    code = re.sub(r'//.*', '', code)
+    return code
+
+def get_function_inner_body(function_body):
+    """
+    Return function content inside the outermost braces.
+    This avoids treating the function signature itself as a function call.
+    Example:
+        int main() {
+            foo();
+        }
+    We only want:
+        foo();
+    """
+    start = function_body.find("{")
+    end = function_body.rfind("}")
+
+    if start == -1 or end == -1 or end <= start:
+        return function_body
+
+    return function_body[start + 1:end]
+
+
+# ----------------------------------------------------------------------
+# 4. LLM-friendly slice construction
+# ----------------------------------------------------------------------
+
+def build_slice_code(function_obj, risk_keywords):
+    context = function_obj["context"]
+    parts = []
+
+    parts.append("/* ===== SENTINEL Agent B Slice ===== */")
+    parts.append(f"/* File: {function_obj['file']} */")
+    parts.append(f"/* Target Function: {function_obj['function_name']} */")
+    parts.append(f"/* Line Range: {function_obj['start_line']}-{function_obj['end_line']} */")
+
+    if risk_keywords:
+        parts.append(f"/* Risk Keywords: {', '.join(risk_keywords)} */")
+    else:
+        parts.append("/* Risk Keywords: none */")
+
+    if function_obj.get("call_chain_upstream"):
+        callers = ", ".join(
+            item["function"] for item in function_obj["call_chain_upstream"]
+        )
+        parts.append(f"/* Upstream Callers: {callers} */")
+    else:
+        parts.append("/* Upstream Callers: none */")
+
+    if function_obj.get("callee_functions"):
+        parts.append(f"/* Callees: {', '.join(function_obj['callee_functions'])} */")
+    else:
+        parts.append("/* Callees: none */")
+
+    parts.append("\n/* ===== Related Includes ===== */")
+    if context["includes"]:
+        parts.extend(item["code"] for item in context["includes"])
+    else:
+        parts.append("/* none */")
+
+    parts.append("\n/* ===== Related Macros ===== */")
+    if context["macros"]:
+        parts.extend(item["code"] for item in context["macros"])
+    else:
+        parts.append("/* none */")
+
+    parts.append("\n/* ===== Related Types typedef / struct / enum ===== */")
+    if context["types"]:
+        parts.extend(item["code"] for item in context["types"])
+    else:
+        parts.append("/* none */")
+
+    parts.append("\n/* ===== Related Global Variables ===== */")
+    if context["globals"]:
+        parts.extend(item["code"] for item in context["globals"])
+    else:
+        parts.append("/* none */")
+
+    parts.append("\n/* ===== Target Function Body ===== */")
+    parts.append(function_obj["body"])
+
+    return "\n".join(parts)

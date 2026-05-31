@@ -1,0 +1,30 @@
+{
+  "events": [
+    {
+      "timestamp": "2026-05-30T10:21:33",
+      "pid": 12345,
+      "process": "fuzz_target",
+      "function": "malloc",
+      "event_type": "malloc",
+      "address": "0x603000000040",
+      "size": 32
+    },
+    {
+      "timestamp": "2026-05-30T10:21:34",
+      "pid": 12345,
+      "process": "fuzz_target",
+      "function": "free",
+      "event_type": "free",
+      "address": "0x603000000040"
+    },
+    {
+      "timestamp": "2026-05-30T10:21:35",
+      "pid": 12345,
+      "process": "fuzz_target",
+      "function": "memory_write",
+      "event_type": "use_after_free_suspected",
+      "address": "0x603000000040"
+    }
+  ],
+  "notes": "Part 0 mock eBPF log. Backend will replace this with bpftrace/libbpf output."
+}

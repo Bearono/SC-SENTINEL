@@ -1,0 +1,387 @@
+{
+  "source": "ASAN",
+  "schema_version": "part4.2",
+  "crash_found": true,
+  "summary": {
+    "total_harness_packages": 4,
+    "total_logs": 4,
+    "confirmed_findings": 4,
+    "failed_or_unconfirmed": 0
+  },
+  "results": [
+    {
+      "harness_id": "HARNESS-0001",
+      "finding_id": "FINDING-0001",
+      "target_file": "double_free_demo.c",
+      "target_function": "double_free_case",
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/asan_double_free.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "double-free",
+      "expected_asan_keyword": "double-free",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {},
+      "source_locations": [
+        {
+          "file": "../../samples/vulnerable_project/double_free_demo.c",
+          "line": 12
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c",
+          "line": 61
+        },
+        {
+          "file": "../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "../../samples/vulnerable_project/double_free_demo.c",
+          "line": 9
+        },
+        {
+          "file": "../../samples/vulnerable_project/double_free_demo.c",
+          "line": 4
+        }
+      ],
+      "stderr_excerpt": "==2877==ERROR: AddressSanitizer: attempting double-free on 0x503000000040 in thread T0:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c318461 in double_free_case ../../samples/vulnerable_project/double_free_demo.c:12\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #4 0x7b8148e29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #5 0x61909c318204 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/asan_target+0x1204)\n\n0x503000000040 is located 0 bytes inside of 32-byte region [0x503000000040,0x503000000060)\nfreed by thread T0 here:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c31844f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:9\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7b81492b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x61909c31843f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:4\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127 in __interceptor_free\n==2877==ABORTING",
+      "evidence": [
+        "AddressSanitizer reported: double-free",
+        "Expected CWE from static audit: CWE-415",
+        "Target source location: ../../samples/vulnerable_project/double_free_demo.c:12",
+        "Target source location: ../../samples/vulnerable_project/double_free_demo.c:9",
+        "Target source location: ../../samples/vulnerable_project/double_free_demo.c:4"
+      ]
+    },
+    {
+      "harness_id": "HARNESS-0002",
+      "finding_id": "FINDING-0002",
+      "target_file": "heap_overflow_demo.c",
+      "target_function": "heap_overflow_case",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/asan_heap.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "heap-buffer-overflow",
+      "expected_asan_keyword": "heap-buffer-overflow",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {
+        "access_type": "WRITE",
+        "size": 257
+      },
+      "source_locations": [
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+          "line": 10
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c",
+          "line": 63
+        },
+        {
+          "file": "csu/../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+          "line": 5
+        }
+      ],
+      "stderr_excerpt": "==2574==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000018 at pc 0x5f7b7ceab907 bp 0x7ffc5ecffb20 sp 0x7ffc5ecff2e8\nWRITE of size 257 at 0x602000000018 thread T0\n    #0 0x5f7b7ceab906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2ed in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10:5\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7233e6e29e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5f7b7ce3e324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x1e324) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n\n0x602000000018 is located 0 bytes to the right of 8-byte region [0x602000000010,0x602000000018)\nallocated by thread T0 here:\n    #0 0x5f7b7cec116e in __interceptor_malloc (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0xa116e) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2c5 in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5:25\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n\nSUMMARY: AddressSanitizer: heap-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c) in strcpy\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa 00[fa]fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+      "evidence": [
+        "AddressSanitizer reported: heap-buffer-overflow",
+        "Expected CWE from static audit: CWE-122",
+        "Memory access: WRITE of size 257",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5"
+      ]
+    },
+    {
+      "harness_id": "HARNESS-0003",
+      "finding_id": "FINDING-0003",
+      "target_file": "stack_overflow_demo.c",
+      "target_function": "stack_overflow_case",
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/asan_stack.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "stack-buffer-overflow",
+      "expected_asan_keyword": "stack-buffer-overflow",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {
+        "access_type": "WRITE",
+        "size": 257
+      },
+      "source_locations": [
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+          "line": 5
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c",
+          "line": 63
+        },
+        {
+          "file": "csu/../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+          "line": 3
+        }
+      ],
+      "stderr_excerpt": "==2602==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffc10bd8308 at pc 0x5d4c87487907 bp 0x7ffc10bd82d0 sp 0x7ffc10bd7a98\nWRITE of size 257 at 0x7ffc10bd8308 thread T0\n    #0 0x5d4c87487906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n    #1 0x5d4c874d8379 in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5:5\n    #2 0x5d4c874d8057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c:63:9\n    #3 0x7e3601829d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7e3601829e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5d4c8741a324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x1e324) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n\nAddress 0x7ffc10bd8308 is located in stack of thread T0 at offset 40 in frame\n    #0 0x5d4c874d82bf in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3\n\n  This frame has 1 object(s):\n    [32, 40) 'buf' (line 4) <== Memory access at offset 40 overflows this variable\nHINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork\n      (longjmp and C++ exceptions *are* supported)\nSUMMARY: AddressSanitizer: stack-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a) in strcpy\nShadow bytes around the buggy address:\n  0x100002173010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173050: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1\n=>0x100002173060: 00[f3]f3 f3 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173070: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f3 f3 f3\n  0x100002173080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+      "evidence": [
+        "AddressSanitizer reported: stack-buffer-overflow",
+        "Expected CWE from static audit: CWE-121",
+        "Memory access: WRITE of size 257",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3"
+      ]
+    },
+    {
+      "harness_id": "HARNESS-0004",
+      "finding_id": "FINDING-0004",
+      "target_file": "uaf_demo.c",
+      "target_function": "uaf_case",
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/asan_uaf.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "heap-use-after-free",
+      "expected_asan_keyword": "heap-use-after-free",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {
+        "access_type": "READ",
+        "size": 4
+      },
+      "source_locations": [
+        {
+          "file": "../../samples/vulnerable_project/uaf_demo.c",
+          "line": 14
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c",
+          "line": 61
+        },
+        {
+          "file": "../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "../../samples/vulnerable_project/uaf_demo.c",
+          "line": 11
+        },
+        {
+          "file": "../../samples/vulnerable_project/uaf_demo.c",
+          "line": 5
+        }
+      ],
+      "stderr_excerpt": "==2818==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000000030 at pc 0x5905d5ae44d2 bp 0x7fffd8f134e0 sp 0x7fffd8f134d0\nREAD of size 4 at 0x502000000030 thread T0\n    #0 0x5905d5ae44d1 in uaf_case ../../samples/vulnerable_project/uaf_demo.c:14\n    #1 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #2 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #3 0x7f94dfa29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #4 0x5905d5ae4244 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/asan_target+0x1244)\n\n0x502000000030 is located 0 bytes inside of 4-byte region [0x502000000030,0x502000000034)\nfreed by thread T0 here:\n    #0 0x7f94dfeb4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x5905d5ae448f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:11\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7f94dfeb4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x5905d5ae447f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:5\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: heap-use-after-free ../../samples/vulnerable_project/uaf_demo.c:14 in uaf_case\nShadow bytes around the buggy address:\n  0x0a047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0a047fff8000: fa fa 02 fa fa fa[fd]fa fa fa fa fa fa fa fa fa\n  0x0a047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9",
+      "evidence": [
+        "AddressSanitizer reported: heap-use-after-free",
+        "Expected CWE from static audit: CWE-416",
+        "Memory access: READ of size 4",
+        "Target source location: ../../samples/vulnerable_project/uaf_demo.c:14",
+        "Target source location: ../../samples/vulnerable_project/uaf_demo.c:11",
+        "Target source location: ../../samples/vulnerable_project/uaf_demo.c:5"
+      ]
+    }
+  ],
+  "results_by_finding_id": {
+    "FINDING-0001": {
+      "harness_id": "HARNESS-0001",
+      "finding_id": "FINDING-0001",
+      "target_file": "double_free_demo.c",
+      "target_function": "double_free_case",
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/asan_double_free.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "double-free",
+      "expected_asan_keyword": "double-free",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {},
+      "source_locations": [
+        {
+          "file": "../../samples/vulnerable_project/double_free_demo.c",
+          "line": 12
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c",
+          "line": 61
+        },
+        {
+          "file": "../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "../../samples/vulnerable_project/double_free_demo.c",
+          "line": 9
+        },
+        {
+          "file": "../../samples/vulnerable_project/double_free_demo.c",
+          "line": 4
+        }
+      ],
+      "stderr_excerpt": "==2877==ERROR: AddressSanitizer: attempting double-free on 0x503000000040 in thread T0:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c318461 in double_free_case ../../samples/vulnerable_project/double_free_demo.c:12\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #4 0x7b8148e29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #5 0x61909c318204 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/asan_target+0x1204)\n\n0x503000000040 is located 0 bytes inside of 32-byte region [0x503000000040,0x503000000060)\nfreed by thread T0 here:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c31844f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:9\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7b81492b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x61909c31843f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:4\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127 in __interceptor_free\n==2877==ABORTING",
+      "evidence": [
+        "AddressSanitizer reported: double-free",
+        "Expected CWE from static audit: CWE-415",
+        "Target source location: ../../samples/vulnerable_project/double_free_demo.c:12",
+        "Target source location: ../../samples/vulnerable_project/double_free_demo.c:9",
+        "Target source location: ../../samples/vulnerable_project/double_free_demo.c:4"
+      ]
+    },
+    "FINDING-0002": {
+      "harness_id": "HARNESS-0002",
+      "finding_id": "FINDING-0002",
+      "target_file": "heap_overflow_demo.c",
+      "target_function": "heap_overflow_case",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/asan_heap.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "heap-buffer-overflow",
+      "expected_asan_keyword": "heap-buffer-overflow",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {
+        "access_type": "WRITE",
+        "size": 257
+      },
+      "source_locations": [
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+          "line": 10
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c",
+          "line": 63
+        },
+        {
+          "file": "csu/../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+          "line": 5
+        }
+      ],
+      "stderr_excerpt": "==2574==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000018 at pc 0x5f7b7ceab907 bp 0x7ffc5ecffb20 sp 0x7ffc5ecff2e8\nWRITE of size 257 at 0x602000000018 thread T0\n    #0 0x5f7b7ceab906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2ed in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10:5\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7233e6e29e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5f7b7ce3e324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x1e324) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n\n0x602000000018 is located 0 bytes to the right of 8-byte region [0x602000000010,0x602000000018)\nallocated by thread T0 here:\n    #0 0x5f7b7cec116e in __interceptor_malloc (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0xa116e) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2c5 in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5:25\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n\nSUMMARY: AddressSanitizer: heap-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c) in strcpy\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa 00[fa]fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+      "evidence": [
+        "AddressSanitizer reported: heap-buffer-overflow",
+        "Expected CWE from static audit: CWE-122",
+        "Memory access: WRITE of size 257",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5"
+      ]
+    },
+    "FINDING-0003": {
+      "harness_id": "HARNESS-0003",
+      "finding_id": "FINDING-0003",
+      "target_file": "stack_overflow_demo.c",
+      "target_function": "stack_overflow_case",
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/asan_stack.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "stack-buffer-overflow",
+      "expected_asan_keyword": "stack-buffer-overflow",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {
+        "access_type": "WRITE",
+        "size": 257
+      },
+      "source_locations": [
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+          "line": 5
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c",
+          "line": 63
+        },
+        {
+          "file": "csu/../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+          "line": 3
+        }
+      ],
+      "stderr_excerpt": "==2602==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffc10bd8308 at pc 0x5d4c87487907 bp 0x7ffc10bd82d0 sp 0x7ffc10bd7a98\nWRITE of size 257 at 0x7ffc10bd8308 thread T0\n    #0 0x5d4c87487906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n    #1 0x5d4c874d8379 in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5:5\n    #2 0x5d4c874d8057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c:63:9\n    #3 0x7e3601829d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7e3601829e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5d4c8741a324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x1e324) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n\nAddress 0x7ffc10bd8308 is located in stack of thread T0 at offset 40 in frame\n    #0 0x5d4c874d82bf in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3\n\n  This frame has 1 object(s):\n    [32, 40) 'buf' (line 4) <== Memory access at offset 40 overflows this variable\nHINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork\n      (longjmp and C++ exceptions *are* supported)\nSUMMARY: AddressSanitizer: stack-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a) in strcpy\nShadow bytes around the buggy address:\n  0x100002173010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173050: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1\n=>0x100002173060: 00[f3]f3 f3 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173070: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f3 f3 f3\n  0x100002173080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+      "evidence": [
+        "AddressSanitizer reported: stack-buffer-overflow",
+        "Expected CWE from static audit: CWE-121",
+        "Memory access: WRITE of size 257",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5",
+        "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3"
+      ]
+    },
+    "FINDING-0004": {
+      "harness_id": "HARNESS-0004",
+      "finding_id": "FINDING-0004",
+      "target_file": "uaf_demo.c",
+      "target_function": "uaf_case",
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/asan_uaf.log",
+      "dynamic_status": "confirmed",
+      "sanitizer": "AddressSanitizer",
+      "asan_bug_type": "heap-use-after-free",
+      "expected_asan_keyword": "heap-use-after-free",
+      "consistency": "matched_expected_cwe",
+      "crash_found": true,
+      "access": {
+        "access_type": "READ",
+        "size": 4
+      },
+      "source_locations": [
+        {
+          "file": "../../samples/vulnerable_project/uaf_demo.c",
+          "line": 14
+        },
+        {
+          "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c",
+          "line": 61
+        },
+        {
+          "file": "../csu/libc-start.c",
+          "line": 392
+        },
+        {
+          "file": "../../samples/vulnerable_project/uaf_demo.c",
+          "line": 11
+        },
+        {
+          "file": "../../samples/vulnerable_project/uaf_demo.c",
+          "line": 5
+        }
+      ],
+      "stderr_excerpt": "==2818==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000000030 at pc 0x5905d5ae44d2 bp 0x7fffd8f134e0 sp 0x7fffd8f134d0\nREAD of size 4 at 0x502000000030 thread T0\n    #0 0x5905d5ae44d1 in uaf_case ../../samples/vulnerable_project/uaf_demo.c:14\n    #1 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #2 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #3 0x7f94dfa29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #4 0x5905d5ae4244 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/asan_target+0x1244)\n\n0x502000000030 is located 0 bytes inside of 4-byte region [0x502000000030,0x502000000034)\nfreed by thread T0 here:\n    #0 0x7f94dfeb4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x5905d5ae448f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:11\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7f94dfeb4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x5905d5ae447f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:5\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: heap-use-after-free ../../samples/vulnerable_project/uaf_demo.c:14 in uaf_case\nShadow bytes around the buggy address:\n  0x0a047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0a047fff8000: fa fa 02 fa fa fa[fd]fa fa fa fa fa fa fa fa fa\n  0x0a047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9",
+      "evidence": [
+        "AddressSanitizer reported: heap-use-after-free",
+        "Expected CWE from static audit: CWE-416",
+        "Memory access: READ of size 4",
+        "Target source location: ../../samples/vulnerable_project/uaf_demo.c:14",
+        "Target source location: ../../samples/vulnerable_project/uaf_demo.c:11",
+        "Target source location: ../../samples/vulnerable_project/uaf_demo.c:5"
+      ]
+    }
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "agent": "Agent B - Context Pruning and Code Slicing",
+  "slices": [
+    {
+      "slice_id": "SLICE-0001",
+      "target_file": "double_free_demo.c",
+      "target_function": "double_free_case",
+      "line_range": [
+        2,
+        14
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <stdlib.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "double_free_demo.c",
+          "line_range": [
+            15,
+            19
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_demo.c */\n/* Target Function: double_free_case */\n/* Line Range: 2-14 */\n/* Risk Keywords: malloc, free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <stdlib.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nvoid double_free_case(int flag) {\n    char *buf = (char *)malloc(32);\n    if (buf == NULL) {\n        return;\n    }\n\n    free(buf);\n\n    if (flag) {\n        free(buf);  // CWE-415: double free\n    }\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0002",
+      "target_file": "double_free_demo.c",
+      "target_function": "main",
+      "line_range": [
+        15,
+        19
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <stdlib.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "double_free_case"
+      ],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_demo.c */\n/* Target Function: main */\n/* Line Range: 15-19 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: double_free_case */\n\n/* ===== Related Includes ===== */\n#include <stdlib.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main() {\n    double_free_case(1);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0003",
+      "target_file": "heap_overflow_demo.c",
+      "target_function": "heap_overflow_case",
+      "line_range": [
+        3,
+        12
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 2,
+          "code": "#include <string.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "heap_overflow_demo.c",
+          "line_range": [
+            13,
+            17
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "strcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_demo.c */\n/* Target Function: heap_overflow_case */\n/* Line Range: 3-12 */\n/* Risk Keywords: malloc, free, strcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <stdlib.h>\n#include <string.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nvoid heap_overflow_case(const char *input) {\n    char *buf = (char *)malloc(8);\n    if (buf == NULL) {\n        return;\n    }\n\n    strcpy(buf, input);  // CWE-122: heap buffer overflow\n    free(buf);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0004",
+      "target_file": "heap_overflow_demo.c",
+      "target_function": "main",
+      "line_range": [
+        13,
+        17
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 2,
+          "code": "#include <string.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "heap_overflow_case"
+      ],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_demo.c */\n/* Target Function: main */\n/* Line Range: 13-17 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: heap_overflow_case */\n\n/* ===== Related Includes ===== */\n#include <stdlib.h>\n#include <string.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main() {\n    heap_overflow_case(\"this string is too long\");\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0005",
+      "target_file": "multi_component_demo.c",
+      "target_function": "dependency_probe_demo",
+      "line_range": [
+        6,
+        12
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <png.h>"
+        },
+        {
+          "line": 2,
+          "code": "#include <zlib.h>"
+        },
+        {
+          "line": 3,
+          "code": "#include <curl/curl.h>"
+        },
+        {
+          "line": 4,
+          "code": "#include <sqlite3.h>"
+        },
+        {
+          "line": 5,
+          "code": "#include <libxml/parser.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: multi_component_demo.c */\n/* Target Function: dependency_probe_demo */\n/* Line Range: 6-12 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <png.h>\n#include <zlib.h>\n#include <curl/curl.h>\n#include <sqlite3.h>\n#include <libxml/parser.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nvoid dependency_probe_demo() {\n    /*\n     * This file is only used by SENTINEL Agent A dependency parsing tests.\n     * It is not intended to compile in the current minimal sample project.\n     */\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0006",
+      "target_file": "openssl_component_demo.c",
+      "target_function": "init_openssl_demo",
+      "line_range": [
+        3,
+        6
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <openssl/ssl.h>"
+        },
+        {
+          "line": 2,
+          "code": "#include <openssl/crypto.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: openssl_component_demo.c */\n/* Target Function: init_openssl_demo */\n/* Line Range: 3-6 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <openssl/ssl.h>\n#include <openssl/crypto.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nvoid init_openssl_demo() {\n    SSL_library_init();\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0007",
+      "target_file": "stack_overflow_demo.c",
+      "target_function": "stack_overflow_case",
+      "line_range": [
+        2,
+        6
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <string.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "stack_overflow_demo.c",
+          "line_range": [
+            7,
+            11
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "strcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_demo.c */\n/* Target Function: stack_overflow_case */\n/* Line Range: 2-6 */\n/* Risk Keywords: strcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <string.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nvoid stack_overflow_case(const char *input) {\n    char buf[8];\n    strcpy(buf, input);  // CWE-121: stack buffer overflow\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0008",
+      "target_file": "stack_overflow_demo.c",
+      "target_function": "main",
+      "line_range": [
+        7,
+        11
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <string.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "stack_overflow_case"
+      ],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_demo.c */\n/* Target Function: main */\n/* Line Range: 7-11 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: stack_overflow_case */\n\n/* ===== Related Includes ===== */\n#include <string.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main() {\n    stack_overflow_case(\"this string is too long\");\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0009",
+      "target_file": "uaf_demo.c",
+      "target_function": "uaf_case",
+      "line_range": [
+        3,
+        16
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 2,
+          "code": "#include <stdlib.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "uaf_demo.c",
+          "line_range": [
+            17,
+            21
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_demo.c */\n/* Target Function: uaf_case */\n/* Line Range: 3-16 */\n/* Risk Keywords: malloc, free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <stdio.h>\n#include <stdlib.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nvoid uaf_case(int flag) {\n    int *p = (int *)malloc(sizeof(int));\n    if (p == NULL) {\n        return;\n    }\n\n    *p = 42;\n    free(p);\n\n    if (flag) {\n        printf(\"%d\\n\", *p);  // CWE-416: use after free\n    }\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0010",
+      "target_file": "uaf_demo.c",
+      "target_function": "main",
+      "line_range": [
+        17,
+        21
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 2,
+          "code": "#include <stdlib.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "uaf_case"
+      ],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_demo.c */\n/* Target Function: main */\n/* Line Range: 17-21 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: uaf_case */\n\n/* ===== Related Includes ===== */\n#include <stdio.h>\n#include <stdlib.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main() {\n    uaf_case(1);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    }
+  ],
+  "summary": {
+    "total_slices": 10,
+    "total_source_files": 6,
+    "slices_with_risk_keywords": 4
+  }
+}

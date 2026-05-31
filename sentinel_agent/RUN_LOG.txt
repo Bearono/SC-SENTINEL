@@ -1,0 +1,32 @@
+[0/7] Project: /mnt/data/sentinel_part0_five_agents/samples/vulnerable_project
+[1/7] Scanning C/C++ source files and metadata files...
+      Source files: 5
+      Metadata files: 1
+[2/7] Agent A: dependency risk identification...
+[3/7] Agent B: context pruning and code slicing...
+[4/7] Agent C: static vulnerability audit...
+[5/7] Agent D: harness package generation...
+[6/7] Loading mock AFL++ and eBPF results...
+[7/7] Agent E: final judgement and report...
+
+=== SENTINEL Part 0 Finished ===
+Project: vulnerable_project
+Overall Risk: high
+Components: 1
+Static Findings: 4
+Harness Packages: 4
+Confirmed Findings: 3
+Final JSON: /mnt/data/sentinel_part0_five_agents/outputs/final_report.json
+Final MD: /mnt/data/sentinel_part0_five_agents/outputs/final_report.md
+
+STDERR:
+Spreadsheet runtime warmup failed during python startup
+Traceback (most recent call last):
+  File "/tmp/tmp.9eeVjt35CN/artifact_tool_v2-2.7.5/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py", line 26, in warm_spreadsheet_runtime_on_startup
+  File "/tmp/tmp.9eeVjt35CN/artifact_tool_v2-2.7.5/artifact_tool/spreadsheet_warmup.py", line 785, in warm_spreadsheet_runtime
+  File "/tmp/tmp.9eeVjt35CN/artifact_tool_v2-2.7.5/artifact_tool/spreadsheet_warmup.py", line 720, in _warm_feature_flows
+  File "/tmp/tmp.9eeVjt35CN/artifact_tool_v2-2.7.5/artifact_tool/spreadsheet_warmup.py", line 704, in _warm_collaboration_flows
+  File "/tmp/tmp.9eeVjt35CN/artifact_tool_v2-2.7.5/artifact_tool/generated/interface/models.py", line 48821, in hydrate_crdt_from_proto
+  File "/tmp/tmp.9eeVjt35CN/artifact_tool_v2-2.7.5/artifact_tool/rpc/remote.py", line 747, in __call__
+  File "/tmp/tmp.9eeVjt35CN/artifact_tool_v2-2.7.5/artifact_tool/rpc/client.py", line 150, in call
+artifact_tool.rpc.client.RemoteError: hydrateCrdtFromProto requires an empty collaborative document.

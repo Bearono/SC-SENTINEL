@@ -1,0 +1,166 @@
+{
+  "agent": "Agent D - Harness Automatic Generation",
+  "harness_packages": [
+    {
+      "package_id": "HARNESS-0001",
+      "finding_id": "FINDING-0001",
+      "target_file": "double_free_demo.c",
+      "target_function": "double_free_case",
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "line_range": [
+        8,
+        11
+      ],
+      "trigger_condition": "当函数参数 flag 为非零值时，程序进入条件分支并执行第二次 free 操作",
+      "strategy": {
+        "strategy_name": "flag_path_trigger",
+        "argument_model": "int_flag",
+        "trigger_value": 1,
+        "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "double-free or heap-use-after-free"
+      },
+      "package_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001",
+      "afl_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/afl_harness.c",
+      "libfuzzer_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/libfuzzer_harness.c",
+      "makefile": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/Makefile",
+      "seed_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds",
+      "seed_files": [
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds/seed_001.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds/seed_002_trigger_flag.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds/seed_003_nonzero.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0002",
+      "finding_id": "FINDING-0002",
+      "target_file": "heap_overflow_demo.c",
+      "target_function": "heap_overflow_case",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        4,
+        9
+      ],
+      "trigger_condition": "当输入参数 input 的字符串长度大于等于 8 字节时触发",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002",
+      "afl_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/afl_harness.c",
+      "libfuzzer_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/libfuzzer_harness.c",
+      "makefile": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/Makefile",
+      "seed_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/seeds",
+      "seed_files": [
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/seeds/seed_001.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/seeds/seed_002_long_string.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/seeds/seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0003",
+      "finding_id": "FINDING-0003",
+      "target_file": "stack_overflow_demo.c",
+      "target_function": "stack_overflow_case",
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        3,
+        4
+      ],
+      "trigger_condition": "当输入参数 input 的字符串长度大于等于 8 字节（含空终止符）时",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003",
+      "afl_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/afl_harness.c",
+      "libfuzzer_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/libfuzzer_harness.c",
+      "makefile": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/Makefile",
+      "seed_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds",
+      "seed_files": [
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds/seed_001.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds/seed_002_long_string.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds/seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0004",
+      "finding_id": "FINDING-0004",
+      "target_file": "uaf_demo.c",
+      "target_function": "uaf_case",
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "line_range": [
+        10,
+        13
+      ],
+      "trigger_condition": "当函数参数 flag 为非零值时，控制流进入 if 分支，执行第13行代码解引用指针 p。",
+      "strategy": {
+        "strategy_name": "flag_path_trigger",
+        "argument_model": "int_flag",
+        "trigger_value": 1,
+        "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "double-free or heap-use-after-free"
+      },
+      "package_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004",
+      "afl_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/afl_harness.c",
+      "libfuzzer_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/libfuzzer_harness.c",
+      "makefile": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/Makefile",
+      "seed_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds",
+      "seed_files": [
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds/seed_001.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds/seed_002_trigger_flag.bin",
+        "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds/seed_003_nonzero.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    }
+  ],
+  "summary": {
+    "total_packages": 4,
+    "packages_by_cwe": {
+      "CWE-415": 1,
+      "CWE-122": 1,
+      "CWE-121": 1,
+      "CWE-416": 1
+    }
+  }
+}
