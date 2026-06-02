@@ -1,4 +1,5 @@
 from core.risk_level import max_risk
+from core.integration_schema import to_backend_components
 from cve.dependency_parser import infer_components, deduplicate_evidence
 from cve.nvd_client import query_nvd_by_keyword
 from cve.osv_client import query_osv_package
@@ -44,6 +45,7 @@ def run_agent_a(source_files, metadata_files):
 
         enriched.append({
             "name": name,
+            "library_name": name,
             "version": version,
             "purl_name": purl_name,
             "source_types": source_types,
@@ -69,7 +71,7 @@ def run_agent_a(source_files, metadata_files):
             }
         })
 
-    return {
+    result = {
         "agent": "Agent A - Dependency Risk Identification",
         "components": enriched,
         "summary": {
@@ -80,6 +82,8 @@ def run_agent_a(source_files, metadata_files):
             "queried_sources": ["OSV", "NVD"]
         }
     }
+    result["integration"] = to_backend_components(result)
+    return result
 
 
 def deduplicate_vulnerabilities(vulns):

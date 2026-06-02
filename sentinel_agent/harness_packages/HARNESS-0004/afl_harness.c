@@ -2,10 +2,10 @@
  * SENTINEL Agent D - AFL++ / ASan file-input harness
  *
  * Finding ID: FINDING-0004
- * Target file: uaf_demo.c
- * Target function: uaf_case
- * CWE: CWE-416
- * Strategy: flag_path_trigger
+ * Target file: stack_overflow_demo.c
+ * Target function: stack_overflow_case
+ * CWE: CWE-121
+ * Strategy: oversized_string_input
  */
 
 #include <stdio.h>
@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 
-void uaf_case(int flag);
+void stack_overflow_case(const char *input);
 
 static unsigned char *read_file(const char *path, size_t *out_size) {
     FILE *fp = fopen(path, "rb");
@@ -56,9 +56,12 @@ int main(int argc, char **argv) {
     }
 
     /*
-     * For UAF / Double Free demos, flag=1 triggers the vulnerable branch.
+     * data is null-terminated by read_file().
+     * Passing it as a string can trigger unsafe strcpy/memcpy-style code.
      */
-    uaf_case(1);
+    if (size > 0) {
+        stack_overflow_case((const char *)data);
+    }
 
     free(data);
     return 0;

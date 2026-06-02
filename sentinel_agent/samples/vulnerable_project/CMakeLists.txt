@@ -7,5 +7,6 @@ add_executable(vulnerable_project
     double_free_demo.c
     heap_overflow_demo.c
     stack_overflow_demo.c
+    format_string_demo.c
 )
 target_link_libraries(vulnerable_project OpenSSL::SSL OpenSSL::Crypto)

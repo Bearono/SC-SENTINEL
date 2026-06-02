@@ -2,23 +2,23 @@
 
 ## Finding
 
-- Finding ID: `FINDING-0003`
-- Target file: `heap_overflow_demo.c`
-- Target function: `heap_overflow_case`
-- CWE: `CWE-122`
-- Vulnerability type: `Heap Buffer Overflow`
-- Line range: `[9, 9]`
+- Finding ID: `FINDING-0005`
+- Target file: `uaf_demo.c`
+- Target function: `uaf_case`
+- CWE: `CWE-416`
+- Vulnerability type: `Use After Free`
+- Line range: `[10, 13]`
 
 ## Trigger condition
 
-Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.
+Pointer 'p' is dereferenced or accessed after free.
 
 ## Strategy
 
-- Strategy name: `oversized_string_input`
-- Argument model: `const_char_ptr`
+- Strategy name: `flag_path_trigger`
+- Argument model: `int_flag`
 - Expected sanitizer: `AddressSanitizer`
-- Expected symptom: `heap-buffer-overflow or stack-buffer-overflow`
+- Expected symptom: `double-free or heap-use-after-free`
 
 ## Commands in WSL2 / Docker
 

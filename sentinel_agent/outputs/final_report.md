@@ -2,7 +2,7 @@
 
 - Overall Risk: **high**
 - Total Components: 6
-- Total Static Findings: 4
+- Total Static Findings: 5
 - Confirmed Findings: 4
 - ASan Confirmed Findings: 4
 
@@ -50,7 +50,7 @@
 - Static Status: suspected
 - Dynamic Status: **confirmed**
 - Evidence Level: strong
-- Dynamic Evidence Sources: ASAN, AFL++, eBPF
+- Dynamic Evidence Sources: ASAN, eBPF
 - ASan Bug Type: `double-free`
 - ASan Consistency: `matched_expected_cwe`
 - ASan Log: `/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/asan_double_free.log`
@@ -59,14 +59,27 @@
   - Target source location: ../../samples/vulnerable_project/double_free_demo.c:12
   - Target source location: ../../samples/vulnerable_project/double_free_demo.c:9
   - Target source location: ../../samples/vulnerable_project/double_free_demo.c:4
-- Trigger Condition: 当函数参数 flag 为非零值时，程序进入条件分支并执行第二次 free 操作
-- Fix Suggestion: 在首次 free(buf) 后立即将 buf 赋值为 NULL，或重构逻辑移除条件分支中的重复 free 调用，确保指针仅被释放一次。
-- Final Conclusion: This suspected vulnerability is dynamically confirmed by ASAN, AFL++, eBPF. Evidence level: strong.
+- Trigger Condition: Execution reaches free(buf) twice without reset or reallocation.
+- Fix Suggestion: Set buf to NULL after free and avoid duplicate ownership.
+- Final Conclusion: This suspected vulnerability is dynamically confirmed by ASAN, eBPF. Evidence level: strong.
 
-### FINDING-0002 - Heap Buffer Overflow
+### FINDING-0002 - Format String Vulnerability
+- File: `format_string_demo.c`
+- Function: `format_string_case`
+- Line Range: [7, 7]
+- CWE: CWE-134
+- Static Status: suspected
+- Dynamic Status: **untriggered**
+- Evidence Level: weak
+- Dynamic Evidence Sources: none
+- Trigger Condition: Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.
+- Fix Suggestion: Use a constant format string such as printf("%s", input), fprintf(stream, "%s", input), or snprintf(buf, size, "%s", input).
+- Final Conclusion: This suspected vulnerability was not triggered in the current dynamic validation run.
+
+### FINDING-0003 - Heap Buffer Overflow
 - File: `heap_overflow_demo.c`
 - Function: `heap_overflow_case`
-- Line Range: [4, 9]
+- Line Range: [9, 9]
 - CWE: CWE-122
 - Static Status: suspected
 - Dynamic Status: **confirmed**
@@ -80,14 +93,14 @@
   - Memory access: WRITE of size 257
   - Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10
   - Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5
-- Trigger Condition: 当输入参数 input 的字符串长度大于等于 8 字节时触发
-- Fix Suggestion: 使用 strncpy 或 snprintf 限制拷贝长度，或根据 input 的实际长度动态分配内存（如 malloc(strlen(input) + 1)）
+- Trigger Condition: Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.
+- Fix Suggestion: Validate length before copying and use bounded APIs with explicit destination size.
 - Final Conclusion: This suspected vulnerability is dynamically confirmed by ASAN, AFL++, eBPF. Evidence level: strong.
 
-### FINDING-0003 - Stack Buffer Overflow
+### FINDING-0004 - Stack Buffer Overflow
 - File: `stack_overflow_demo.c`
 - Function: `stack_overflow_case`
-- Line Range: [3, 4]
+- Line Range: [4, 4]
 - CWE: CWE-121
 - Static Status: suspected
 - Dynamic Status: **confirmed**
@@ -101,11 +114,11 @@
   - Memory access: WRITE of size 257
   - Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5
   - Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3
-- Trigger Condition: 当输入参数 input 的字符串长度大于等于 8 字节（含空终止符）时
-- Fix Suggestion: 使用带长度限制的拷贝函数（如 strncpy 或 snprintf），或在拷贝前严格校验 strlen(input) < sizeof(buf)
+- Trigger Condition: Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.
+- Fix Suggestion: Validate length before copying and use bounded APIs with explicit destination size.
 - Final Conclusion: This suspected vulnerability is dynamically confirmed by ASAN, AFL++. Evidence level: strong.
 
-### FINDING-0004 - Use After Free
+### FINDING-0005 - Use After Free
 - File: `uaf_demo.c`
 - Function: `uaf_case`
 - Line Range: [10, 13]
@@ -123,6 +136,6 @@
   - Target source location: ../../samples/vulnerable_project/uaf_demo.c:14
   - Target source location: ../../samples/vulnerable_project/uaf_demo.c:11
   - Target source location: ../../samples/vulnerable_project/uaf_demo.c:5
-- Trigger Condition: 当函数参数 flag 为非零值时，控制流进入 if 分支，执行第13行代码解引用指针 p。
-- Fix Suggestion: 在 free(p) 之后立即将指针置空（p = NULL;），或将对 *p 的访问移至 free(p) 之前。
+- Trigger Condition: Pointer 'p' is dereferenced or accessed after free.
+- Fix Suggestion: Do not access p after free; set it to NULL and guard future uses.
 - Final Conclusion: This suspected vulnerability is dynamically confirmed by ASAN, AFL++, eBPF. Evidence level: strong.

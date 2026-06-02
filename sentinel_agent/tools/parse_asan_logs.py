@@ -151,6 +151,8 @@ def normalize_asan_bug_type(raw_type, text):
         "stack-buffer-overflow",
         "global-buffer-overflow",
         "use-after-poison",
+        "format-string",
+        "format",
     ]
 
     for bug_type in known_types:
@@ -165,7 +167,8 @@ def expected_asan_keyword(cwe_id):
         "CWE-415": "double-free",
         "CWE-416": "heap-use-after-free",
         "CWE-122": "heap-buffer-overflow",
-        "CWE-121": "stack-buffer-overflow"
+        "CWE-121": "stack-buffer-overflow",
+        "CWE-134": "format"
     }.get(cwe_id)
 
 

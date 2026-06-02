@@ -1,16 +1,16 @@
 {
   "package_id": "HARNESS-0003",
   "finding_id": "FINDING-0003",
-  "target_file": "stack_overflow_demo.c",
-  "target_function": "stack_overflow_case",
-  "cwe_id": "CWE-121",
-  "vulnerability_type": "Stack Buffer Overflow",
+  "target_file": "heap_overflow_demo.c",
+  "target_function": "heap_overflow_case",
+  "cwe_id": "CWE-122",
+  "vulnerability_type": "Heap Buffer Overflow",
   "risk_level": "high",
   "line_range": [
-    3,
-    4
+    9,
+    9
   ],
-  "trigger_condition": "当输入参数 input 的字符串长度大于等于 8 字节（含空终止符）时",
+  "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
   "strategy": {
     "strategy_name": "oversized_string_input",
     "argument_model": "const_char_ptr",
@@ -19,15 +19,15 @@
     "expected_sanitizer": "AddressSanitizer",
     "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
   },
-  "package_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003",
-  "afl_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/afl_harness.c",
-  "libfuzzer_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/libfuzzer_harness.c",
-  "makefile": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/Makefile",
-  "seed_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds",
+  "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003",
+  "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003\\afl_harness.c",
+  "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003\\libfuzzer_harness.c",
+  "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003\\Makefile",
+  "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003\\seeds",
   "seed_files": [
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds/seed_001.bin",
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds/seed_002_long_string.bin",
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/seeds/seed_003_pattern.bin"
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003\\seeds\\seed_001.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003\\seeds\\seed_002_long_string.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0003\\seeds\\seed_003_pattern.bin"
   ],
   "asan_build_command": "make asan",
   "afl_build_command": "make afl",

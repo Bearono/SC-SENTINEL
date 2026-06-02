@@ -6,7 +6,7 @@
 #
 # Linux / WSL2 / Docker recommended.
 
-TARGET_SRC ?= ../../samples/vulnerable_project/heap_overflow_demo.c
+TARGET_SRC ?= ../../samples/vulnerable_project/format_string_demo.c
 CC ?= clang
 AFL_CC ?= afl-clang
 

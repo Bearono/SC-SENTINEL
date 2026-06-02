@@ -2,9 +2,9 @@
  * SENTINEL Agent D - libFuzzer-style harness
  *
  * Finding ID: FINDING-0003
- * Target file: stack_overflow_demo.c
- * Target function: stack_overflow_case
- * CWE: CWE-121
+ * Target file: heap_overflow_demo.c
+ * Target function: heap_overflow_case
+ * CWE: CWE-122
  * Strategy: oversized_string_input
  */
 
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void stack_overflow_case(const char *input);
+void heap_overflow_case(const char *input);
 
 int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     if (Data == NULL) {
@@ -30,7 +30,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     memcpy(buf, Data, Size);
     buf[Size] = '\0';
 
-    stack_overflow_case((const char *)buf);
+    heap_overflow_case((const char *)buf);
 
     free(buf);
 

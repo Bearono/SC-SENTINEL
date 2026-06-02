@@ -11,7 +11,7 @@
 
 ## Trigger condition
 
-当函数参数 flag 为非零值时，程序进入条件分支并执行第二次 free 操作
+Execution reaches free(buf) twice without reset or reallocation.
 
 ## Strategy
 

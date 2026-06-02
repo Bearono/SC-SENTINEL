@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 
 from core.id_generator import make_id
+from core.integration_schema import to_backend_vulnerabilities
 from core.llm_client import LLMClient, extract_json_object
 
 """
@@ -18,10 +19,12 @@ Part 3.2 upgraded version:
 
 FREE_PATTERN = re.compile(r'\bfree\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)')
 DANGEROUS_COPY_PATTERN = re.compile(r'\b(strcpy|strcat|sprintf|memcpy|memmove)\s*\(')
+FORMAT_CALL_PATTERN = re.compile(r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|syslog)\s*\(')
 
 HIGH_VALUE_RISK_KEYWORDS = {
     "malloc", "calloc", "realloc", "free",
     "strcpy", "strncpy", "strcat", "sprintf", "snprintf",
+    "printf", "fprintf", "vprintf", "vfprintf", "syslog",
     "memcpy", "memmove", "gets", "scanf", "sscanf",
     "new", "delete"
 }
@@ -87,7 +90,7 @@ def run_agent_c(agent_a_result, agent_b_result):
 
     quality_summary = build_quality_summary(findings, quality_events, llm_errors)
 
-    return {
+    result = {
         "agent": "Agent C - Static Vulnerability Audit",
         "audit_mode": "llm_with_rule_fallback" if llm_available else "rule_fallback_only",
         "static_findings": findings,
@@ -108,6 +111,9 @@ def run_agent_c(agent_a_result, agent_b_result):
             "rule_fallback_findings": sum(1 for f in findings if f.get("audit_source") == "rule_fallback")
         }
     }
+    result["vulnerabilities"] = to_backend_vulnerabilities(result)["vulnerabilities"]
+    result["integration"] = {"vulnerabilities": result["vulnerabilities"]}
+    return result
 
 
 def should_audit_slice(slc):
@@ -258,7 +264,7 @@ def apply_quality_control(llm_findings, rule_findings, slc):
             warnings.append("missing_evidence")
         if not finding.get("trigger_condition"):
             warnings.append("missing_trigger_condition")
-        if finding.get("cwe_id") not in {"CWE-416", "CWE-415", "CWE-122", "CWE-121"}:
+        if finding.get("cwe_id") not in {"CWE-416", "CWE-415", "CWE-122", "CWE-121", "CWE-134"}:
             warnings.append("unexpected_cwe_id")
         finding["confidence"] = calibrated_conf
         finding["quality_control"] = {
@@ -366,9 +372,145 @@ def rule_audit_slice(slc, function_lines):
     results = []
     results.extend(_detect_uaf_and_double_free(slc, function_lines))
     results.extend(_detect_overflow(slc, function_lines))
+    results.extend(_detect_format_string(slc, function_lines))
     for item in results:
         item["audit_source"] = "rule_fallback"
     return results
+
+
+def _detect_format_string(slc, function_lines):
+    results = []
+    for item in function_lines:
+        source_line = item["source_line"]
+        line = item["code"]
+        if not FORMAT_CALL_PATTERN.search(line):
+            continue
+
+        for call in extract_function_calls(line):
+            fn = call["function"]
+            if fn not in {"printf", "fprintf", "sprintf", "snprintf", "vprintf", "vfprintf", "syslog"}:
+                continue
+
+            fmt_index = format_arg_index(fn)
+            args = split_call_args(call["args"])
+            if len(args) <= fmt_index:
+                continue
+
+            fmt_arg = args[fmt_index].strip()
+            if is_string_literal(fmt_arg):
+                continue
+
+            results.append(_finding(
+                slc,
+                "CWE-134",
+                "Format String Vulnerability",
+                "high",
+                [source_line, source_line],
+                [
+                    f"Function '{fn}' uses a non-literal format argument at source line {source_line}: {line.strip()}",
+                    f"Format argument expression: {fmt_arg}",
+                ],
+                "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+                "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+            ))
+    return results
+
+
+def extract_function_calls(line):
+    calls = []
+    for match in FORMAT_CALL_PATTERN.finditer(line):
+        fn = match.group(1)
+        open_idx = line.find("(", match.end() - 1)
+        if open_idx == -1:
+            continue
+        close_idx = find_matching_paren(line, open_idx)
+        if close_idx is None:
+            continue
+        calls.append({"function": fn, "args": line[open_idx + 1:close_idx]})
+    return calls
+
+
+def find_matching_paren(text, open_idx):
+    depth = 0
+    in_string = False
+    quote = ""
+    escaped = False
+    for idx in range(open_idx, len(text)):
+        ch = text[idx]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == quote:
+                in_string = False
+            continue
+        if ch in {"'", '"'}:
+            in_string = True
+            quote = ch
+            continue
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+            if depth == 0:
+                return idx
+    return None
+
+
+def split_call_args(args_text):
+    args = []
+    current = []
+    depth = 0
+    in_string = False
+    quote = ""
+    escaped = False
+    for ch in args_text:
+        if in_string:
+            current.append(ch)
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == quote:
+                in_string = False
+            continue
+        if ch in {"'", '"'}:
+            in_string = True
+            quote = ch
+            current.append(ch)
+            continue
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth = max(0, depth - 1)
+        if ch == "," and depth == 0:
+            args.append("".join(current).strip())
+            current = []
+        else:
+            current.append(ch)
+    if current or args_text.strip():
+        args.append("".join(current).strip())
+    return args
+
+
+def format_arg_index(function_name):
+    return {
+        "printf": 0,
+        "vprintf": 0,
+        "fprintf": 1,
+        "vfprintf": 1,
+        "sprintf": 1,
+        "snprintf": 2,
+        "syslog": 1,
+    }.get(function_name, 0)
+
+
+def is_string_literal(expr):
+    expr = expr.strip()
+    # Adjacent C string literals, optionally prefixed with L/u/u8/U, are safe.
+    literal = r'(?:L|u8|u|U)?\"(?:\\.|[^\"\\])*\"'
+    return bool(re.fullmatch(rf'{literal}(?:\s*{literal})*', expr))
 
 
 def _detect_uaf_and_double_free(slc, function_lines):

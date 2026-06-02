@@ -2,9 +2,9 @@
  * SENTINEL Agent D - AFL++ / ASan file-input harness
  *
  * Finding ID: FINDING-0003
- * Target file: stack_overflow_demo.c
- * Target function: stack_overflow_case
- * CWE: CWE-121
+ * Target file: heap_overflow_demo.c
+ * Target function: heap_overflow_case
+ * CWE: CWE-122
  * Strategy: oversized_string_input
  */
 
@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 
-void stack_overflow_case(const char *input);
+void heap_overflow_case(const char *input);
 
 static unsigned char *read_file(const char *path, size_t *out_size) {
     FILE *fp = fopen(path, "rb");
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
      * Passing it as a string can trigger unsafe strcpy/memcpy-style code.
      */
     if (size > 0) {
-        stack_overflow_case((const char *)data);
+        heap_overflow_case((const char *)data);
     }
 
     free(data);

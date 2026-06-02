@@ -1,0 +1,44 @@
+{
+  "vulnerabilities": [
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_demo.c",
+      "line_number": 8,
+      "code_context": "Pointer 'buf' is first freed at source line 8.\nPointer 'buf' is freed again at source line 11: free(buf);  // CWE-415: double free",
+      "trigger_cond": "Execution reaches free(buf) twice without reset or reallocation.",
+      "fix_advice": "Set buf to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_demo.c",
+      "line_number": 7,
+      "code_context": "Function 'printf' uses a non-literal format argument at source line 7: printf(user_input);  // CWE-134: attacker-controlled format string\nFormat argument expression: user_input",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_demo.c",
+      "line_number": 9,
+      "code_context": "Dangerous copy-style function call at source line 9: strcpy(buf, input);  // CWE-122: heap buffer overflow\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "file_path": "stack_overflow_demo.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style function call at source line 4: strcpy(buf, input);  // CWE-121: stack buffer overflow\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "UAF",
+      "file_path": "uaf_demo.c",
+      "line_number": 10,
+      "code_context": "Pointer 'p' is freed at source line 10.\nPointer 'p' is used again at source line 13: printf(\"%d\\n\", *p);  // CWE-416: use after free",
+      "trigger_cond": "Pointer 'p' is dereferenced or accessed after free.",
+      "fix_advice": "Do not access p after free; set it to NULL and guard future uses."
+    }
+  ]
+}

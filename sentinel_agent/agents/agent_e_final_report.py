@@ -10,7 +10,7 @@ def run_agent_e(project_name, agent_a_result, agent_c_result, agent_d_result,
     final_findings = []
     for finding in agent_c_result.get("static_findings", []):
         asan_evidence = match_asan_evidence(finding, asan_result)
-        afl_evidence = match_afl_evidence(afl_result)
+        afl_evidence = match_afl_evidence(finding, afl_result)
         ebpf_evidence = match_ebpf_events(finding, ebpf_log)
 
         dynamic_status, evidence_level, evidence_sources = judge_dynamic_status(
@@ -96,16 +96,32 @@ def match_asan_evidence(finding, asan_result):
         return None
     results_by_id = asan_result.get("results_by_finding_id", {})
     item = results_by_id.get(finding.get("finding_id"))
-    if item:
+    if item and evidence_matches_finding(item, finding):
         return item
     for candidate in asan_result.get("results", []):
-        if candidate.get("cwe_id") == finding.get("cwe_id") and candidate.get("target_function") == finding.get("function"):
+        if evidence_matches_finding(candidate, finding):
             return candidate
     return None
 
 
-def match_afl_evidence(afl_result):
+def evidence_matches_finding(evidence, finding):
+    if not evidence:
+        return False
+    if evidence.get("cwe_id") != finding.get("cwe_id"):
+        return False
+    target_fn = evidence.get("target_function")
+    if target_fn and target_fn != finding.get("function"):
+        return False
+    target_file = evidence.get("target_file")
+    if target_file and target_file != finding.get("file"):
+        return False
+    return True
+
+
+def match_afl_evidence(finding, afl_result):
     if not afl_result or not afl_result.get("crash_found"):
+        return None
+    if not afl_text_matches_cwe(afl_result, finding.get("cwe_id")):
         return None
     return {
         "crash_found": afl_result.get("crash_found"),
@@ -116,6 +132,25 @@ def match_afl_evidence(afl_result):
     }
 
 
+def afl_text_matches_cwe(afl_result, cwe_id):
+    text = " ".join(
+        str(afl_result.get(key, ""))
+        for key in ("stderr_excerpt", "notes", "crash_file", "asan_bug_type", "vulnerability_type")
+    ).lower()
+    if not text.strip():
+        return False
+
+    keywords = {
+        "CWE-416": ["use-after-free", "heap-use-after-free", "uaf"],
+        "CWE-415": ["double-free", "double free"],
+        "CWE-122": ["heap-buffer-overflow", "heap overflow", "buffer-overflow"],
+        "CWE-121": ["stack-buffer-overflow", "stack overflow", "buffer-overflow"],
+        "CWE-134": ["format-string", "format string", "%n"],
+    }.get(cwe_id, [])
+
+    return any(keyword in text for keyword in keywords)
+
+
 def match_ebpf_events(finding, ebpf_log):
     if not ebpf_log:
         return []
@@ -124,7 +159,8 @@ def match_ebpf_events(finding, ebpf_log):
         "CWE-416": {"free", "use_after_free_suspected"},
         "CWE-415": {"free", "double_free_suspected"},
         "CWE-122": {"malloc", "heap_overflow_suspected"},
-        "CWE-121": {"stack_write_suspected"}
+        "CWE-121": {"stack_write_suspected"},
+        "CWE-134": {"format_string", "format_string_suspected", "out_of_bounds"}
     }.get(cwe, set())
     return [ev for ev in ebpf_log.get("events", []) if ev.get("event_type") in desired]
 
@@ -139,7 +175,11 @@ def conclusion(dynamic_status, evidence_level, evidence_sources):
 
 
 def count_asan_confirmed(final_findings):
-    return sum(1 for f in final_findings if f.get("asan_evidence", {}).get("dynamic_status") == "confirmed")
+    return sum(
+        1
+        for f in final_findings
+        if (f.get("asan_evidence") or {}).get("dynamic_status") == "confirmed"
+    )
 
 
 def to_markdown(report):

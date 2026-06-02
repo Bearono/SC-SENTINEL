@@ -28,6 +28,7 @@ FUNCTION_SIGNATURE_PATTERN = re.compile(
 RISK_KEYWORDS = [
     "malloc", "calloc", "realloc", "free",
     "strcpy", "strncpy", "strcat", "sprintf", "snprintf",
+    "printf", "fprintf", "vprintf", "vfprintf", "syslog",
     "memcpy", "memmove", "memset",
     "gets", "scanf", "sscanf",
     "new", "delete"

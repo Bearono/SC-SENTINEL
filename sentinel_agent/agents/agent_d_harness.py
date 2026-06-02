@@ -120,6 +120,20 @@ def infer_harness_strategy(finding):
             "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
         }
 
+    if cwe == "CWE-134":
+        return {
+            "strategy_name": "format_string_payload",
+            "argument_model": "const_char_ptr",
+            "min_input_size": 32,
+            "description": (
+                "Pass fuzzer-controlled bytes as a format string payload. Seeds include "
+                "%x/%p/%s/%n patterns that can expose or corrupt memory when the target "
+                "uses attacker input as the format argument."
+            ),
+            "expected_sanitizer": "AddressSanitizer",
+            "expected_symptom": "format string memory disclosure or write via %n"
+        }
+
     return {
         "strategy_name": "generic_file_input",
         "argument_model": "manual_adaptation_required",
@@ -392,6 +406,12 @@ def write_seed_files(seeds_dir, finding, strategy):
             "seed_001.bin": b"A" * 256,
             "seed_002_long_string.bin": b"B" * 1024,
             "seed_003_pattern.bin": (b"0123456789abcdef" * 32)
+        }
+    elif cwe == "CWE-134":
+        seeds = {
+            "seed_001.bin": b"%x.%x.%x.%x",
+            "seed_002_pointer_leak.bin": b"%p %p %p %p",
+            "seed_003_write_probe.bin": b"%n%n%n%n"
         }
     elif cwe in {"CWE-416", "CWE-415"}:
         seeds = {

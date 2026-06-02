@@ -1,33 +1,33 @@
 {
   "package_id": "HARNESS-0004",
   "finding_id": "FINDING-0004",
-  "target_file": "uaf_demo.c",
-  "target_function": "uaf_case",
-  "cwe_id": "CWE-416",
-  "vulnerability_type": "Use After Free",
+  "target_file": "stack_overflow_demo.c",
+  "target_function": "stack_overflow_case",
+  "cwe_id": "CWE-121",
+  "vulnerability_type": "Stack Buffer Overflow",
   "risk_level": "high",
   "line_range": [
-    10,
-    13
+    4,
+    4
   ],
-  "trigger_condition": "当函数参数 flag 为非零值时，控制流进入 if 分支，执行第13行代码解引用指针 p。",
+  "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
   "strategy": {
-    "strategy_name": "flag_path_trigger",
-    "argument_model": "int_flag",
-    "trigger_value": 1,
-    "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+    "strategy_name": "oversized_string_input",
+    "argument_model": "const_char_ptr",
+    "min_input_size": 256,
+    "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
     "expected_sanitizer": "AddressSanitizer",
-    "expected_symptom": "double-free or heap-use-after-free"
+    "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
   },
-  "package_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004",
-  "afl_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/afl_harness.c",
-  "libfuzzer_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/libfuzzer_harness.c",
-  "makefile": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/Makefile",
-  "seed_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds",
+  "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004",
+  "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004\\afl_harness.c",
+  "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004\\libfuzzer_harness.c",
+  "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004\\Makefile",
+  "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004\\seeds",
   "seed_files": [
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds/seed_001.bin",
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds/seed_002_trigger_flag.bin",
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/seeds/seed_003_nonzero.bin"
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004\\seeds\\seed_001.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004\\seeds\\seed_002_long_string.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0004\\seeds\\seed_003_pattern.bin"
   ],
   "asan_build_command": "make asan",
   "afl_build_command": "make afl",

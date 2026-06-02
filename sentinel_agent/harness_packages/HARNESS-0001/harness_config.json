@@ -10,7 +10,7 @@
     8,
     11
   ],
-  "trigger_condition": "当函数参数 flag 为非零值时，程序进入条件分支并执行第二次 free 操作",
+  "trigger_condition": "Execution reaches free(buf) twice without reset or reallocation.",
   "strategy": {
     "strategy_name": "flag_path_trigger",
     "argument_model": "int_flag",
@@ -19,15 +19,15 @@
     "expected_sanitizer": "AddressSanitizer",
     "expected_symptom": "double-free or heap-use-after-free"
   },
-  "package_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001",
-  "afl_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/afl_harness.c",
-  "libfuzzer_harness_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/libfuzzer_harness.c",
-  "makefile": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/Makefile",
-  "seed_dir": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds",
+  "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001",
+  "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001\\afl_harness.c",
+  "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001\\libfuzzer_harness.c",
+  "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001\\Makefile",
+  "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001\\seeds",
   "seed_files": [
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds/seed_001.bin",
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds/seed_002_trigger_flag.bin",
-    "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/seeds/seed_003_nonzero.bin"
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001\\seeds\\seed_001.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001\\seeds\\seed_002_trigger_flag.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0001\\seeds\\seed_003_nonzero.bin"
   ],
   "asan_build_command": "make asan",
   "afl_build_command": "make afl",

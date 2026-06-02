@@ -3,6 +3,7 @@ from pathlib import Path
 
 from core.file_scanner import scan_source_files, scan_project_metadata_files
 from core.json_utils import save_json, load_json
+from core.integration_schema import to_backend_components, to_backend_vulnerabilities
 
 from agents.agent_a_dependency import run_agent_a
 from agents.agent_b_slicer import run_agent_b
@@ -28,6 +29,7 @@ def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packag
     print("[2/7] Agent A: dependency risk identification...")
     agent_a_result = run_agent_a(source_files, metadata_files)
     save_json(agent_a_result, output_dir / "agent_a_components.json")
+    save_json(to_backend_components(agent_a_result), output_dir / "agent_a_backend_components.json")
 
     print("[3/7] Agent B: context pruning and code slicing...")
     agent_b_result = run_agent_b(source_files)
@@ -36,6 +38,7 @@ def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packag
     print("[4/7] Agent C: static vulnerability audit...")
     agent_c_result = run_agent_c(agent_a_result, agent_b_result)
     save_json(agent_c_result, output_dir / "agent_c_findings.json")
+    save_json(to_backend_vulnerabilities(agent_c_result), output_dir / "agent_c_backend_vulnerabilities.json")
 
     print("[5/7] Agent D: harness package generation...")
     agent_d_result = run_agent_d(agent_c_result, harness_root=harness_dir)

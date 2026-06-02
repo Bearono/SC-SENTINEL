@@ -1,0 +1,38 @@
+{
+  "package_id": "HARNESS-0005",
+  "finding_id": "FINDING-0005",
+  "target_file": "uaf_demo.c",
+  "target_function": "uaf_case",
+  "cwe_id": "CWE-416",
+  "vulnerability_type": "Use After Free",
+  "risk_level": "high",
+  "line_range": [
+    10,
+    13
+  ],
+  "trigger_condition": "Pointer 'p' is dereferenced or accessed after free.",
+  "strategy": {
+    "strategy_name": "flag_path_trigger",
+    "argument_model": "int_flag",
+    "trigger_value": 1,
+    "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+    "expected_sanitizer": "AddressSanitizer",
+    "expected_symptom": "double-free or heap-use-after-free"
+  },
+  "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005",
+  "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005\\afl_harness.c",
+  "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005\\libfuzzer_harness.c",
+  "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005\\Makefile",
+  "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005\\seeds",
+  "seed_files": [
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005\\seeds\\seed_001.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005\\seeds\\seed_002_trigger_flag.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_packages\\HARNESS-0005\\seeds\\seed_003_nonzero.bin"
+  ],
+  "asan_build_command": "make asan",
+  "afl_build_command": "make afl",
+  "libfuzzer_build_command": "make libfuzzer",
+  "asan_run_command": "./asan_target seeds/seed_001.bin",
+  "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+  "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+}

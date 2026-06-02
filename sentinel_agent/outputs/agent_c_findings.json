@@ -1,6 +1,6 @@
 {
   "agent": "Agent C - Static Vulnerability Audit",
-  "audit_mode": "llm_with_rule_fallback",
+  "audit_mode": "rule_fallback_only",
   "static_findings": [
     {
       "finding_id": "FINDING-0001",
@@ -14,100 +14,105 @@
       "cwe_id": "CWE-415",
       "vulnerability_type": "Double Free",
       "risk_level": "high",
-      "trigger_condition": "当函数参数 flag 为非零值时，程序进入条件分支并执行第二次 free 操作",
+      "trigger_condition": "Execution reaches free(buf) twice without reset or reallocation.",
       "evidence": [
-        "第3行：char *buf = (char *)malloc(32); 分配堆内存",
-        "第8行：free(buf); 首次释放该内存块",
-        "第11行：if (flag) { free(buf); } 在 flag 为真时再次释放同一指针，构成重复释放"
+        "Pointer 'buf' is first freed at source line 8.",
+        "Pointer 'buf' is freed again at source line 11: free(buf);  // CWE-415: double free"
       ],
-      "confidence": 0.95,
-      "suggested_fix": "在首次 free(buf) 后立即将 buf 赋值为 NULL，或重构逻辑移除条件分支中的重复 free 调用，确保指针仅被释放一次。",
+      "confidence": 0.65,
+      "suggested_fix": "Set buf to NULL after free and avoid duplicate ownership.",
       "static_status": "suspected",
-      "audit_source": "llm",
+      "audit_source": "rule_fallback",
       "quality_control": {
-        "original_confidence": 0.95,
-        "calibrated_confidence": 0.95,
-        "confidence_adjusted": false,
-        "rule_consistency": "consistent",
-        "matched_rule_cwe": "CWE-415",
-        "matched_rule_line_range": [
-          8,
-          11
-        ],
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
         "warnings": []
       }
     },
     {
       "finding_id": "FINDING-0002",
       "source_slice_id": "SLICE-0003",
-      "file": "heap_overflow_demo.c",
-      "function": "heap_overflow_case",
+      "file": "format_string_demo.c",
+      "function": "format_string_case",
       "line_range": [
-        4,
-        9
+        7,
+        7
       ],
-      "cwe_id": "CWE-122",
-      "vulnerability_type": "Heap Buffer Overflow",
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
       "risk_level": "high",
-      "trigger_condition": "当输入参数 input 的字符串长度大于等于 8 字节时触发",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
       "evidence": [
-        "第4行：char *buf = (char *)malloc(8); 在堆上分配了固定大小为 8 字节的缓冲区",
-        "第9行：strcpy(buf, input); 使用不安全的 strcpy 将外部输入 input 复制到 buf，未进行长度边界检查，导致堆缓冲区溢出"
+        "Function 'printf' uses a non-literal format argument at source line 7: printf(user_input);  // CWE-134: attacker-controlled format string",
+        "Format argument expression: user_input"
       ],
-      "confidence": 0.95,
-      "suggested_fix": "使用 strncpy 或 snprintf 限制拷贝长度，或根据 input 的实际长度动态分配内存（如 malloc(strlen(input) + 1)）",
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
       "static_status": "suspected",
-      "audit_source": "llm",
+      "audit_source": "rule_fallback",
       "quality_control": {
-        "original_confidence": 0.95,
-        "calibrated_confidence": 0.95,
-        "confidence_adjusted": false,
-        "rule_consistency": "consistent",
-        "matched_rule_cwe": "CWE-122",
-        "matched_rule_line_range": [
-          9,
-          9
-        ],
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
         "warnings": []
       }
     },
     {
       "finding_id": "FINDING-0003",
-      "source_slice_id": "SLICE-0007",
-      "file": "stack_overflow_demo.c",
-      "function": "stack_overflow_case",
+      "source_slice_id": "SLICE-0005",
+      "file": "heap_overflow_demo.c",
+      "function": "heap_overflow_case",
       "line_range": [
-        3,
-        4
+        9,
+        9
       ],
-      "cwe_id": "CWE-121",
-      "vulnerability_type": "Stack Buffer Overflow",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
       "risk_level": "high",
-      "trigger_condition": "当输入参数 input 的字符串长度大于等于 8 字节（含空终止符）时",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
       "evidence": [
-        "第3行：在栈上分配了固定大小为8字节的局部缓冲区 char buf[8];",
-        "第4行：调用 strcpy(buf, input); 进行数据拷贝，该函数不执行边界检查，若 input 长度超过 7 字节将直接越界写入栈内存"
+        "Dangerous copy-style function call at source line 9: strcpy(buf, input);  // CWE-122: heap buffer overflow",
+        "Rule fallback cannot fully prove destination bounds."
       ],
-      "confidence": 0.95,
-      "suggested_fix": "使用带长度限制的拷贝函数（如 strncpy 或 snprintf），或在拷贝前严格校验 strlen(input) < sizeof(buf)",
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
       "static_status": "suspected",
-      "audit_source": "llm",
+      "audit_source": "rule_fallback",
       "quality_control": {
-        "original_confidence": 0.95,
-        "calibrated_confidence": 0.95,
-        "confidence_adjusted": false,
-        "rule_consistency": "consistent",
-        "matched_rule_cwe": "CWE-121",
-        "matched_rule_line_range": [
-          4,
-          4
-        ],
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
         "warnings": []
       }
     },
     {
       "finding_id": "FINDING-0004",
       "source_slice_id": "SLICE-0009",
+      "file": "stack_overflow_demo.c",
+      "function": "stack_overflow_case",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 4: strcpy(buf, input);  // CWE-121: stack buffer overflow",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0005",
+      "source_slice_id": "SLICE-0011",
       "file": "uaf_demo.c",
       "function": "uaf_case",
       "line_range": [
@@ -117,26 +122,18 @@
       "cwe_id": "CWE-416",
       "vulnerability_type": "Use After Free",
       "risk_level": "high",
-      "trigger_condition": "当函数参数 flag 为非零值时，控制流进入 if 分支，执行第13行代码解引用指针 p。",
+      "trigger_condition": "Pointer 'p' is dereferenced or accessed after free.",
       "evidence": [
-        "第4行：int *p = (int *)malloc(sizeof(int)); 分配堆内存并赋值给指针 p",
-        "第10行：free(p); 释放指针 p 指向的堆内存",
-        "第13行：printf(\"%d\\n\", *p); 在 free 之后再次解引用指针 p，访问已释放内存"
+        "Pointer 'p' is freed at source line 10.",
+        "Pointer 'p' is used again at source line 13: printf(\"%d\\n\", *p);  // CWE-416: use after free"
       ],
-      "confidence": 0.95,
-      "suggested_fix": "在 free(p) 之后立即将指针置空（p = NULL;），或将对 *p 的访问移至 free(p) 之前。",
+      "confidence": 0.65,
+      "suggested_fix": "Do not access p after free; set it to NULL and guard future uses.",
       "static_status": "suspected",
-      "audit_source": "llm",
+      "audit_source": "rule_fallback",
       "quality_control": {
-        "original_confidence": 0.95,
-        "calibrated_confidence": 0.95,
-        "confidence_adjusted": false,
-        "rule_consistency": "consistent",
-        "matched_rule_cwe": "CWE-416",
-        "matched_rule_line_range": [
-          10,
-          13
-        ],
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
         "warnings": []
       }
     }
@@ -153,6 +150,14 @@
     },
     {
       "slice_id": "SLICE-0003",
+      "target_file": "format_string_demo.c",
+      "target_function": "format_string_case",
+      "risk_keywords": [
+        "printf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0005",
       "target_file": "heap_overflow_demo.c",
       "target_function": "heap_overflow_case",
       "risk_keywords": [
@@ -162,7 +167,7 @@
       ]
     },
     {
-      "slice_id": "SLICE-0007",
+      "slice_id": "SLICE-0009",
       "target_file": "stack_overflow_demo.c",
       "target_function": "stack_overflow_case",
       "risk_keywords": [
@@ -170,12 +175,13 @@
       ]
     },
     {
-      "slice_id": "SLICE-0009",
+      "slice_id": "SLICE-0011",
       "target_file": "uaf_demo.c",
       "target_function": "uaf_case",
       "risk_keywords": [
         "malloc",
-        "free"
+        "free",
+        "printf"
       ]
     }
   ],
@@ -188,75 +194,146 @@
     },
     {
       "slice_id": "SLICE-0004",
+      "target_file": "format_string_demo.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0006",
       "target_file": "heap_overflow_demo.c",
       "target_function": "main",
       "reason": "No memory-risk keyword found in this slice."
     },
     {
-      "slice_id": "SLICE-0005",
+      "slice_id": "SLICE-0007",
       "target_file": "multi_component_demo.c",
       "target_function": "dependency_probe_demo",
       "reason": "No memory-risk keyword found in this slice."
     },
     {
-      "slice_id": "SLICE-0006",
+      "slice_id": "SLICE-0008",
       "target_file": "openssl_component_demo.c",
       "target_function": "init_openssl_demo",
       "reason": "No memory-risk keyword found in this slice."
     },
     {
-      "slice_id": "SLICE-0008",
+      "slice_id": "SLICE-0010",
       "target_file": "stack_overflow_demo.c",
       "target_function": "main",
       "reason": "No memory-risk keyword found in this slice."
     },
     {
-      "slice_id": "SLICE-0010",
+      "slice_id": "SLICE-0012",
       "target_file": "uaf_demo.c",
       "target_function": "main",
       "reason": "No memory-risk keyword found in this slice."
     }
   ],
   "llm_errors": [],
-  "quality_events": [
-    {
-      "slice_id": "SLICE-0001",
-      "event": "json_parse_success",
-      "attempt": 1
-    },
-    {
-      "slice_id": "SLICE-0003",
-      "event": "json_parse_success",
-      "attempt": 1
-    },
-    {
-      "slice_id": "SLICE-0007",
-      "event": "json_parse_success",
-      "attempt": 1
-    },
-    {
-      "slice_id": "SLICE-0009",
-      "event": "json_parse_success",
-      "attempt": 1
-    }
-  ],
+  "quality_events": [],
   "quality_summary": {
-    "total_quality_events": 4,
+    "total_quality_events": 0,
     "json_retry_events": 0,
     "confidence_adjusted_count": 0,
-    "consistent_with_rule_count": 4,
+    "consistent_with_rule_count": 0,
     "cwe_conflict_count": 0,
     "llm_error_count": 0
   },
   "summary": {
-    "total_input_slices": 10,
-    "audited_slices": 4,
-    "skipped_slices": 6,
-    "total_findings": 4,
-    "high_risk_findings": 4,
-    "llm_available": true,
+    "total_input_slices": 12,
+    "audited_slices": 5,
+    "skipped_slices": 7,
+    "total_findings": 5,
+    "high_risk_findings": 5,
+    "llm_available": false,
     "llm_error_count": 0,
-    "llm_findings": 4,
-    "rule_fallback_findings": 0
+    "llm_findings": 0,
+    "rule_fallback_findings": 5
+  },
+  "vulnerabilities": [
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_demo.c",
+      "line_number": 8,
+      "code_context": "Pointer 'buf' is first freed at source line 8.\nPointer 'buf' is freed again at source line 11: free(buf);  // CWE-415: double free",
+      "trigger_cond": "Execution reaches free(buf) twice without reset or reallocation.",
+      "fix_advice": "Set buf to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_demo.c",
+      "line_number": 7,
+      "code_context": "Function 'printf' uses a non-literal format argument at source line 7: printf(user_input);  // CWE-134: attacker-controlled format string\nFormat argument expression: user_input",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_demo.c",
+      "line_number": 9,
+      "code_context": "Dangerous copy-style function call at source line 9: strcpy(buf, input);  // CWE-122: heap buffer overflow\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "file_path": "stack_overflow_demo.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style function call at source line 4: strcpy(buf, input);  // CWE-121: stack buffer overflow\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "UAF",
+      "file_path": "uaf_demo.c",
+      "line_number": 10,
+      "code_context": "Pointer 'p' is freed at source line 10.\nPointer 'p' is used again at source line 13: printf(\"%d\\n\", *p);  // CWE-416: use after free",
+      "trigger_cond": "Pointer 'p' is dereferenced or accessed after free.",
+      "fix_advice": "Do not access p after free; set it to NULL and guard future uses."
+    }
+  ],
+  "integration": {
+    "vulnerabilities": [
+      {
+        "vuln_type": "double_free",
+        "file_path": "double_free_demo.c",
+        "line_number": 8,
+        "code_context": "Pointer 'buf' is first freed at source line 8.\nPointer 'buf' is freed again at source line 11: free(buf);  // CWE-415: double free",
+        "trigger_cond": "Execution reaches free(buf) twice without reset or reallocation.",
+        "fix_advice": "Set buf to NULL after free and avoid duplicate ownership."
+      },
+      {
+        "vuln_type": "format_string",
+        "file_path": "format_string_demo.c",
+        "line_number": 7,
+        "code_context": "Function 'printf' uses a non-literal format argument at source line 7: printf(user_input);  // CWE-134: attacker-controlled format string\nFormat argument expression: user_input",
+        "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+        "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+      },
+      {
+        "vuln_type": "heap_overflow",
+        "file_path": "heap_overflow_demo.c",
+        "line_number": 9,
+        "code_context": "Dangerous copy-style function call at source line 9: strcpy(buf, input);  // CWE-122: heap buffer overflow\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "stack_overflow",
+        "file_path": "stack_overflow_demo.c",
+        "line_number": 4,
+        "code_context": "Dangerous copy-style function call at source line 4: strcpy(buf, input);  // CWE-121: stack buffer overflow\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "UAF",
+        "file_path": "uaf_demo.c",
+        "line_number": 10,
+        "code_context": "Pointer 'p' is freed at source line 10.\nPointer 'p' is used again at source line 13: printf(\"%d\\n\", *p);  // CWE-416: use after free",
+        "trigger_cond": "Pointer 'p' is dereferenced or accessed after free.",
+        "fix_advice": "Do not access p after free; set it to NULL and guard future uses."
+      }
+    ]
   }
 }

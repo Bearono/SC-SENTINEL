@@ -3,22 +3,22 @@
 ## Finding
 
 - Finding ID: `FINDING-0002`
-- Target file: `heap_overflow_demo.c`
-- Target function: `heap_overflow_case`
-- CWE: `CWE-122`
-- Vulnerability type: `Heap Buffer Overflow`
-- Line range: `[4, 9]`
+- Target file: `format_string_demo.c`
+- Target function: `format_string_case`
+- CWE: `CWE-134`
+- Vulnerability type: `Format String Vulnerability`
+- Line range: `[7, 7]`
 
 ## Trigger condition
 
-当输入参数 input 的字符串长度大于等于 8 字节时触发
+Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.
 
 ## Strategy
 
-- Strategy name: `oversized_string_input`
+- Strategy name: `format_string_payload`
 - Argument model: `const_char_ptr`
 - Expected sanitizer: `AddressSanitizer`
-- Expected symptom: `heap-buffer-overflow or stack-buffer-overflow`
+- Expected symptom: `format string memory disclosure or write via %n`
 
 ## Commands in WSL2 / Docker
 

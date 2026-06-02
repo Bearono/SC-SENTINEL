@@ -3,6 +3,7 @@
   "components": [
     {
       "name": "libpng",
+      "library_name": "libpng",
       "version": "1.6.39",
       "purl_name": "libpng",
       "source_types": [
@@ -46,6 +47,7 @@
     },
     {
       "name": "zlib",
+      "library_name": "zlib",
       "version": "1.2.13",
       "purl_name": "zlib",
       "source_types": [
@@ -89,6 +91,7 @@
     },
     {
       "name": "curl",
+      "library_name": "curl",
       "version": "unknown",
       "purl_name": "curl",
       "source_types": [
@@ -1138,6 +1141,7 @@
     },
     {
       "name": "sqlite",
+      "library_name": "sqlite",
       "version": "3.45.0",
       "purl_name": "sqlite",
       "source_types": [
@@ -1187,6 +1191,7 @@
     },
     {
       "name": "libxml2",
+      "library_name": "libxml2",
       "version": "unknown",
       "purl_name": "libxml2",
       "source_types": [
@@ -3215,6 +3220,7 @@
     },
     {
       "name": "openssl",
+      "library_name": "openssl",
       "version": "1.1.1t",
       "purl_name": "openssl",
       "source_types": [
@@ -3312,6 +3318,793 @@
     "queried_sources": [
       "OSV",
       "NVD"
+    ]
+  },
+  "integration": {
+    "components": [
+      {
+        "library_name": "libpng",
+        "version": "1.6.39",
+        "cve_id": null,
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Component detected; no matched vulnerability was returned by OSV/NVD.",
+        "nvd_url": null
+      },
+      {
+        "library_name": "zlib",
+        "version": "1.2.13",
+        "cve_id": null,
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Component detected; no matched vulnerability was returned by OSV/NVD.",
+        "nvd_url": null
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2025-657",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in ftp_pp_statemachine",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=439473053"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2022-1065",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52517"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2022-1046",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Stack-buffer-overflow in Curl_output_aws_sigv4",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52349"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2022-450",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in Curl_headers_push",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=47767"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2022-141",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in nghttp2_hd_deflate_hd_bufs",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44517"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2022-139",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in nghttp2_http_record_request_method",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44516"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1796",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43186"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1793",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in seturl",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=43160"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1758",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in seturl",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42892"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1756",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42901"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1747",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in seturl",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42808"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1737",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42727"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1730",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in seturl",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=42708"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1629",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in Curl_sasl_decode_mech",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41403"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-1625",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in junkscan",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41390"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2017-79",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in fuzz_read_callback",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4785"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2018-230",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in rtsp_rtp_readwrite",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7105"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2018-209",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in loop",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=5251"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2017-8",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in setcharset",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=4161"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2020-1230",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in to_u32",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16734"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2020-600",
+        "cvss_score": null,
+        "severity": "medium",
+        "description": "Use-of-uninitialized-value in dprintf_formatf",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16699"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2020-389",
+        "cvss_score": null,
+        "severity": "medium",
+        "description": "Use-of-uninitialized-value in smtp_state_ehlo_resp",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16918"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2021-696",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "UNKNOWN READ in ntlm_decode_type2_target",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=33720"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2018-40",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "UNKNOWN READ in ftp_disconnect",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12173"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2017-1",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Index-out-of-bounds in fuzz_send_next_response",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3956"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2020-1347",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Negative-size-param in fuzz_tlv_to_string",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16703"
+      },
+      {
+        "library_name": "curl",
+        "version": "unknown",
+        "cve_id": "OSV-2020-1080",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Negative-size-param in fuzz_tlv_to_string",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16696"
+      },
+      {
+        "library_name": "sqlite",
+        "version": "3.45.0",
+        "cve_id": null,
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Component detected; no matched vulnerability was returned by OSV/NVD.",
+        "nvd_url": null
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2026-565",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in xmlFAParsePosCharGroup",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=501547873"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2025-457",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in xmlParsePubidLiteral",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=424242614"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2025-74",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Stack-buffer-overflow in xmlValidateElementContent",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=392687022"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-1209",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlValidateOneElement",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=372547409"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-698",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlCharEncCloseFunc",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-634",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in htmlCurrentChar",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70297"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-217",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in dropNode",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67670"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-198",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlCopyPropInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67586"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-194",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlDOMWrapNSNormAcquireNormalizedNs",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67560"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-103",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlRemoveID",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66679"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-82",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlValidatePopElement",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66154"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-81",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlRemoveID",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66502"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-77",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlRemoveID",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=66446"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-1373",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlRemoveID",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65409"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-1365",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlStaticCopyNode",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65363"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-1315",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in htmlParseDocument",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65112"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-1303",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in htmlCurrentChar",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65043"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-1000",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63157"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-999",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in xmlParseCommentComplex",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63127"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-990",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in __xmlRaiseError",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63092"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-988",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in xmlCopyCharMultiByte",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=63086"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-969",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlStaticCopyNode",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62996"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-953",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in xmlDictLookupInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=62911"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-684",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in __xmlRaiseError",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=61337"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-61",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-buffer-overflow in xmlParseTryOrFinish",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=55980"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2022-1120",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlXIncludeDoProcess",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52869"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2022-1071",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlXIncludeCopyXPointer",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=52554"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2021-777",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlAddNextSibling",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=34461"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-1885",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlStaticCopyNode",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=26022"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-1726",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlXPathNodeSetAdd",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25536"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-1667",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlTextReaderRead",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=25210"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-1623",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlXIncludeIncludeNode",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24925"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-908",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=24055"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-755",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in xmlParserPrintFileContextInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23765"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-89",
+        "cvss_score": null,
+        "severity": "high",
+        "description": "Heap-use-after-free in __xmlRaiseError",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23120"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2024-193",
+        "cvss_score": null,
+        "severity": "medium",
+        "description": "Use-of-uninitialized-value in api.c",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=67552"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2020-215",
+        "cvss_score": null,
+        "severity": "medium",
+        "description": "Use-of-uninitialized-value in xmlStrdup",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=23144"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-1301",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlDictLookupInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=65012"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-477",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in htmlParseHTMLAttribute",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59718"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-474",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlDictLookup",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=59701"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-249",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlStrndup",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57469"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-215",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in htmlParsePI",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57304"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-213",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in htmlParseDocument",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57288"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-212",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlParseEntityDecl",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57294"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-211",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlStrndup",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57284"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-206",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlParseContentInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57225"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-204",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in htmlParseChunk",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57224"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-199",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlParseQName",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57151"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-196",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlDictLookup",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57110"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-195",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in htmlParseDocument",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57089"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-193",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlParseContentInternal",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57084"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-191",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlSkipBlankChars",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57080"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-188",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlParseQName",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57077"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-185",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlNextChar",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=57073"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-174",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in htmlCurrentChar",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56964"
+      },
+      {
+        "library_name": "libxml2",
+        "version": "unknown",
+        "cve_id": "OSV-2023-162",
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Global-buffer-overflow in xmlCurrentChar",
+        "nvd_url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=56841"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.1.1t",
+        "cve_id": null,
+        "cvss_score": null,
+        "severity": "unknown",
+        "description": "Component detected; no matched vulnerability was returned by OSV/NVD.",
+        "nvd_url": null
+      }
     ]
   }
 }

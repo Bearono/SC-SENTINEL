@@ -3,22 +3,22 @@
 ## Finding
 
 - Finding ID: `FINDING-0004`
-- Target file: `uaf_demo.c`
-- Target function: `uaf_case`
-- CWE: `CWE-416`
-- Vulnerability type: `Use After Free`
-- Line range: `[10, 13]`
+- Target file: `stack_overflow_demo.c`
+- Target function: `stack_overflow_case`
+- CWE: `CWE-121`
+- Vulnerability type: `Stack Buffer Overflow`
+- Line range: `[4, 4]`
 
 ## Trigger condition
 
-当函数参数 flag 为非零值时，控制流进入 if 分支，执行第13行代码解引用指针 p。
+Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.
 
 ## Strategy
 
-- Strategy name: `flag_path_trigger`
-- Argument model: `int_flag`
+- Strategy name: `oversized_string_input`
+- Argument model: `const_char_ptr`
 - Expected sanitizer: `AddressSanitizer`
-- Expected symptom: `double-free or heap-use-after-free`
+- Expected symptom: `heap-buffer-overflow or stack-buffer-overflow`
 
 ## Commands in WSL2 / Docker
 

@@ -1,11 +1,11 @@
 /*
  * SENTINEL Agent D - AFL++ / ASan file-input harness
  *
- * Finding ID: FINDING-0002
- * Target file: format_string_demo.c
- * Target function: format_string_case
- * CWE: CWE-134
- * Strategy: format_string_payload
+ * Finding ID: FINDING-0005
+ * Target file: uaf_demo.c
+ * Target function: uaf_case
+ * CWE: CWE-416
+ * Strategy: flag_path_trigger
  */
 
 #include <stdio.h>
@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 
-void format_string_case(const char *input);
+void uaf_case(int flag);
 
 static unsigned char *read_file(const char *path, size_t *out_size) {
     FILE *fp = fopen(path, "rb");
@@ -56,12 +56,9 @@ int main(int argc, char **argv) {
     }
 
     /*
-     * data is null-terminated by read_file().
-     * Passing it as a string can trigger unsafe strcpy/memcpy-style code.
+     * For UAF / Double Free demos, flag=1 triggers the vulnerable branch.
      */
-    if (size > 0) {
-        format_string_case((const char *)data);
-    }
+    uaf_case(1);
 
     free(data);
     return 0;
