@@ -57,6 +57,8 @@ RISK_KEYWORD_WEIGHTS = {
     "delete": 1,
 }
 
+PRIORITY_ORDER = {"high": 3, "medium": 2, "low": 1}
+
 CONTROL_KEYWORDS = {
     "if", "for", "while", "switch", "return", "sizeof"
 }
@@ -116,6 +118,10 @@ def run_agent_b(source_files):
             "risk_keywords": risk_keywords,
             "risk_score": risk_score,
             "audit_priority": classify_audit_priority(risk_score),
+            "dataflow_hints": infer_dataflow_hints(fn),
+            "source_sink_pairs": infer_source_sink_pairs(fn),
+            "caller_count": len(fn["call_chain_upstream"]),
+            "callee_count": len(fn["callee_functions"]),
             "body_line_count": count_non_empty_lines(fn["body"]),
             "context_line_count": count_context_lines(fn["context"]),
 
@@ -125,6 +131,12 @@ def run_agent_b(source_files):
                 "+ simple call graph + memory-risk keywords."
             )
         })
+
+    slices = sorted(
+        slices,
+        key=lambda s: (PRIORITY_ORDER.get(s["audit_priority"], 0), s["risk_score"], s["slice_id"]),
+        reverse=True
+    )
 
     return {
         "agent": "Agent B - Context Pruning and Code Slicing",
@@ -506,6 +518,60 @@ def count_context_lines(context):
             else:
                 total += 1
     return total
+
+
+def infer_dataflow_hints(function_obj):
+    body = remove_comments(function_obj["body"])
+    hints = []
+    if re.search(r'\b(argv|argc|stdin|fread|read|recv|scanf|sscanf|gets)\b', body):
+        hints.append("external_input")
+    if re.search(r'\b(malloc|calloc|realloc|new)\b', body):
+        hints.append("heap_allocation")
+    if re.search(r'\bfree\s*\(', body):
+        hints.append("explicit_free")
+    if re.search(r'\b(strcpy|strcat|sprintf|memcpy|memmove|gets)\s*\(', body):
+        hints.append("unsafe_copy_sink")
+    if re.search(r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|syslog)\s*\(', body):
+        hints.append("format_sink")
+    if re.search(r'\[[^\]]+\]', body) or re.search(r'->|\*\s*[A-Za-z_]', body):
+        hints.append("pointer_or_index_access")
+    return sorted(set(hints))
+
+
+def infer_source_sink_pairs(function_obj):
+    body = remove_comments(function_obj["body"])
+    sources = []
+    sinks = []
+
+    source_patterns = {
+        "argv": r'\bargv\b',
+        "stdin": r'\bstdin\b',
+        "file_read": r'\b(fread|read)\s*\(',
+        "network_recv": r'\brecv\s*\(',
+        "scanf_input": r'\b(scanf|sscanf|gets)\s*\(',
+    }
+    sink_patterns = {
+        "free": r'\bfree\s*\(',
+        "copy": r'\b(strcpy|strcat|sprintf|memcpy|memmove|gets)\s*\(',
+        "format": r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|syslog)\s*\(',
+        "pointer_access": r'(->|\*\s*[A-Za-z_]|\[[^\]]+\])',
+    }
+
+    for name, pattern in source_patterns.items():
+        if re.search(pattern, body):
+            sources.append(name)
+    for name, pattern in sink_patterns.items():
+        if re.search(pattern, body):
+            sinks.append(name)
+
+    if not sources and ("const_char_ptr" in body or "char *" in body or "char*" in body):
+        sources.append("function_parameter")
+
+    return [
+        {"source": source, "sink": sink}
+        for source in sorted(set(sources))
+        for sink in sorted(set(sinks))
+    ]
 
 
 def remove_comments(code):

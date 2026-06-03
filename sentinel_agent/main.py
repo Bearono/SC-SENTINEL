@@ -7,9 +7,11 @@ from core.integration_schema import to_backend_components, to_backend_vulnerabil
 
 from agents.agent_a_dependency import run_agent_a
 from agents.agent_b_slicer import run_agent_b
-from agents.agent_c_static_audit import run_agent_c
-from agents.agent_d_harness import run_agent_d
-from agents.agent_e_final_report import run_agent_e
+from agents.agent_c_hypothesis import run_agent_c
+from agents.agent_d_llm_audit import run_agent_d
+from agents.agent_d_harness import run_agent_d as run_agent_e
+from agents.agent_f_dynamic_evidence import run_agent_f
+from agents.agent_g_final_report import run_agent_g
 
 
 def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packages"):
@@ -18,33 +20,39 @@ def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packag
     output_dir = Path(output_dir).resolve()
     harness_dir = Path(harness_dir).resolve()
 
-    print(f"[0/7] Project: {project_path}")
+    print(f"[0/9] Project: {project_path}")
 
-    print("[1/7] Scanning C/C++ source files and metadata files...")
+    print("[1/9] Scanning C/C++ source files and metadata files...")
     source_files = scan_source_files(str(project_path))
     metadata_files = scan_project_metadata_files(str(project_path))
     print(f"      Source files: {len(source_files)}")
     print(f"      Metadata files: {len(metadata_files)}")
 
-    print("[2/7] Agent A: dependency risk identification...")
+    print("[2/9] Agent A: dependency risk identification...")
     agent_a_result = run_agent_a(source_files, metadata_files)
     save_json(agent_a_result, output_dir / "agent_a_components.json")
     save_json(to_backend_components(agent_a_result), output_dir / "agent_a_backend_components.json")
 
-    print("[3/7] Agent B: context pruning and code slicing...")
+    print("[3/9] Agent B: semantic slicing...")
     agent_b_result = run_agent_b(source_files)
     save_json(agent_b_result, output_dir / "agent_b_slices.json")
 
-    print("[4/7] Agent C: static vulnerability audit...")
+    print("[4/9] Agent C: vulnerability hypothesis generation...")
     agent_c_result = run_agent_c(agent_a_result, agent_b_result)
-    save_json(agent_c_result, output_dir / "agent_c_findings.json")
-    save_json(to_backend_vulnerabilities(agent_c_result), output_dir / "agent_c_backend_vulnerabilities.json")
+    save_json(agent_c_result, output_dir / "agent_c_hypotheses.json")
 
-    print("[5/7] Agent D: harness package generation...")
-    agent_d_result = run_agent_d(agent_c_result, harness_root=harness_dir, project_root=project_path)
-    save_json(agent_d_result, output_dir / "agent_d_harness_packages.json")
+    print("[5/9] Agent D: LLM audit and cross-check...")
+    agent_d_result = run_agent_d(agent_a_result, agent_b_result, agent_c_result)
+    save_json(agent_d_result, output_dir / "agent_d_findings.json")
+    save_json(agent_d_result, output_dir / "agent_c_findings.json")
+    save_json(to_backend_vulnerabilities(agent_d_result), output_dir / "agent_c_backend_vulnerabilities.json")
 
-    print("[6/7] Loading dynamic validation results...")
+    print("[6/9] Agent E: harness package generation and quality gate...")
+    agent_e_result = run_agent_e(agent_d_result, harness_root=harness_dir, project_root=project_path)
+    save_json(agent_e_result, output_dir / "agent_e_harness_packages.json")
+    save_json(agent_e_result, output_dir / "agent_d_harness_packages.json")
+
+    print("[7/9] Loading dynamic validation results...")
     afl_result = load_json(Path("validation") / "afl_result_example.json", default={"crash_found": False})
     ebpf_log = load_json(Path("validation") / "ebpf_log_example.json", default={"events": []})
     asan_result = load_json(Path("validation") / "asan_validation_results.json", default={})
@@ -55,22 +63,35 @@ def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packag
     else:
         print("      ASan results not found, using AFL++/eBPF mock compatibility mode.")
 
-    print("[7/7] Agent E: final judgement and report...")
-    final_report = run_agent_e(
-        project_name=project_name,
-        agent_a_result=agent_a_result,
-        agent_c_result=agent_c_result,
+    print("[8/9] Agent F: dynamic evidence attribution...")
+    agent_f_result = run_agent_f(
         agent_d_result=agent_d_result,
+        agent_e_result=agent_e_result,
         afl_result=afl_result,
         ebpf_log=ebpf_log,
         asan_result=asan_result,
+    )
+    save_json(agent_f_result, output_dir / "agent_f_evidence_links.json")
+
+    print("[9/9] Agent G: final risk decision and report...")
+    agent_g_result = run_agent_g(
+        project_name=project_name,
+        agent_a_result=agent_a_result,
+        agent_b_result=agent_b_result,
+        agent_c_result=agent_c_result,
+        agent_d_result=agent_d_result,
+        agent_e_result=agent_e_result,
+        agent_f_result=agent_f_result,
         output_dir=output_dir
     )
+    save_json(agent_g_result, output_dir / "agent_g_final_decision.json")
+    final_report = agent_g_result["final_report"]
 
-    print("\n=== SENTINEL Part 4.2 Finished ===")
+    print("\n=== SENTINEL Seven-Agent Pipeline Finished ===")
     print(f"Project: {final_report['project_name']}")
     print(f"Overall Risk: {final_report['overall_risk']}")
     print(f"Components: {final_report['summary']['total_components']}")
+    print(f"Hypotheses: {final_report['summary']['total_hypotheses']}")
     print(f"Static Findings: {final_report['summary']['total_static_findings']}")
     print(f"Harness Packages: {final_report['summary']['total_harness_packages']}")
     print(f"Confirmed Findings: {final_report['summary']['confirmed_findings']}")
@@ -81,7 +102,7 @@ def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packag
 
 
 def main():
-    parser = argparse.ArgumentParser(description="SENTINEL - Five-Agent Pipeline")
+    parser = argparse.ArgumentParser(description="SENTINEL - Seven-Agent Pipeline")
     parser.add_argument("--project", required=True)
     parser.add_argument("--output", default="outputs")
     parser.add_argument("--harness", default="harness_packages")

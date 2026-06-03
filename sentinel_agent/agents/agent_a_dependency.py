@@ -41,13 +41,17 @@ def run_agent_a(source_files, metadata_files):
             risk = max_risk(risk, item.get("risk_level", "unknown"))
 
         evidence = deduplicate_evidence(component.get("evidence", []))
+        evidence = [annotate_evidence_type(item) for item in evidence]
         source_types = sorted({item.get("source") for item in evidence if item.get("source")})
+        risk_profile = build_component_risk_profile(matched, risk)
+        component_confidence = infer_component_confidence(evidence)
 
         enriched.append({
             "name": name,
             "library_name": name,
             "version": version,
             "purl_name": purl_name,
+            "component_confidence": component_confidence,
             "source_types": source_types,
             "evidence": evidence,
 
@@ -61,6 +65,8 @@ def run_agent_a(source_files, metadata_files):
             "top_vulnerabilities": matched[:5],
 
             "risk_level": risk,
+            "risk_profile": risk_profile,
+            "recommended_action": risk_profile["recommended_action"],
             "summary": {
                 "vulnerability_count": len(matched),
                 "highest_risk": risk,
@@ -74,6 +80,7 @@ def run_agent_a(source_files, metadata_files):
     result = {
         "agent": "Agent A - Dependency Risk Identification",
         "components": enriched,
+        "components_rich": enriched,
         "summary": {
             "total_components": len(enriched),
             "high_risk_components": sum(
@@ -114,3 +121,83 @@ def sort_vulnerabilities_by_risk(vulns):
         ),
         reverse=True
     )
+
+
+def annotate_evidence_type(item):
+    item = dict(item)
+    source = str(item.get("source") or "").lower()
+    evidence = str(item.get("evidence") or "").lower()
+
+    if source == "include":
+        evidence_type = "include"
+    elif source in {"vcpkg.json", "conanfile.txt"}:
+        evidence_type = "package_manifest"
+    elif evidence.startswith("-l"):
+        evidence_type = "link_flag"
+    elif source in {"cmakelists.txt", "makefile", "makefile"}:
+        evidence_type = "build_file"
+    else:
+        evidence_type = "metadata"
+
+    item["evidence_type"] = evidence_type
+    return item
+
+
+def infer_component_confidence(evidence_items):
+    evidence_types = {item.get("evidence_type") for item in evidence_items}
+    score = 0.35
+    if "package_manifest" in evidence_types:
+        score += 0.35
+    if "build_file" in evidence_types:
+        score += 0.25
+    if "include" in evidence_types:
+        score += 0.20
+    if "link_flag" in evidence_types:
+        score += 0.20
+    if len(evidence_items) >= 2:
+        score += 0.10
+    return round(min(score, 0.98), 2)
+
+
+def build_component_risk_profile(vulnerabilities, risk_level):
+    memory_keywords = [
+        "buffer overflow", "overflow", "out-of-bounds", "out of bounds",
+        "use after free", "use-after-free", "double free", "memory corruption",
+        "heap", "stack", "format string"
+    ]
+    known_cve_count = len(vulnerabilities)
+    memory_safety_cve_count = 0
+    highest_cvss = None
+
+    for vuln in vulnerabilities:
+        score = vuln.get("severity_score") or vuln.get("cvss_score")
+        try:
+            score = float(score) if score is not None else None
+        except Exception:
+            score = None
+        if score is not None:
+            highest_cvss = score if highest_cvss is None else max(highest_cvss, score)
+
+        text = " ".join(str(vuln.get(key, "")) for key in ("summary", "details", "cve_id", "id")).lower()
+        if any(keyword in text for keyword in memory_keywords):
+            memory_safety_cve_count += 1
+
+    return {
+        "known_cve_count": known_cve_count,
+        "memory_safety_cve_count": memory_safety_cve_count,
+        "highest_cvss": highest_cvss,
+        "risk_level": risk_level,
+        "recommended_action": recommended_action(risk_level, memory_safety_cve_count),
+    }
+
+
+def recommended_action(risk_level, memory_safety_cve_count):
+    if risk_level in {"critical", "high"} and memory_safety_cve_count:
+        return "Prioritize upgrade or patch before release; memory-safety CVEs are present."
+    if risk_level in {"critical", "high"}:
+        return "Review high-risk CVEs and upgrade the component if a fixed version exists."
+    if risk_level == "medium":
+        return "Review exposure and schedule dependency upgrade."
+    if risk_level == "low":
+        return "Track the component and upgrade during routine maintenance."
+    return "Component detected; monitor OSV/NVD results and verify the declared version."

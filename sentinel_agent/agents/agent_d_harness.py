@@ -1,4 +1,6 @@
 
+import shutil
+import subprocess
 from pathlib import Path
 from core.id_generator import make_id
 from core.json_utils import save_json
@@ -16,7 +18,7 @@ from core.json_utils import save_json
 #   3. links both object files into ASan/AFL++/libFuzzer targets.
 
 
-def run_agent_d(agent_c_result, harness_root="harness_packages", project_root=None):
+def run_agent_d(agent_c_result, harness_root="harness_packages", project_root=None, enable_compile_check=False):
     harness_root = Path(harness_root)
     harness_root.mkdir(parents=True, exist_ok=True)
     project_root = Path(project_root).resolve() if project_root else None
@@ -31,6 +33,7 @@ def run_agent_d(agent_c_result, harness_root="harness_packages", project_root=No
         crashes_dir.mkdir(parents=True, exist_ok=True)
 
         strategy = infer_harness_strategy(finding)
+        quality_gate = infer_harness_quality(strategy)
 
         (package_dir / "afl_harness.c").write_text(
             make_afl_harness(finding, strategy),
@@ -69,12 +72,22 @@ def run_agent_d(agent_c_result, harness_root="harness_packages", project_root=No
             "seed_dir": str(seeds_dir),
             "seed_files": seed_files,
             "asan_build_command": "make asan",
+            "compile_command": "make asan",
             "afl_build_command": "make afl",
             "libfuzzer_build_command": "make libfuzzer",
             "asan_run_command": "./asan_target seeds/seed_001.bin",
             "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+            "prototype_confidence": quality_gate["prototype_confidence"],
+            "build_ready": quality_gate["build_ready"],
+            "manual_adaptation_required": quality_gate["manual_adaptation_required"],
+            "compile_check": run_compile_check(package_dir, enable_compile_check),
+            "llm_fixer": {
+                "enabled": False,
+                "status": "reserved",
+                "notes": "Compile stderr is captured for a future LLM harness fixer, but automatic mutation is disabled by default."
+            },
             "notes": (
-                "Part 4.1 generated harness package. "
+                "Agent E generated harness package. "
                 "The target source and harness are compiled separately so -Dmain only affects the target source."
             )
         }
@@ -83,11 +96,14 @@ def run_agent_d(agent_c_result, harness_root="harness_packages", project_root=No
         packages.append(package)
 
     return {
-        "agent": "Agent D - Harness Automatic Generation",
+        "agent": "Agent E - Harness Builder and Fixer Agent",
         "harness_packages": packages,
         "summary": {
             "total_packages": len(packages),
-            "packages_by_cwe": count_by_cwe(packages)
+            "packages_by_cwe": count_by_cwe(packages),
+            "build_ready_packages": sum(1 for p in packages if p.get("build_ready")),
+            "manual_adaptation_required": sum(1 for p in packages if p.get("manual_adaptation_required")),
+            "compile_checks_executed": sum(1 for p in packages if p.get("compile_check", {}).get("executed"))
         }
     }
 
@@ -265,6 +281,56 @@ def infer_function_prototype(finding, strategy):
         return f"void {function}(const char *input);"
 
     return f"/* TODO: declare the real target function prototype for {function}. */"
+
+
+def infer_harness_quality(strategy):
+    manual = strategy.get("argument_model") == "manual_adaptation_required"
+    return {
+        "prototype_confidence": 0.25 if manual else 0.78,
+        "build_ready": not manual,
+        "manual_adaptation_required": manual,
+    }
+
+
+def run_compile_check(package_dir, enable_compile_check):
+    if not enable_compile_check:
+        return {
+            "executed": False,
+            "status": "skipped",
+            "reason": "compile_check_disabled",
+            "stderr_excerpt": "",
+        }
+    if not shutil.which("make"):
+        return {
+            "executed": False,
+            "status": "skipped",
+            "reason": "make_not_found",
+            "stderr_excerpt": "",
+        }
+    try:
+        completed = subprocess.run(
+            ["make", "asan"],
+            cwd=str(package_dir),
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        return {
+            "executed": True,
+            "status": "passed" if completed.returncode == 0 else "failed",
+            "returncode": completed.returncode,
+            "stdout_excerpt": (completed.stdout or "")[-1200:],
+            "stderr_excerpt": (completed.stderr or "")[-1200:],
+        }
+    except Exception as exc:
+        return {
+            "executed": True,
+            "status": "failed",
+            "returncode": None,
+            "stdout_excerpt": "",
+            "stderr_excerpt": str(exc)[-1200:],
+        }
 
 
 def make_target_call_for_afl(function, strategy):
