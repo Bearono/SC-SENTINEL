@@ -75,11 +75,7 @@ def normalize_nvd_item(item):
             if value and value not in weaknesses:
                 weaknesses.append(value)
 
-    references = [
-        ref.get("url")
-        for ref in cve.get("references", {}).get("referenceData", [])
-        if ref.get("url")
-    ][:5]
+    references = extract_references(cve)
 
     return {
         "source": "NVD",
@@ -112,6 +108,25 @@ def extract_cvss(cve):
                 return None
 
     return None
+
+
+def extract_references(cve):
+    refs = cve.get("references", [])
+
+    # NVD API 2.0 returns a list of reference objects:
+    # {"references": [{"url": "...", "source": "..."}]}
+    if isinstance(refs, list):
+        return [ref.get("url") for ref in refs if isinstance(ref, dict) and ref.get("url")][:5]
+
+    # Keep compatibility with the older 1.x style shape.
+    if isinstance(refs, dict):
+        return [
+            ref.get("url")
+            for ref in refs.get("referenceData", [])
+            if isinstance(ref, dict) and ref.get("url")
+        ][:5]
+
+    return []
 
 
 def score_to_risk(score):

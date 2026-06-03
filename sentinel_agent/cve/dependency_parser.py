@@ -41,7 +41,61 @@ KNOWN_COMPONENTS = {
         "keywords": ["libxml2", "xml2"],
         "ecosystem_candidates": ["OSS-Fuzz"],
         "purl_name": "libxml2"
+    },
+    "boost": {
+        "headers": ["boost/asio.hpp", "boost/filesystem.hpp", "boost/algorithm/string.hpp"],
+        "keywords": ["boost", "boost::filesystem", "boost::system"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "boost"
+    },
+    "protobuf": {
+        "headers": ["google/protobuf/message.h", "google/protobuf/descriptor.h"],
+        "keywords": ["protobuf", "libprotobuf", "protobuf::libprotobuf"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "protobuf"
+    },
+    "grpc": {
+        "headers": ["grpc/grpc.h", "grpcpp/grpcpp.h"],
+        "keywords": ["grpc", "grpc++", "grpc::grpc++"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "grpc"
+    },
+    "expat": {
+        "headers": ["expat.h"],
+        "keywords": ["expat", "expat::expat"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "expat"
+    },
+    "libjpeg-turbo": {
+        "headers": ["jpeglib.h", "turbojpeg.h"],
+        "keywords": ["libjpeg", "jpeg", "turbojpeg", "libjpeg-turbo"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "libjpeg-turbo"
+    },
+    "freetype": {
+        "headers": ["ft2build.h", "freetype/freetype.h"],
+        "keywords": ["freetype", "freetype2"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "freetype"
+    },
+    "libssh2": {
+        "headers": ["libssh2.h"],
+        "keywords": ["libssh2", "ssh2"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "libssh2"
+    },
+    "yaml-cpp": {
+        "headers": ["yaml-cpp/yaml.h"],
+        "keywords": ["yaml-cpp", "yaml_cpp"],
+        "ecosystem_candidates": ["OSS-Fuzz"],
+        "purl_name": "yaml-cpp"
     }
+}
+
+SYSTEM_HEADER_PREFIXES = {
+    "stdio", "stdlib", "string", "strings", "stdint", "stddef", "unistd",
+    "errno", "time", "math", "vector", "string", "map", "set", "memory",
+    "algorithm", "iostream", "fstream", "sstream", "utility", "limits"
 }
 
 
@@ -79,6 +133,16 @@ def infer_components(source_files, metadata_files):
 def _infer_from_includes(source_files, evidence):
     for item in extract_includes(source_files):
         header = item["header"].lower()
+        normalized = normalize_header_component(header)
+        if normalized:
+            evidence[normalized].append({
+                "source": "include",
+                "file": item["file"],
+                "evidence": f'#include <{item["header"]}>',
+                "version_hint": None
+            })
+            continue
+
         for component_name, info in KNOWN_COMPONENTS.items():
             if header in [h.lower() for h in info.get("headers", [])]:
                 evidence[component_name].append({
@@ -113,13 +177,11 @@ def _parse_cmake(mf, evidence):
     # find_package(OpenSSL REQUIRED)
     for pkg in re.findall(r'find_package\s*\(\s*([A-Za-z0-9_\-]+)', text, flags=re.IGNORECASE):
         normalized = normalize_component_name(pkg)
-        if normalized:
-            evidence[normalized].append({
-                "source": "CMakeLists.txt",
-                "file": mf["relative_path"],
-                "evidence": f"find_package({pkg})",
-                "version_hint": None
-            })
+        add_dependency_evidence(evidence, normalized or pkg, "CMakeLists.txt", mf["relative_path"], f"find_package({pkg})")
+
+    for lib in re.findall(r'(?:^|\s)-l([A-Za-z0-9_\-+.]+)', text):
+        normalized = normalize_component_name(lib)
+        add_dependency_evidence(evidence, normalized or lib, "CMakeLists.txt", mf["relative_path"], f"-l{lib}")
 
     # target_link_libraries(app OpenSSL::SSL zlib ...)
     for component_name, info in KNOWN_COMPONENTS.items():
@@ -144,6 +206,9 @@ def _parse_makefile(mf, evidence):
                     "evidence": keyword,
                     "version_hint": None
                 })
+    for lib in re.findall(r'(?:^|\s)-l([A-Za-z0-9_\-+.]+)', mf["content"]):
+        normalized = normalize_component_name(lib)
+        add_dependency_evidence(evidence, normalized or lib, mf["name"], mf["relative_path"], f"-l{lib}")
 
 
 def _parse_vcpkg_json(mf, evidence):
@@ -164,13 +229,7 @@ def _parse_vcpkg_json(mf, evidence):
             continue
 
         normalized = normalize_component_name(dep_name)
-        if normalized:
-            evidence[normalized].append({
-                "source": "vcpkg.json",
-                "file": mf["relative_path"],
-                "evidence": dep_name,
-                "version_hint": version_hint
-            })
+        add_dependency_evidence(evidence, normalized or dep_name, "vcpkg.json", mf["relative_path"], dep_name, version_hint)
 
 
 def _parse_conanfile(mf, evidence):
@@ -186,13 +245,7 @@ def _parse_conanfile(mf, evidence):
 
         dep_name, version = match.group(1), match.group(2)
         normalized = normalize_component_name(dep_name)
-        if normalized:
-            evidence[normalized].append({
-                "source": "conanfile.txt",
-                "file": mf["relative_path"],
-                "evidence": stripped,
-                "version_hint": version
-            })
+        add_dependency_evidence(evidence, normalized or dep_name, "conanfile.txt", mf["relative_path"], stripped, version)
 
 
 def _parse_generic_metadata(mf, evidence):
@@ -234,6 +287,24 @@ def normalize_component_name(name):
 
         "xml2": "libxml2",
         "libxml2": "libxml2",
+
+        "boost": "boost",
+        "boost_system": "boost",
+        "boost_filesystem": "boost",
+        "protobuf": "protobuf",
+        "libprotobuf": "protobuf",
+        "grpc": "grpc",
+        "grpc++": "grpc",
+        "expat": "expat",
+        "jpeg": "libjpeg-turbo",
+        "libjpeg": "libjpeg-turbo",
+        "turbojpeg": "libjpeg-turbo",
+        "freetype": "freetype",
+        "freetype2": "freetype",
+        "ssh2": "libssh2",
+        "libssh2": "libssh2",
+        "yaml-cpp": "yaml-cpp",
+        "yaml_cpp": "yaml-cpp",
     }
 
     if lower in alias_map:
@@ -243,7 +314,45 @@ def normalize_component_name(name):
         if lower in [kw.lower() for kw in info.get("keywords", [])]:
             return component_name
 
+    if is_reasonable_package_name(lower):
+        return lower
+
     return None
+
+
+def normalize_header_component(header):
+    for component_name, info in KNOWN_COMPONENTS.items():
+        if header in [h.lower() for h in info.get("headers", [])]:
+            return component_name
+
+    if "/" not in header:
+        stem = header.rsplit(".", 1)[0]
+        if stem in SYSTEM_HEADER_PREFIXES:
+            return None
+        return normalize_component_name(stem)
+
+    prefix = header.split("/", 1)[0]
+    return normalize_component_name(prefix)
+
+
+def add_dependency_evidence(evidence, name, source, file, evidence_text, version_hint=None):
+    normalized = normalize_component_name(name)
+    if not normalized:
+        return
+    evidence[normalized].append({
+        "source": source,
+        "file": file,
+        "evidence": str(evidence_text),
+        "version_hint": version_hint
+    })
+
+
+def is_reasonable_package_name(name):
+    if not name:
+        return False
+    if name in SYSTEM_HEADER_PREFIXES:
+        return False
+    return bool(re.fullmatch(r'[a-z0-9][a-z0-9_.+\-]{1,63}', name))
 
 
 def infer_version_from_evidence(evidence_items):

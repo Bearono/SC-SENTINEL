@@ -16,9 +16,10 @@ from core.json_utils import save_json
 #   3. links both object files into ASan/AFL++/libFuzzer targets.
 
 
-def run_agent_d(agent_c_result, harness_root="harness_packages"):
+def run_agent_d(agent_c_result, harness_root="harness_packages", project_root=None):
     harness_root = Path(harness_root)
     harness_root.mkdir(parents=True, exist_ok=True)
+    project_root = Path(project_root).resolve() if project_root else None
 
     packages = []
     for idx, finding in enumerate(agent_c_result.get("static_findings", []), start=1):
@@ -40,7 +41,7 @@ def run_agent_d(agent_c_result, harness_root="harness_packages"):
             encoding="utf-8"
         )
         (package_dir / "Makefile").write_text(
-            make_makefile(finding, strategy),
+            make_makefile(finding, strategy, project_root),
             encoding="utf-8"
         )
         (package_dir / "README.md").write_text(
@@ -335,9 +336,12 @@ free(buf);
 """.strip()
 
 
-def make_makefile(finding, strategy):
+def make_makefile(finding, strategy, project_root=None):
     target_file = finding.get("file")
-    target_src = f"../../samples/vulnerable_project/{target_file}"
+    if project_root:
+        target_src = str((project_root / target_file).resolve()).replace("\\", "/")
+    else:
+        target_src = f"../../samples/vulnerable_project/{target_file}"
 
     return f"""
 # SENTINEL Agent D generated Makefile - Part 4.1

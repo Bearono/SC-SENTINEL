@@ -41,7 +41,7 @@ def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packag
     save_json(to_backend_vulnerabilities(agent_c_result), output_dir / "agent_c_backend_vulnerabilities.json")
 
     print("[5/7] Agent D: harness package generation...")
-    agent_d_result = run_agent_d(agent_c_result, harness_root=harness_dir)
+    agent_d_result = run_agent_d(agent_c_result, harness_root=harness_dir, project_root=project_path)
     save_json(agent_d_result, output_dir / "agent_d_harness_packages.json")
 
     print("[6/7] Loading dynamic validation results...")

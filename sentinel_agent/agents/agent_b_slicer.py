@@ -34,6 +34,29 @@ RISK_KEYWORDS = [
     "new", "delete"
 ]
 
+RISK_KEYWORD_WEIGHTS = {
+    "gets": 5,
+    "strcpy": 4,
+    "strcat": 4,
+    "sprintf": 4,
+    "memcpy": 3,
+    "memmove": 3,
+    "free": 3,
+    "realloc": 3,
+    "scanf": 3,
+    "sscanf": 3,
+    "printf": 2,
+    "fprintf": 2,
+    "vprintf": 2,
+    "vfprintf": 2,
+    "syslog": 2,
+    "malloc": 1,
+    "calloc": 1,
+    "snprintf": 1,
+    "new": 1,
+    "delete": 1,
+}
+
 CONTROL_KEYWORDS = {
     "if", "for", "while", "switch", "return", "sizeof"
 }
@@ -74,6 +97,7 @@ def run_agent_b(source_files):
         slice_id = make_id("SLICE", idx)
 
         risk_keywords = find_risk_keywords(fn)
+        risk_score = score_slice_risk(fn, risk_keywords)
         code_slice = build_slice_code(fn, risk_keywords)
 
         slices.append({
@@ -90,6 +114,10 @@ def run_agent_b(source_files):
             "call_chain_upstream": fn["call_chain_upstream"],
             "callee_functions": fn["callee_functions"],
             "risk_keywords": risk_keywords,
+            "risk_score": risk_score,
+            "audit_priority": classify_audit_priority(risk_score),
+            "body_line_count": count_non_empty_lines(fn["body"]),
+            "context_line_count": count_context_lines(fn["context"]),
 
             "code": code_slice,
             "notes": (
@@ -104,7 +132,9 @@ def run_agent_b(source_files):
         "summary": {
             "total_slices": len(slices),
             "total_source_files": len(source_files),
-            "slices_with_risk_keywords": sum(1 for s in slices if s["risk_keywords"])
+            "slices_with_risk_keywords": sum(1 for s in slices if s["risk_keywords"]),
+            "high_priority_slices": sum(1 for s in slices if s["audit_priority"] == "high"),
+            "medium_priority_slices": sum(1 for s in slices if s["audit_priority"] == "medium")
         }
     }
 
@@ -443,6 +473,39 @@ def find_risk_keywords(function_obj):
             found.append(keyword)
 
     return found
+
+
+def score_slice_risk(function_obj, risk_keywords):
+    score = sum(RISK_KEYWORD_WEIGHTS.get(keyword, 1) for keyword in risk_keywords)
+    if function_obj.get("call_chain_upstream"):
+        score += 1
+    if function_obj.get("callee_functions"):
+        score += min(len(function_obj["callee_functions"]), 3)
+    return score
+
+
+def classify_audit_priority(score):
+    if score >= 6:
+        return "high"
+    if score >= 2:
+        return "medium"
+    return "low"
+
+
+def count_non_empty_lines(code):
+    return sum(1 for line in code.splitlines() if line.strip())
+
+
+def count_context_lines(context):
+    total = 0
+    for key in ("includes", "macros", "types", "globals"):
+        for item in context.get(key, []):
+            if "line_range" in item and isinstance(item["line_range"], list):
+                start, end = item["line_range"]
+                total += max(1, end - start + 1)
+            else:
+                total += 1
+    return total
 
 
 def remove_comments(code):
