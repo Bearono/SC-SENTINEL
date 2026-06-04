@@ -47,10 +47,14 @@ async def _update_task_db(
     new_status: TaskStatus,
     error_message: str | None = None,
     mark_complete: bool = False,
-) -> None:
+) -> bool:
     """
     内部辅助：在独立 Session 里更新 task 表的状态字段。
     Worker 进程没有 FastAPI 的请求上下文，必须手动管理 Session 生命周期。
+
+    Returns:
+        True 表示更新成功；False 表示任务已被取消（处于 FAILED 终态），
+        调用方应据此中止后续 Pipeline 阶段（协作式取消）。
     """
     from sqlalchemy import select
     from app.models.task import Task
@@ -63,7 +67,12 @@ async def _update_task_db(
             task = result.scalar_one_or_none()
             if task is None:
                 logger.warning(f"[Middleware] task_db_id={task_db_id} 不存在，跳过状态更新")
-                return
+                return False
+
+            # 协作式取消：若任务已被用户取消（FAILED 终态），不再覆盖回运行态
+            if task.status in (TaskStatus.FAILED, TaskStatus.COMPLETED) and not mark_complete:
+                logger.info(f"[Middleware] task={task_db_id} 已处于终态 {task.status.value}，跳过状态覆盖")
+                return False
 
             task.status = new_status
             if error_message is not None:
@@ -73,8 +82,10 @@ async def _update_task_db(
 
             await session.commit()
             logger.info(f"[Middleware] task={task_db_id} 状态更新为 {new_status.value}")
+            return True
     except Exception as e:
         logger.error(f"[Middleware] 数据库更新失败 task={task_db_id}: {e}", exc_info=True)
+        return False
 
 
 async def _broadcast_progress(
@@ -126,7 +137,15 @@ class SentinelMiddleware(TaskiqMiddleware):
         }
         human_msg = stage_labels.get(stage, f"任务阶段 {stage} 开始执行")
 
-        await _update_task_db(task_db_id, new_status)
+        # 协作式取消：_update_task_db 返回 False 表示任务已被取消，
+        # 此时广播取消提示，后续 Worker 任务体也会自行检测并提前返回。
+        updated = await _update_task_db(task_db_id, new_status)
+        if not updated:
+            await _broadcast_progress(
+                task_db_id, stage="failed", percent=percent,
+                message="⏹ 任务已被取消，流水线终止",
+            )
+            return message
         await _broadcast_progress(task_db_id, stage, percent, human_msg)
         return message
 

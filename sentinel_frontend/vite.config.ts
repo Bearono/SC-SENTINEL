@@ -12,16 +12,11 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // 所有 /api 请求代理到后端，解决跨域问题
+      // 所有 /api 请求代理到后端（含 WebSocket：/api/v1/ws/...）
       '/api': {
         target: 'http://127.0.0.1:18000',
-        changeOrigin: true
-      },
-      // WebSocket 代理
-      '/ws': {
-        target: 'ws://127.0.0.1:18000',
-        ws: true,
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true
       }
     }
   }

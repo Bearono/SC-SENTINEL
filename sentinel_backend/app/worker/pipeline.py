@@ -24,6 +24,26 @@ from app.models.task import Task, TaskStatus
 logger = logging.getLogger(__name__)
 
 
+async def _is_task_cancelled(task_db_id: str) -> bool:
+    """
+    检查任务是否已被用户取消（处于 FAILED 终态）。
+    供链式触发函数在投递下一阶段前调用，实现协作式取消：
+    一旦任务被 cancel 接口标记为 FAILED，后续阶段不再下发。
+    """
+    from sqlalchemy import select
+
+    try:
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(Task.status).where(Task.id == uuid.UUID(task_db_id))
+            )
+            status = result.scalar_one_or_none()
+            return status in (TaskStatus.FAILED, TaskStatus.COMPLETED)
+    except Exception as e:
+        logger.warning(f"[Pipeline] 取消状态检查失败 task={task_db_id}: {e}")
+        return False
+
+
 async def dispatch_audit_pipeline(
     task_db_id: str,
     source_path: str,
@@ -65,7 +85,7 @@ async def dispatch_audit_pipeline(
         run_sbom_analysis
         .kicker()
         .with_labels(task_db_id=task_db_id, stage="sbom", is_dynamic=str(is_dynamic))
-        .kiq(task_db_id, source_path)
+        .kiq(task_db_id, source_path, is_dynamic)
     )
 
     logger.info(f"[Pipeline] task={task_db_id} 第一阶段（SBOM）已投递，等待 Worker 拾取")
@@ -74,6 +94,9 @@ async def dispatch_audit_pipeline(
 # ── 阶段二触发函数（由 sbom_task 在成功时调用）────────────────────────────────
 async def trigger_llm_stage(task_db_id: str, source_path: str, is_dynamic: bool) -> None:
     """sbom_task 执行成功后调用此函数，投递 LLM 审计任务"""
+    if await _is_task_cancelled(task_db_id):
+        logger.info(f"[Pipeline] task={task_db_id} 已取消，跳过 LLM 阶段投递")
+        return
     from app.worker.llm_task import run_llm_audit
     await (
         run_llm_audit
@@ -87,6 +110,9 @@ async def trigger_llm_stage(task_db_id: str, source_path: str, is_dynamic: bool)
 # ── 阶段三触发函数（由 llm_task 在成功时调用）────────────────────────────────
 async def trigger_fuzzing_stage(task_db_id: str, source_path: str) -> None:
     """llm_task 执行成功且 is_dynamic=True 时调用，投递 Fuzzing 任务"""
+    if await _is_task_cancelled(task_db_id):
+        logger.info(f"[Pipeline] task={task_db_id} 已取消，跳过 Fuzzing 阶段投递")
+        return
     from app.worker.fuzzing_task import run_dynamic_fuzzing
     await (
         run_dynamic_fuzzing

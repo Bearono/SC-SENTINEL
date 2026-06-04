@@ -1,449 +1,201 @@
 <template>
-  <div class="home-page">
-    <!-- Hero 区域 -->
-    <section class="hero-section">
-      <div class="container">
-        <div class="hero-badge">
-          <span class="badge badge--running">✦ CISCN 2025</span>
-        </div>
-        <h1 class="hero-title">
-          面向 C/C++ 开源供应链的<br />
-          <span class="title-accent">智能漏洞审计</span>系统
-        </h1>
-        <p class="hero-subtitle">
-          基于 eBPF 内核级探针 + LLM 语义分析，深度挖掘供应链组件中的
-          UAF、堆溢出、Double Free 等内存安全漏洞
-        </p>
-        <div class="hero-actions">
-          <el-button
-            type="primary"
-            size="large"
-            class="btn-start"
-            @click="scrollToUpload"
-          >
-            <el-icon><Upload /></el-icon>
-            开始审计
-          </el-button>
-          <el-button
-            size="large"
-            class="btn-demo"
-            plain
-            @click="fillHeartbleedDemo"
-          >
-            <el-icon><View /></el-icon>
-            查看 Demo (Heartbleed)
-          </el-button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 底部统计数字卡片 -->
-    <section class="stats-section">
-      <div class="container">
-        <div class="stats-grid">
-          <div v-for="stat in stats" :key="stat.label" class="stat-card sentinel-card">
-            <div class="stat-value count-up">{{ stat.value }}</div>
-            <div class="stat-label">{{ stat.label }}</div>
+  <div class="page-home">
+    <!-- HERO -->
+    <div class="hero-wrap">
+      <div class="orb orb1" /><div class="orb orb2" /><div class="orb orb3" />
+      <div class="hero">
+        <div>
+          <div class="hbadge reveal"><span class="hbdot" />CISCN · Supply Chain Security</div>
+          <h1 class="htitle reveal reveal-delay-1">LLM suspects.<br />eBPF <span class="accent">confirms.</span></h1>
+          <p class="hdesc reveal reveal-delay-2">SENTINEL 是面向 C/C++ 开发者的供应链安全左移工具。Multi-Agent 静态语义审计发现可疑漏洞，AFL++ 模糊测试 + eBPF 内核级监控将推测转化为可触发的崩溃铁证。</p>
+          <div class="hactions reveal reveal-delay-3">
+            <button class="bp bw" style="padding:11px 26px;font-size:14px" @click="router.push('/submit')">Submit Project →</button>
+            <button class="bp bg" style="padding:11px 26px;font-size:14px" @click="router.push('/history')">View History</button>
           </div>
+          <p class="hnote reveal reveal-delay-4">支持 .zip 上传 · GitHub 链接 · Docker 隔离沙箱 · 自动销毁 · eBPF 内核透明监控</p>
         </div>
-      </div>
-    </section>
-
-    <!-- 上传区域 -->
-    <section id="upload-section" class="upload-section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">提交审计项目</h2>
-          <p class="section-desc">上传 C/C++ 源码压缩包，系统将自动进行 SBOM 分析、LLM 语义审计与动态 Fuzzing 验证</p>
-        </div>
-
-        <div class="upload-layout">
-          <!-- 左：上传框 -->
-          <div class="upload-panel sentinel-card">
-            <h3 class="panel-title">源码上传</h3>
-
-            <!-- 拖拽上传区 -->
-            <div
-              class="drop-zone"
-              :class="{ 'drop-zone--active': isDragging, 'drop-zone--filled': uploadedFile }"
-              @dragover.prevent="isDragging = true"
-              @dragleave.prevent="isDragging = false"
-              @drop.prevent="onDrop"
-              @click="triggerFileInput"
-            >
-              <input
-                ref="fileInputRef"
-                type="file"
-                accept=".zip"
-                style="display: none"
-                @change="onFileSelect"
-              />
-              <template v-if="!uploadedFile">
-                <el-icon class="drop-icon"><FolderAdd /></el-icon>
-                <p class="drop-text">拖拽 <strong>.zip</strong> 文件到此处，或点击选择</p>
-                <p class="drop-hint">仅支持 .zip 格式，建议 &lt; 50MB</p>
-              </template>
-              <template v-else>
-                <el-icon class="drop-icon drop-icon--filled"><DocumentChecked /></el-icon>
-                <p class="drop-text file-name">{{ uploadedFile.name }}</p>
-                <p class="drop-hint">{{ formatFileSize(uploadedFile.size) }}</p>
-                <el-button
-                  size="small"
-                  type="danger"
-                  plain
-                  class="remove-file-btn"
-                  @click.stop="uploadedFile = null"
-                >移除</el-button>
-              </template>
-            </div>
-
-            <!-- 分隔线 -->
-            <div class="divider"><span>或填写 GitHub 仓库地址</span></div>
-
-            <!-- GitHub URL 输入框 -->
-            <el-input
-              v-model="form.github_url"
-              placeholder="https://github.com/username/repo"
-              :prefix-icon="Link"
-              clearable
-              size="large"
-            />
-          </div>
-
-          <!-- 右：审计选项 -->
-          <div class="options-panel sentinel-card">
-            <h3 class="panel-title">审计选项</h3>
-
-            <!-- 项目名称 -->
-            <div class="form-item">
-              <label class="form-label">项目名称 <span class="required">*</span></label>
-              <el-input
-                v-model="form.project_name"
-                placeholder="例如：openssl-1.0.1e"
-                size="large"
-                clearable
-              />
-            </div>
-
-            <!-- 启用动态验证 -->
-            <div class="form-item">
-              <div class="switch-row">
-                <div>
-                  <div class="form-label">启用动态验证（eBPF + AFL++）</div>
-                  <div class="form-desc">勾选后将在隔离 Docker 沙箱中进行 Fuzzing 测试</div>
-                </div>
-                <el-switch
-                  v-model="form.is_dynamic"
-                  active-color="var(--sentinel-warning)"
-                  inactive-color="var(--border-normal)"
-                />
+        <div class="dcard-wrap reveal reveal-delay-2">
+          <div class="dcard">
+            <div class="dctop">
+              <div class="dctop-row">
+                <span class="dcname">vulnerable_server.zip</span>
+                <div class="dclive"><span class="dldot" />Fuzzing · 65%</div>
               </div>
-              <Transition name="el-fade-in">
-                <div v-if="form.is_dynamic" class="time-estimate">
-                  <el-icon><Timer /></el-icon>
-                  预计额外增加 <strong>约 5 分钟</strong>（沙箱 Fuzzing 时间）
-                </div>
-              </Transition>
+              <div class="dstages">
+                <div class="ds"><div class="dsico done">✓</div><div class="dsin"><div class="dsn">Agent A — Dependency Risk</div><div class="dss">libpng 1.6.34 · CVE-2018-13785</div></div></div>
+                <div class="ds"><div class="dsico done">✓</div><div class="dsin"><div class="dsn">Agent B — Semantic Audit</div><div class="dss">找到 3 处 UAF / 1 处堆溢出</div></div></div>
+                <div class="ds"><div class="dsico run">⬡</div><div class="dsin"><div class="dsn">AFL++ Fuzzing + eBPF Monitor</div><div class="dss">动态验证中 — 已捕获 2 次崩溃</div><div class="dspbar"><div class="dspfill" /></div></div></div>
+                <div class="ds"><div class="dsico wait">◎</div><div class="dsin"><div class="dsn">Agent C — Report</div><div class="dss">等待验证完成</div></div></div>
+              </div>
             </div>
-
-            <!-- 目标漏洞类型 -->
-            <div class="form-item">
-              <label class="form-label">目标漏洞类型</label>
-              <el-checkbox-group v-model="form.vuln_types" class="vuln-checkboxes">
-                <el-checkbox value="uaf">Use-After-Free (UAF)</el-checkbox>
-                <el-checkbox value="heap_overflow">堆溢出 (Heap Overflow)</el-checkbox>
-                <el-checkbox value="double_free">Double Free</el-checkbox>
-                <el-checkbox value="stack_overflow">栈溢出 (Stack Overflow)</el-checkbox>
-              </el-checkbox-group>
+            <div class="dcbody">
+              <div class="dflabel">Confirmed Findings</div>
+              <div class="dfrow"><span class="dftag">UAF</span><span class="dffile">parser.c:247</span><span class="dbadge b-ok">● eBPF Confirmed</span></div>
+              <div class="dfrow"><span class="dftag">HEAP-OVF</span><span class="dffile">network.c:891</span><span class="dbadge b-cr">Critical</span></div>
+              <div class="dfrow"><span class="dftag">DBL-FREE</span><span class="dffile">cache.c:134</span><span class="dbadge b-un">Verifying…</span></div>
             </div>
-
-            <!-- 提交按钮 -->
-            <el-button
-              type="primary"
-              size="large"
-              class="submit-btn"
-              :loading="submitting"
-              :disabled="!canSubmit"
-              @click="handleSubmit"
-            >
-              <el-icon v-if="!submitting"><Promotion /></el-icon>
-              {{ submitting ? '提交中...' : '开始审计' }}
-            </el-button>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="feat-strip">
+      <div class="feat-bg" />
+      <div class="feat-inner">
+        <div class="fitem reveal"><div class="fnum">0<sub>% false neg.</sub></div><div class="ftit">动态验证闭环</div><div class="fdesc">LLM 找嫌疑人，eBPF + AFL++ 出崩溃证据，每个 "confirmed" 漏洞都有内核级时间戳和内存地址作为铁证。</div></div>
+        <div class="fitem reveal reveal-delay-1"><div class="fnum">4<sub> agents</sub></div><div class="ftit">Multi-Agent 架构</div><div class="fdesc">Agent A 识别第三方依赖 CVE，Agent B 审计源码语义，Agent C 汇总生成结构化报告与 PDF。</div></div>
+        <div class="fitem reveal reveal-delay-2"><div class="fnum">∞<sub> isolated</sub></div><div class="ftit">Docker 隔离沙箱</div><div class="fdesc">每次 Fuzzing 在独立容器内执行，完成后自动销毁。eBPF 运行在内核层，对被测程序完全透明。</div></div>
+      </div>
+    </div>
+
+    <!-- PIPELINE -->
+    <div class="pipe-section">
+      <div class="eyebrow reveal">How It Works</div>
+      <h2 class="sec-h reveal reveal-delay-1">两阶段双机制，<em>从静态到内核</em></h2>
+      <p class="sec-s reveal reveal-delay-2">Multi-Agent 静态审计 → 动态 AFL++ 验证 → eBPF 内核事件捕获，三层递进，证据链完整。</p>
+      <div class="pipe-cards reveal reveal-delay-3">
+        <div class="pc"><div class="pc-num">01</div><div class="pc-tag ta">Agent A</div><div class="pc-name">Dependency Risk</div><div class="pc-desc">识别 CMakeLists.txt 中第三方库，比对 NVD/OSV，输出 CVE 风险摘要。</div></div>
+        <div class="pc"><div class="pc-num">02</div><div class="pc-tag ta">Agent B</div><div class="pc-name">Semantic Audit</div><div class="pc-desc">按函数粒度切片，识别 UAF / 堆溢出 / Double Free，输出漏洞位置和触发条件。</div></div>
+        <div class="pc"><div class="pc-num">03</div><div class="pc-tag te">eBPF + AFL++</div><div class="pc-name">Dynamic Verify</div><div class="pc-desc">Docker 沙箱 AFL++ 模糊测试，uprobe 挂载 malloc/free，内核层捕获 UAF 事件。</div></div>
+        <div class="pc"><div class="pc-num">04</div><div class="pc-tag tr">Agent C</div><div class="pc-name">Report Synthesis</div><div class="pc-desc">整合所有输出，生成含修复建议的 JSON 结构化报告与可下载 PDF。</div></div>
+      </div>
+    </div>
+
+    <!-- COMPARE -->
+    <div class="cmp-section">
+      <div class="cmp-inner">
+        <div class="eyebrow reveal">Why SENTINEL</div>
+        <h2 class="sec-h reveal reveal-delay-1">不只是静态扫描，而是可触发的证据</h2>
+        <p class="sec-s reveal reveal-delay-2" style="margin-bottom:40px">对比纯 LLM 代码审计，SENTINEL 在每个核心维度都提供了更强的保障</p>
+        <table class="cmp-table reveal reveal-delay-3">
+          <thead><tr><th>维度</th><th>纯 LLM 代码审计</th><th>SENTINEL</th></tr></thead>
+          <tbody>
+            <tr><td>结果可信度</td><td>LLM 推测，误报率高</td><td>动态验证后输出，附崩溃证据 <span class="tw-pill">✓</span></td></tr>
+            <tr><td>分析视角</td><td>仅看源码文本</td><td>源码 + 运行时内核事件双视角 <span class="tw-pill">✓</span></td></tr>
+            <tr><td>供应链感知</td><td>不感知依赖引入风险</td><td>识别第三方依赖 CVE 风险 <span class="tw-pill">✓</span></td></tr>
+            <tr><td>eBPF 运用</td><td style="color:var(--fog)">无</td><td>uprobe 挂载 malloc/free，内核级观测 <span class="tw-pill">✓</span></td></tr>
+            <tr><td>验证手段</td><td style="color:var(--fog)">无</td><td>AFL++ 模糊测试 + LLM Payload 生成 <span class="tw-pill">✓</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Upload, View, FolderAdd, DocumentChecked, Link, Timer, Promotion } from '@element-plus/icons-vue'
-import { submitTask } from '@/api/tasks'
 
 const router = useRouter()
 
-// ── 统计数字（静态展示数据，可替换为接口数据） ─────────────────
-const stats = [
-  { value: '142',    label: '已审计项目数' },
-  { value: '1,038',  label: '发现漏洞总数' },
-  { value: '8.3 min', label: '平均审计时长' }
-]
+function checkReveal() {
+  document.querySelectorAll('.page-home .reveal').forEach((el) => {
+    const r = el.getBoundingClientRect()
+    if (r.top < window.innerHeight - 60) el.classList.add('in')
+  })
+}
 
-// ── 表单状态 ────────────────────────────────────────────────────
-const fileInputRef = ref<HTMLInputElement | null>(null)
-const uploadedFile = ref<File | null>(null)
-const isDragging = ref(false)
-const submitting = ref(false)
-
-const form = ref({
-  project_name: '',
-  github_url: '',
-  is_dynamic: false,
-  vuln_types: ['uaf', 'heap_overflow', 'double_free', 'stack_overflow'] as string[]
+onMounted(() => {
+  setTimeout(checkReveal, 80)
+  window.addEventListener('scroll', checkReveal, { passive: true })
 })
-
-const canSubmit = computed(() => {
-  const hasSource = uploadedFile.value !== null || form.value.github_url.trim() !== ''
-  return hasSource && form.value.project_name.trim() !== ''
-})
-
-// ── 文件上传逻辑 ─────────────────────────────────────────────────
-function triggerFileInput() {
-  if (!uploadedFile.value) fileInputRef.value?.click()
-}
-
-function onFileSelect(e: Event) {
-  const input = e.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (file) validateAndSetFile(file)
-}
-
-function onDrop(e: DragEvent) {
-  isDragging.value = false
-  const file = e.dataTransfer?.files[0]
-  if (file) validateAndSetFile(file)
-}
-
-function validateAndSetFile(file: File) {
-  if (!file.name.endsWith('.zip')) {
-    ElMessage.error('仅支持 .zip 格式文件')
-    return
-  }
-  if (file.size > 100 * 1024 * 1024) {
-    ElMessage.warning('文件大小建议不超过 100MB')
-  }
-  uploadedFile.value = file
-  if (!form.value.project_name) {
-    // 自动填充项目名
-    form.value.project_name = file.name.replace(/\.zip$/, '')
-  }
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
-
-// ── Heartbleed Demo 预填 ─────────────────────────────────────────
-function fillHeartbleedDemo() {
-  form.value.project_name = 'OpenSSL-1.0.1e-Heartbleed'
-  form.value.github_url = 'https://github.com/openssl/openssl'
-  form.value.is_dynamic = true
-  form.value.vuln_types = ['uaf', 'heap_overflow']
-  ElMessage.info('已预填 Heartbleed 演示数据')
-  scrollToUpload()
-}
-
-// ── 提交 ─────────────────────────────────────────────────────────
-async function handleSubmit() {
-  if (!canSubmit.value) return
-
-  try {
-    await ElMessageBox.confirm(
-      `确认提交项目「${form.value.project_name}」进行审计？${form.value.is_dynamic ? '（已启用动态验证，预计约 5 分钟）' : ''}`,
-      '确认提交',
-      { confirmButtonText: '确认', cancelButtonText: '取消', type: 'info' }
-    )
-  } catch {
-    return // 用户取消
-  }
-
-  submitting.value = true
-  try {
-    const fd = new FormData()
-    fd.append('project_name', form.value.project_name.trim())
-    fd.append('is_dynamic', String(form.value.is_dynamic))
-    fd.append('vuln_types', form.value.vuln_types.join(','))
-
-    if (uploadedFile.value) {
-      fd.append('file', uploadedFile.value)
-      fd.append('source_type', 'zip')
-    } else {
-      fd.append('github_url', form.value.github_url.trim())
-      fd.append('source_type', 'github')
-    }
-
-    const resp = await submitTask(fd)
-    const taskId = resp.data.data.id
-
-    ElMessage.success('任务已提交，正在跳转到审计详情页...')
-    router.push({ name: 'report', params: { id: taskId } })
-  } finally {
-    submitting.value = false
-  }
-}
-
-function scrollToUpload() {
-  document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })
-}
+onUnmounted(() => window.removeEventListener('scroll', checkReveal))
 </script>
 
 <style scoped>
-.home-page { min-height: 100vh; }
+.hero-wrap { position: relative; overflow: hidden; padding: 0 44px; }
+.orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .22; pointer-events: none; animation: od 12s ease-in-out infinite; }
+.orb1 { width: 520px; height: 520px; background: radial-gradient(circle, #ff8c42, transparent 70%); top: -100px; right: 60px; }
+.orb2 { width: 360px; height: 360px; background: radial-gradient(circle, #f7c665, transparent 70%); top: 220px; right: 360px; animation-delay: -4s; }
+.orb3 { width: 260px; height: 260px; background: radial-gradient(circle, #ff6b35, transparent 70%); top: 60px; right: 500px; animation-delay: -8s; }
+@keyframes od { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(22px, -28px) scale(1.05); } 66% { transform: translate(-14px, 18px) scale(.97); } }
+.hero { max-width: 1200px; margin: 0 auto; padding: 96px 0 88px; display: grid; grid-template-columns: 1fr 460px; gap: 72px; align-items: center; position: relative; z-index: 1; }
+.hbadge { display: inline-flex; align-items: center; gap: 7px; padding: 5px 13px; border-radius: 9999px; border: 1px solid rgba(255, 107, 53, .3); background: rgba(255, 107, 53, .07); font-size: 11px; font-weight: 600; color: #c4430a; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 28px; }
+.hbdot { width: 6px; height: 6px; border-radius: 50%; background: var(--w1); animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.7); } }
+.htitle { font-family: var(--fd); font-size: 62px; font-weight: 400; line-height: 1.04; letter-spacing: -1.2px; margin-bottom: 22px; }
+.accent { background: linear-gradient(135deg, var(--w1) 0%, var(--amber) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hdesc { font-size: 15.5px; line-height: 1.7; color: var(--grv); max-width: 480px; margin-bottom: 36px; }
+.hactions { display: flex; gap: 10px; align-items: center; }
+.hnote { font-size: 11.5px; color: var(--fog); margin-top: 14px; }
+/* CHUNK2 */
+.dcard-wrap { perspective: 1200px; }
+.dcard { background: #fff; border-radius: 22px; box-shadow: 0 2px 2px rgba(0, 0, 0, .04), 0 12px 40px rgba(0, 0, 0, .12), 0 0 0 1px rgba(0, 0, 0, .06); overflow: hidden; transform: rotateY(-4deg) rotateX(2deg); transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+.dcard-wrap:hover .dcard { transform: rotateY(0deg) rotateX(0deg); }
+.dctop { background: linear-gradient(160deg, #161210 0%, #2c2016 100%); padding: 18px 20px 14px; border-bottom: 1px solid rgba(255, 255, 255, .07); }
+.dctop-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.dcname { font-size: 13px; font-weight: 600; color: #fff; }
+.dclive { display: flex; align-items: center; gap: 5px; font-size: 11px; color: rgba(255, 255, 255, .4); }
+.dldot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; animation: pulse 1.5s infinite; }
+.dstages { padding: 4px 0 8px; }
+.ds { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255, 255, 255, .055); }
+.ds:last-child { border-bottom: none; }
+.dsico { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.dsico.done { background: linear-gradient(135deg, var(--w1), var(--amber)); color: #fff; }
+.dsico.run { background: rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .5); animation: blink 1.8s infinite; }
+.dsico.wait { background: rgba(255, 255, 255, .05); color: rgba(255, 255, 255, .2); }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.dsin { flex: 1; }
+.dsn { font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, .85); }
+.dss { font-size: 11px; color: rgba(255, 255, 255, .36); margin-top: 1px; }
+.dspbar { height: 2px; background: rgba(255, 255, 255, .08); border-radius: 9999px; margin-top: 5px; overflow: hidden; }
+.dspfill { height: 100%; border-radius: 9999px; background: linear-gradient(90deg, var(--w1), var(--amber)); width: 65%; animation: grow 2s ease-out both; }
+@keyframes grow { from { width: 0; } }
+.dcbody { padding: 16px 20px 18px; }
+.dflabel { font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--fog); margin-bottom: 10px; }
+.dfrow { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--ch); font-size: 12px; }
+.dfrow:last-child { border-bottom: none; }
+.dftag { font-family: var(--fm); font-size: 10px; padding: 3px 7px; border-radius: 4px; background: var(--obs); color: #fff; flex-shrink: 0; }
+.dffile { color: var(--grv); flex: 1; font-family: var(--fm); font-size: 11px; }
+/* CHUNK3 */
+.feat-strip { border-top: 1px solid var(--ch); position: relative; overflow: hidden; }
+.feat-bg { position: absolute; inset: 0; background: linear-gradient(180deg, var(--w4) 0%, transparent 100%); opacity: .8; }
+.feat-inner { max-width: 1200px; margin: 0 auto; padding: 64px 44px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 52px; position: relative; z-index: 1; }
+.fnum { font-family: var(--fd); font-size: 44px; line-height: 1; margin-bottom: 10px; background: linear-gradient(135deg, var(--w1), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.fnum sub { font-size: 15px; color: var(--grv); font-family: var(--fb); -webkit-text-fill-color: var(--grv); }
+.ftit { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.fdesc { font-size: 13px; color: var(--grv); line-height: 1.6; }
 
-/* ── Hero ── */
-.hero-section {
-  padding: 80px 0 60px;
-  background: linear-gradient(180deg, #0d1821 0%, #112233 100%);
-  border-bottom: 1px solid var(--border-subtle);
-}
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-.hero-badge { margin-bottom: 20px; }
-.hero-title {
-  font-size: 44px;
-  font-weight: 700;
-  line-height: 1.25;
-  color: var(--text-primary);
-  margin-bottom: 20px;
-}
-.title-accent { color: var(--sentinel-warning); }
-.hero-subtitle {
-  font-size: 16px;
-  color: var(--text-secondary);
-  max-width: 600px;
-  margin-bottom: 36px;
-  line-height: 1.8;
-}
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn-start {
-  background: var(--sentinel-primary-light);
-  border-color: var(--sentinel-primary-light);
-  font-size: 15px;
-  padding: 12px 28px;
-}
-.btn-demo {
-  border-color: var(--border-normal);
-  color: var(--text-secondary);
-  font-size: 15px;
-  padding: 12px 28px;
-}
-.btn-demo:hover { border-color: var(--sentinel-warning); color: var(--sentinel-warning); }
+.pipe-section { max-width: 1200px; margin: 0 auto; padding: 100px 44px; }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--w1); margin-bottom: 14px; }
+.sec-h { font-family: var(--fd); font-size: 46px; letter-spacing: -.9px; line-height: 1.1; margin-bottom: 14px; }
+.sec-h em { font-style: italic; color: var(--grv); }
+.sec-s { font-size: 15px; color: var(--grv); max-width: 520px; margin-bottom: 56px; line-height: 1.65; }
+.pipe-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--ch); border-radius: 20px; overflow: hidden; box-shadow: var(--sc); }
+.pc { background: #fff; padding: 28px 24px; position: relative; overflow: hidden; transition: all .25s; }
+.pc::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--ch); transition: background .25s; }
+.pc:hover::before { background: linear-gradient(90deg, var(--w1), var(--amber)); }
+.pc:hover { background: var(--w4); }
+.pc-num { font-family: var(--fd); font-size: 30px; color: var(--ch); margin-bottom: 14px; line-height: 1; }
+.pc-tag { display: inline-flex; font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 3px 9px; border-radius: 9999px; margin-bottom: 14px; }
+.ta { background: rgba(255, 107, 53, .1); color: #c4430a; }
+.te { background: rgba(42, 95, 212, .1); color: #1a47b3; }
+.tr { background: rgba(29, 138, 86, .1); color: #166842; }
+.pc-name { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.pc-desc { font-size: 12.5px; color: var(--grv); line-height: 1.55; }
+/* CHUNK4 */
+.cmp-section { background: var(--pw); border-top: 1px solid var(--ch); border-bottom: 1px solid var(--ch); padding: 100px 0; }
+.cmp-inner { max-width: 1200px; margin: 0 auto; padding: 0 44px; }
+.cmp-table { width: 100%; border-collapse: collapse; border-radius: 16px; overflow: hidden; box-shadow: var(--sc); }
+.cmp-table th { text-align: left; padding: 13px 20px; border-bottom: 1px solid var(--ch); font-size: 11px; font-weight: 700; letter-spacing: .4px; background: #fff; }
+.cmp-table th:last-child { background: linear-gradient(160deg, #161210, #2c2016); color: #fff; }
+.cmp-table td { padding: 13px 20px; border-bottom: 1px solid var(--ch); color: var(--grv); }
+.cmp-table td:first-child { color: var(--obs); font-weight: 500; }
+.cmp-table td:last-child { background: rgba(255, 107, 53, .04); color: var(--obs); font-weight: 500; }
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:hover td { background: rgba(255, 107, 53, .03); }
+.cmp-table tr:hover td:last-child { background: rgba(255, 107, 53, .08); }
+.tw-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 9999px; background: linear-gradient(135deg, var(--w1), var(--amber)); color: #fff; }
 
-/* ── 统计 ── */
-.stats-section { padding: 32px 0; }
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.stat-card {
-  padding: 24px 28px;
-  text-align: center;
-  transition: transform var(--transition-normal);
+@media (max-width: 980px) {
+  .hero { grid-template-columns: 1fr; gap: 48px; padding: 64px 0; }
+  .htitle { font-size: 46px; }
+  .feat-inner { grid-template-columns: 1fr; gap: 36px; }
+  .pipe-cards { grid-template-columns: 1fr 1fr; }
+  .sec-h { font-size: 34px; }
 }
-.stat-card:hover { transform: translateY(-2px); }
-.stat-value { font-size: 32px; font-weight: 700; color: var(--sentinel-warning); margin-bottom: 4px; }
-.stat-label { font-size: 13px; color: var(--text-secondary); }
-
-/* ── 上传区 ── */
-.upload-section { padding: 60px 0 80px; }
-.section-header { margin-bottom: 40px; text-align: center; }
-.section-title { font-size: 28px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
-.section-desc { font-size: 14px; color: var(--text-secondary); }
-.upload-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-
-.upload-panel, .options-panel {
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.panel-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-
-/* 拖拽区 */
-.drop-zone {
-  border: 2px dashed var(--border-normal);
-  border-radius: var(--radius-lg);
-  padding: 40px 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.drop-zone:hover, .drop-zone--active {
-  border-color: var(--sentinel-primary-light);
-  background: rgba(30, 74, 120, 0.08);
-}
-.drop-zone--filled {
-  border-color: var(--sentinel-success);
-  border-style: solid;
-  background: rgba(29, 158, 117, 0.06);
-}
-.drop-icon { font-size: 36px; color: var(--text-muted); }
-.drop-icon--filled { color: var(--sentinel-success-light); }
-.drop-text { font-size: 14px; color: var(--text-secondary); }
-.drop-text strong { color: var(--text-primary); }
-.drop-hint { font-size: 12px; color: var(--text-muted); }
-.file-name { color: var(--sentinel-success-light) !important; font-weight: 500; }
-.remove-file-btn { margin-top: 4px; }
-
-/* 分隔线 */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-.divider::before, .divider::after {
-  content: '';
-  flex: 1;
-  border-top: 1px solid var(--border-subtle);
-}
-
-/* 表单 */
-.form-item { display: flex; flex-direction: column; gap: 8px; }
-.form-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-.form-desc  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.required   { color: var(--sentinel-danger); }
-.switch-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-.time-estimate {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--sentinel-warning);
-  background: rgba(239, 159, 39, 0.1);
-  border: 1px solid rgba(239, 159, 39, 0.2);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-}
-.time-estimate strong { color: var(--sentinel-warning); }
-.vuln-checkboxes { display: flex; flex-direction: column; gap: 8px; }
-.vuln-checkboxes :deep(.el-checkbox__label) { color: var(--text-secondary); font-size: 13px; }
-.submit-btn { width: 100%; margin-top: auto; font-size: 15px; height: 48px; }
-
-@media (max-width: 768px) {
-  .hero-title { font-size: 28px; }
-  .stats-grid { grid-template-columns: 1fr; }
-  .upload-layout { grid-template-columns: 1fr; }
+@media (max-width: 560px) {
+  .pipe-cards { grid-template-columns: 1fr; }
 }
 </style>

@@ -1,6 +1,7 @@
 /**
  * WebSocket 生命周期管理 Composable
- * 负责：连接建立 / 心跳 / 异常断开 / 自动重连 / 与 3 秒轮询的互斥
+ * 负责：连接建立 / 心跳 / 异常断开 / 自动重连
+ * 后端路由：WS /api/v1/ws/tasks/{task_id}/progress（纯文本心跳 ping/pong）
  */
 import { ref, onUnmounted } from 'vue'
 import { useTaskStore } from '@/stores/taskStore'
@@ -12,15 +13,17 @@ export function useWebSocket(taskId: string) {
   let reconnectTimer: ReturnType<typeof setTimeout> | null = null
   let heartbeatTimer: ReturnType<typeof setInterval> | null = null
   let reconnectAttempts = 0
+  let manualClose = false
   const MAX_RECONNECT = 5
   const HEARTBEAT_INTERVAL = 30000
 
   function connect() {
     if (ws.value && ws.value.readyState === WebSocket.OPEN) return
+    manualClose = false
 
-    // 代理配置下直接使用相对路径 /ws/...
+    // 经 Vite 代理：直接连后端真实路径 /api/v1/ws/tasks/{id}/progress
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const url = `${protocol}//${window.location.host}/ws/api/v1/ws/tasks/${taskId}/progress`
+    const url = `${protocol}//${window.location.host}/api/v1/ws/tasks/${taskId}/progress`
 
     ws.value = new WebSocket(url)
     store.wsConnected = false
@@ -33,10 +36,10 @@ export function useWebSocket(taskId: string) {
     }
 
     ws.value.onmessage = (event) => {
+      // 后端心跳回复为纯文本 "pong"
+      if (event.data === 'pong') return
       try {
         const msg: WsProgressMessage = JSON.parse(event.data)
-        // 忽略 pong 心跳
-        if ((msg as unknown as { type: string }).type === 'pong') return
         store.pushProgressLog(msg)
       } catch {
         console.warn('[WS] Failed to parse message:', event.data)
@@ -47,8 +50,7 @@ export function useWebSocket(taskId: string) {
       store.wsConnected = false
       stopHeartbeat()
       console.log(`[WS] Closed (code=${event.code}) for task ${taskId}`)
-      // 非正常关闭时自动重连
-      if (event.code !== 1000 && reconnectAttempts < MAX_RECONNECT) {
+      if (!manualClose && event.code !== 1000 && reconnectAttempts < MAX_RECONNECT) {
         scheduleReconnect()
       }
     }
@@ -73,7 +75,7 @@ export function useWebSocket(taskId: string) {
   function startHeartbeat() {
     heartbeatTimer = setInterval(() => {
       if (ws.value?.readyState === WebSocket.OPEN) {
-        ws.value.send(JSON.stringify({ type: 'ping' }))
+        ws.value.send('ping')
       }
     }, HEARTBEAT_INTERVAL)
   }
@@ -86,6 +88,7 @@ export function useWebSocket(taskId: string) {
   }
 
   function disconnect() {
+    manualClose = true
     stopHeartbeat()
     if (reconnectTimer) {
       clearTimeout(reconnectTimer)
@@ -100,5 +103,5 @@ export function useWebSocket(taskId: string) {
 
   onUnmounted(disconnect)
 
-  return { connect, disconnect, wsConnected: store.wsConnected }
+  return { connect, disconnect }
 }

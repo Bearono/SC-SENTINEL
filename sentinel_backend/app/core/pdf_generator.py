@@ -26,12 +26,29 @@ from reportlab.platypus import (
     TableStyle,
 )
 from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.ttfonts import TTFont
 
 from app.models.component_risk import ComponentRisk, Severity
 from app.models.ebpf_event_log import EbpfEventLog
 from app.models.task import Task
 from app.models.vulnerability import Vulnerability, VerifyStatus
+
+# ── 中文字体注册 ──────────────────────────────────────────────────────────────
+# ReportLab 内置 CID 字体 STSong-Light 可直接渲染中文，无需附带 TTF 文件，
+# 避免 Helvetica/Courier 渲染中文时出现乱码（空白方块）。
+_CJK_FONT = "Helvetica"        # 西文/默认回退
+_CJK_FONT_BOLD = "Helvetica-Bold"
+_MONO_FONT = "Courier"
+
+try:
+    pdfmetrics.registerFont(UnicodeCIDFont("STSong-Light"))
+    _CJK_FONT = "STSong-Light"
+    _CJK_FONT_BOLD = "STSong-Light"   # CID 字体无独立 Bold，复用同一字体
+    _MONO_FONT = "STSong-Light"       # 等宽列也用中文字体，保证中文不乱码
+except Exception:
+    # 注册失败时回退到内置西文字体（中文会丢失，但不致命）
+    pass
 
 # ── 颜色常量（来自执行手册配色规范） ────────────────────────────────────────────
 COLOR_DARK_BLUE = colors.HexColor("#1A3A5C")    # 深蓝主色
@@ -59,12 +76,13 @@ VERIFY_STATUS_LABELS = {
 
 
 def _get_styles():
-    """构建 PDF 样式表（全部使用 ReportLab 内置字体，确保跨平台不乱码）"""
+    """构建 PDF 样式表（使用 CJK 字体 STSong-Light，确保中文不乱码）"""
     base = getSampleStyleSheet()
 
     title_style = ParagraphStyle(
         "SentinelTitle",
         parent=base["Title"],
+        fontName=_CJK_FONT_BOLD,
         fontSize=22,
         leading=28,
         textColor=COLOR_DARK_BLUE,
@@ -74,6 +92,7 @@ def _get_styles():
     subtitle_style = ParagraphStyle(
         "SentinelSubtitle",
         parent=base["Normal"],
+        fontName=_CJK_FONT,
         fontSize=11,
         textColor=colors.grey,
         alignment=TA_CENTER,
@@ -82,6 +101,7 @@ def _get_styles():
     section_style = ParagraphStyle(
         "SentinelSection",
         parent=base["Heading2"],
+        fontName=_CJK_FONT_BOLD,
         fontSize=13,
         leading=18,
         textColor=COLOR_DARK_BLUE,
@@ -92,6 +112,7 @@ def _get_styles():
     body_style = ParagraphStyle(
         "SentinelBody",
         parent=base["Normal"],
+        fontName=_CJK_FONT,
         fontSize=9,
         leading=14,
         textColor=colors.HexColor("#333333"),
@@ -99,6 +120,7 @@ def _get_styles():
     meta_style = ParagraphStyle(
         "SentinelMeta",
         parent=base["Normal"],
+        fontName=_CJK_FONT,
         fontSize=8,
         textColor=colors.grey,
         alignment=TA_LEFT,
@@ -106,6 +128,7 @@ def _get_styles():
     code_style = ParagraphStyle(
         "SentinelCode",
         parent=base["Code"],
+        fontName=_MONO_FONT,
         fontSize=7.5,
         leading=11,
         backColor=colors.HexColor("#1E1E1E"),
@@ -209,9 +232,9 @@ def generate_audit_pdf(task: Task) -> bytes:
     meta_table.setStyle(TableStyle([
         ("BACKGROUND",   (0, 0), (0, -1), COLOR_LIGHT_BG),
         ("TEXTCOLOR",    (0, 0), (0, -1), COLOR_DARK_BLUE),
-        ("FONTNAME",     (0, 0), (-1, -1), "Helvetica"),
+        ("FONTNAME",     (0, 0), (-1, -1), _CJK_FONT),
         ("FONTSIZE",     (0, 0), (-1, -1), 9),
-        ("FONTNAME",     (0, 0), (0, -1), "Helvetica-Bold"),
+        ("FONTNAME",     (0, 0), (0, -1), _CJK_FONT_BOLD),
         ("ROWBACKGROUNDS", (0, 0), (-1, -1), [colors.white, COLOR_LIGHT_BG]),
         ("GRID",         (0, 0), (-1, -1), 0.5, colors.HexColor("#DDDDDD")),
         ("LEFTPADDING",  (0, 0), (-1, -1), 8),
@@ -246,7 +269,8 @@ def generate_audit_pdf(task: Task) -> bytes:
         row_styles = [
             ("BACKGROUND", (0, 0), (-1, 0), COLOR_DARK_BLUE),
             ("TEXTCOLOR",  (0, 0), (-1, 0), colors.white),
-            ("FONTNAME",   (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTNAME",   (0, 0), (-1, 0), _CJK_FONT_BOLD),
+            ("FONTNAME",   (0, 1), (-1, -1), _CJK_FONT),
             ("FONTSIZE",   (0, 0), (-1, -1), 8),
             ("GRID",       (0, 0), (-1, -1), 0.5, colors.HexColor("#DDDDDD")),
             ("LEFTPADDING",  (0, 0), (-1, -1), 6),
@@ -258,7 +282,7 @@ def generate_audit_pdf(task: Task) -> bytes:
         for i, c in enumerate(task.component_risks, start=1):
             sev_color = SEVERITY_COLORS.get(c.severity, colors.grey)
             row_styles.append(("TEXTCOLOR", (4, i), (4, i), sev_color))
-            row_styles.append(("FONTNAME",  (4, i), (4, i), "Helvetica-Bold"))
+            row_styles.append(("FONTNAME",  (4, i), (4, i), _CJK_FONT_BOLD))
 
         comp_table.setStyle(TableStyle(row_styles))
         elements.append(comp_table)
@@ -301,8 +325,8 @@ def generate_audit_pdf(task: Task) -> bytes:
                 detail_table = Table(detail_data, colWidths=[22 * mm, 138 * mm])
                 detail_table.setStyle(TableStyle([
                     ("BACKGROUND",    (0, 0), (0, -1), COLOR_LIGHT_BG),
-                    ("FONTNAME",      (0, 0), (0, -1), "Helvetica-Bold"),
-                    ("FONTNAME",      (1, 0), (1, -1), "Helvetica"),
+                    ("FONTNAME",      (0, 0), (0, -1), _CJK_FONT_BOLD),
+                    ("FONTNAME",      (1, 0), (1, -1), _CJK_FONT),
                     ("FONTSIZE",      (0, 0), (-1, -1), 8),
                     ("GRID",          (0, 0), (-1, -1), 0.4, colors.HexColor("#EEEEEE")),
                     ("LEFTPADDING",   (0, 0), (-1, -1), 6),

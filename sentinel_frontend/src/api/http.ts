@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
 
 const http = axios.create({
   baseURL: '/api/v1',
@@ -13,15 +12,19 @@ http.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// ── 响应拦截器（全局异常处理） ────────────────────────────────────
+// ── 响应拦截器（全局异常处理，不依赖 UI 库） ────────────────────
+// 后端全局响应包装：{ code: 200, message: 'success', data: {...} }
+// 注意：文件下载（blob）等非包装响应不在此判断。
 http.interceptors.response.use(
   (response) => {
     const data = response.data
-    // 后端业务层错误（code !== 0）
-    if (data && typeof data.code === 'number' && data.code !== 0) {
-      const msg = data.msg || '操作失败，请稍后重试'
-      ElMessage.error(msg)
-      return Promise.reject(new Error(msg))
+    // 仅对带 code 字段的 JSON 业务响应做判断；二进制流（blob）直接放行
+    if (data && typeof data === 'object' && typeof data.code === 'number') {
+      if (data.code !== 200) {
+        const msg = data.message || '操作失败，请稍后重试'
+        console.error('[SENTINEL API]', msg)
+        return Promise.reject(new Error(msg))
+      }
     }
     return response
   },
@@ -36,12 +39,12 @@ http.interceptors.response.use(
         500: '服务器内部错误，请联系管理员',
         503: '服务暂时不可用，请稍后重试'
       }
-      const msg = error.response.data?.msg || msgMap[status] || `请求失败 (${status})`
-      ElMessage.error(msg)
+      const msg = error.response.data?.message || msgMap[status] || `请求失败 (${status})`
+      console.error('[SENTINEL API]', msg)
     } else if (error.code === 'ECONNABORTED') {
-      ElMessage.error('请求超时，请检查网络连接')
+      console.error('[SENTINEL API] 请求超时，请检查网络连接')
     } else {
-      ElMessage.error('网络异常，无法连接到后端服务')
+      console.error('[SENTINEL API] 网络异常，无法连接到后端服务')
     }
     return Promise.reject(error)
   }
