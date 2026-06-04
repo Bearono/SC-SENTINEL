@@ -2,6 +2,9 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { TaskSummary, AuditReport, WsProgressMessage } from '@/types/api'
 
+const TERMINAL = ['completed', 'failed']
+const RUNNING = ['analyzing_deps', 'llm_auditing', 'fuzzing']
+
 export const useTaskStore = defineStore('task', () => {
   // ── 当前查看的单任务 ───────────────────────────────────────────
   const currentTask = ref<TaskSummary | null>(null)
@@ -18,15 +21,13 @@ export const useTaskStore = defineStore('task', () => {
   const taskList = ref<TaskSummary[]>([])
   const taskTotal = ref(0)
 
-  // ── 计算属性：当前任务是否完结 ─────────────────────────────────
+  // ── 计算属性 ────────────────────────────────────────────────────
   const isTerminal = computed(() =>
-    currentTask.value?.status === 'completed' ||
-    currentTask.value?.status === 'failed'
+    currentTask.value ? TERMINAL.includes(currentTask.value.status) : false
   )
 
   const isRunning = computed(() =>
-    currentTask.value != null &&
-    !['completed', 'failed', 'pending'].includes(currentTask.value.status)
+    currentTask.value ? RUNNING.includes(currentTask.value.status) || currentTask.value.status === 'pending' : false
   )
 
   // ── Actions ─────────────────────────────────────────────────────
@@ -44,17 +45,17 @@ export const useTaskStore = defineStore('task', () => {
   }
 
   function updateTaskStatusInList(taskId: string, status: TaskSummary['status']) {
-    const idx = taskList.value.findIndex(t => t.id === taskId)
+    const idx = taskList.value.findIndex((t) => t.id === taskId)
     if (idx !== -1) {
       taskList.value[idx] = { ...taskList.value[idx], status }
     }
   }
 
   function pushProgressLog(msg: WsProgressMessage) {
-    progressLogs.value.push(msg)
-    progressPercent.value = msg.percent
-    progressStage.value = msg.stage
-    progressMessage.value = msg.message
+    progressLogs.value.push({ ...msg, timestamp: new Date().toISOString() })
+    if (typeof msg.percent === 'number') progressPercent.value = msg.percent
+    if (msg.stage) progressStage.value = msg.stage
+    if (msg.message) progressMessage.value = msg.message
   }
 
   function resetProgress() {

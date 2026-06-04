@@ -1,55 +1,118 @@
 /**
  * 后端 API 返回数据类型定义
- * 与 app/schemas/ 下的结构一一对应
+ * 与 app/schemas/task.py / app/api/v1/audit.py 严格一一对应
  */
 
-// ── 通用响应包装 ─────────────────────────────────────────────────
+// ── 通用响应包装（后端 app/schemas/common.py: {code, message, data}）──
 export interface ApiResponse<T = unknown> {
   code: number
-  msg: string
+  message: string
   data: T
 }
 
-// ── 任务状态枚举（与后端 TaskStatus 一致） ────────────────────────
+// ── 任务状态枚举（与后端 TaskStatus 一致）──────────────────────────
 export type TaskStatus =
   | 'pending'
-  | 'sbom_scanning'
+  | 'analyzing_deps'
   | 'llm_auditing'
   | 'fuzzing'
   | 'completed'
   | 'failed'
 
 export type SourceType = 'zip' | 'github'
-export type Severity = 'critical' | 'high' | 'medium' | 'low' | 'unknown'
-export type VulnType = 'uaf' | 'heap_overflow' | 'double_free' | 'stack_overflow' | 'other'
-export type EbpfEventType = 'double_free' | 'uaf_suspected' | 'alloc' | 'free' | 'other'
-export type VerifyStatus = 'confirmed' | 'not_triggered' | 'pending'
 
-// ── 任务摘要（列表页） ───────────────────────────────────────────
+export type Severity = 'critical' | 'high' | 'medium' | 'low' | 'unknown'
+
+// 后端 vuln_type 是自由字符串，常见标准缩写见对接规范
+export type VulnType =
+  | 'UAF'
+  | 'double_free'
+  | 'heap_overflow'
+  | 'stack_overflow'
+  | string
+
+// 后端 EbpfEventType
+export type EbpfEventType =
+  | 'double_free'
+  | 'heap_overflow'
+  | 'use_after_free'
+  | 'null_deref'
+  | 'stack_overflow'
+  | 'out_of_bounds'
+  | 'other'
+
+// 后端 VerifyStatus
+export type VerifyStatus = 'unverified' | 'confirmed' | 'false_positive'
+
+// ── 任务摘要（对应后端 TaskListItem / TaskStatusOut）────────────────
 export interface TaskSummary {
   id: string
   project_name: string
-  source_type: SourceType
   status: TaskStatus
+  source_type: SourceType
   is_dynamic: boolean
   vuln_count: number
+  error_message: string | null
   created_at: string
   completed_at: string | null
+}
+
+// ── 任务分页列表（对应后端 TaskListOut）────────────────────────────
+export interface TaskListData {
+  total: number
+  items: TaskSummary[]
+}
+
+// ── 仪表盘聚合统计（对应后端 DashboardStats）────────────────────────
+export interface LibRiskCount {
+  library_name: string
+  critical: number
+  high: number
+  other: number
+}
+
+export interface DashboardStats {
+  total_audits: number
+  completed: number
+  running: number
+  failed: number
+  total_vulns: number
+  cve_risks: number
+  confirm_rate: number
+  avg_scan_seconds: number
+  vuln_type_dist: Record<string, number>
+  top_libs: LibRiskCount[]
+}
+
+// ── 创建任务响应（对应后端 TaskCreateOut）──────────────────────────
+export interface TaskCreateResult {
+  id: string
+  project_name: string
+  status: TaskStatus
+  created_at: string
+}
+
+// ── 触发审计 Pipeline 响应（对应后端 /audit/submit data）───────────
+export interface AuditSubmitResult {
+  task_id: string
+  status: TaskStatus
+  ws_url: string
+  message?: string
+}
+
+// ── 审计进度（对应后端 /audit/status/{id} data）────────────────────
+export interface AuditStatus {
+  task_id: string
+  project_name: string
+  status: TaskStatus
+  status_label: string
+  progress_percent: number
+  ws_url: string
   error_message: string | null
 }
 
-// ── 任务分页列表 ──────────────────────────────────────────────────
-export interface TaskListData {
-  items: TaskSummary[]
-  total: number
-  page: number
-  page_size: number
-}
-
-// ── 组件风险（SBOM 结果） ─────────────────────────────────────────
+// ── 组件风险（对应后端 ComponentOut）───────────────────────────────
 export interface ComponentRisk {
-  id: string
-  task_id: string
   library_name: string
   version: string | null
   cve_id: string | null
@@ -59,56 +122,57 @@ export interface ComponentRisk {
   nvd_url: string | null
 }
 
-// ── 漏洞详情 ─────────────────────────────────────────────────────
+// ── eBPF 事件（对应后端 EbpfLogOut，内嵌在漏洞中）──────────────────
+export interface EbpfLog {
+  timestamp: number // 纳秒级 Unix 时间戳
+  event_type: EbpfEventType
+  memory_addr: string | null
+  function_name: string | null
+}
+
+// ── 漏洞详情（对应后端 VulnerabilityOut）───────────────────────────
 export interface Vulnerability {
   id: string
-  task_id: string
   vuln_type: VulnType
-  severity: Severity
   file_path: string | null
   line_number: number | null
-  code_snippet: string | null
+  code_context: string | null
   description: string | null
   trigger_condition: string | null
   fix_suggestion: string | null
   verify_status: VerifyStatus
   crash_output: string | null
+  ebpf_logs: EbpfLog[]
 }
 
-// ── eBPF 事件日志 ─────────────────────────────────────────────────
-export interface EbpfEventLog {
-  id: string
-  task_id: string
-  event_type: EbpfEventType
-  address: string | null
-  details: string | null
-  raw_log: string | null
-  captured_at: string
+// ── 报告摘要（对应后端 ReportSummary）──────────────────────────────
+export interface ReportSummary {
+  project_name: string
+  total_time_seconds: number | null
+  is_dynamic: boolean
 }
 
-// ── 完整审计报告（四表联查） ──────────────────────────────────────
+// ── 完整审计报告（对应后端 ReportOut）──────────────────────────────
 export interface AuditReport {
-  task: TaskSummary & {
-    duration_seconds: number | null
-  }
-  component_risks: ComponentRisk[]
+  summary: ReportSummary
+  components: ComponentRisk[]
   vulnerabilities: Vulnerability[]
-  ebpf_events: EbpfEventLog[]
 }
 
-// ── 提交任务的表单 ────────────────────────────────────────────────
+// ── 提交任务的表单（前端内部使用）──────────────────────────────────
 export interface SubmitTaskForm {
   project_name: string
   source_type: SourceType
-  github_url?: string
+  source_path?: string // GitHub URL
   is_dynamic: boolean
-  vuln_types?: VulnType[]
+  target_vulns?: string // JSON string of vuln types
 }
 
-// ── WebSocket 进度推送 ────────────────────────────────────────────
+// ── WebSocket 进度推送（与后端 WsProgressMessage 一致）──────────────
 export interface WsProgressMessage {
   stage: string
   percent: number
   message: string
-  timestamp?: string
+  log_stream: string
+  timestamp?: string // 前端本地追加，方便展示时间
 }

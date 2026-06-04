@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 from app.models.component_risk import Severity
 from app.models.ebpf_event_log import EbpfEventType
-from app.models.task import TaskStatus
+from app.models.task import SourceType, TaskStatus
 from app.models.vulnerability import VerifyStatus
 
 
@@ -34,11 +34,16 @@ class TaskCreateOut(BaseModel):
 # ══════════════════════════════════════════════════════════════════════
 
 class TaskListItem(BaseModel):
-    """任务列表中的单条摘要"""
+    """任务列表中的单条摘要（含前端列表页所需的全部展示字段）"""
     id: uuid.UUID
     project_name: str
     status: TaskStatus
+    source_type: SourceType
+    is_dynamic: bool
+    vuln_count: int = 0           # 漏洞总数（completed 后才有意义）
+    error_message: Optional[str] = None
     created_at: datetime
+    completed_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 
@@ -50,14 +55,46 @@ class TaskListOut(BaseModel):
 
 
 # ══════════════════════════════════════════════════════════════════════
+# API: GET /api/v1/tasks/stats 全局聚合统计（History 仪表盘用）
+# ══════════════════════════════════════════════════════════════════════
+
+class LibRiskCount(BaseModel):
+    """单个第三方库的 CVE 数量（按等级拆分）"""
+    library_name: str
+    critical: int = 0
+    high: int = 0
+    other: int = 0
+
+
+class DashboardStats(BaseModel):
+    """History 仪表盘聚合统计，一次性返回全部 KPI + 图表数据"""
+    total_audits: int = 0
+    completed: int = 0
+    running: int = 0
+    failed: int = 0
+    total_vulns: int = 0
+    cve_risks: int = 0
+    confirm_rate: int = 0          # eBPF 动态确认率（百分比，0~100）
+    avg_scan_seconds: int = 0      # 平均端到端耗时（秒）
+    vuln_type_dist: dict = {}      # { "UAF": 5, "Heap Overflow": 3, ... }
+    top_libs: List[LibRiskCount] = []   # 高频漏洞组件 Top N
+
+
+# ══════════════════════════════════════════════════════════════════════
 # API 3: GET /api/v1/tasks/{task_id} 单体状态（轻量级轮询）
 # ══════════════════════════════════════════════════════════════════════
 
 class TaskStatusOut(BaseModel):
-    """仅返回 id + status + created_at，供前端降级轮询使用"""
+    """返回完整的任务状态信息，供前端进度页和轮询使用"""
     id: uuid.UUID
+    project_name: str
     status: TaskStatus
+    source_type: SourceType
+    is_dynamic: bool
+    vuln_count: int = 0
+    error_message: Optional[str] = None
     created_at: datetime
+    completed_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 
@@ -78,7 +115,10 @@ class ComponentOut(BaseModel):
     library_name: str
     version: Optional[str] = None
     cve_id: Optional[str] = None
+    cvss_score: Optional[float] = None
     severity: Severity
+    description: Optional[str] = None
+    nvd_url: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
@@ -100,7 +140,11 @@ class VulnerabilityOut(BaseModel):
     file_path: Optional[str] = None
     line_number: Optional[int] = None
     code_context: Optional[str] = None
+    description: Optional[str] = None
+    trigger_condition: Optional[str] = None
+    fix_suggestion: Optional[str] = None
     verify_status: VerifyStatus
+    crash_output: Optional[str] = None
     ebpf_logs: List[EbpfLogOut] = []
 
     model_config = {"from_attributes": True}

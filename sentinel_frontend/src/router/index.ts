@@ -7,25 +7,31 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('@/views/HomeView.vue'),
-      meta: { title: 'SENTINEL | 上传审计' }
+      meta: { title: 'SENTINEL — Supply Chain Security' }
     },
     {
-      path: '/tasks',
-      name: 'tasks',
-      component: () => import('@/views/TaskListView.vue'),
-      meta: { title: 'SENTINEL | 任务列表' }
+      path: '/submit',
+      name: 'submit',
+      component: () => import('@/views/SubmitView.vue'),
+      meta: { title: 'SENTINEL | New Audit' }
+    },
+    {
+      path: '/tasks/:id/monitor',
+      name: 'monitor',
+      component: () => import('@/views/MonitorView.vue'),
+      meta: { title: 'SENTINEL | Live Monitor' }
     },
     {
       path: '/tasks/:id/report',
       name: 'report',
       component: () => import('@/views/ReportView.vue'),
-      meta: { title: 'SENTINEL | 审计报告' }
+      meta: { title: 'SENTINEL | Report' }
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('@/views/AboutView.vue'),
-      meta: { title: 'SENTINEL | 关于' }
+      path: '/history',
+      name: 'history',
+      component: () => import('@/views/HistoryView.vue'),
+      meta: { title: 'SENTINEL | History' }
     },
     // 404 回退
     {
@@ -39,7 +45,6 @@ const router = createRouter({
   }
 })
 
-// 更新页面标题
 router.afterEach((to) => {
   if (to.meta.title) {
     document.title = to.meta.title as string
