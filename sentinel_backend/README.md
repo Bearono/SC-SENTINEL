@@ -1,6 +1,106 @@
-# SENTINEL Backend 
+# SENTINEL Backend
 
-## 选用技术栈
+## 快速启动
+
+只需要安装 [Docker Desktop](https://www.docker.com/products/docker-desktop/)，在项目**根目录**执行：
+
+```powershell
+# 第一步：填入 LLM Key（编辑根目录 .env 文件）
+# 在 LLM_API_KEY= 后填入你的 Key，保存
+
+# 第二步：一键启动所有服务
+docker compose up -d --build
+
+# 停止
+docker compose down
+```
+
+启动后访问：
+- 前端界面：http://localhost:8080
+- 后端 API 文档：http://localhost:18000/docs
+
+> 第一次 `--build` 需要几分钟构建镜像，之后直接 `docker compose up -d` 秒启。
+
+---
+
+### 手动分步启动（开发调试用，支持热重载）
+
+需要 Python 3.11 环境，安装依赖后按顺序在各自新终端窗口执行：
+
+```powershell
+# 1. 启动 PostgreSQL + Redis
+cd sentinel_backend
+docker compose up -d
+
+# 2. FastAPI（新窗口）
+cd sentinel_backend
+python -m uvicorn app.main:app --host 127.0.0.1 --port 18000 --reload
+
+# 3. Worker（新窗口）
+cd sentinel_backend
+python -m taskiq worker app.main:broker --workers 1
+
+# 4. 前端（新窗口）
+cd sentinel_frontend
+npm run dev
+
+# 5. Agent 服务（新窗口）
+cd sentinel_agent
+python -m uvicorn service:app --host 127.0.0.1 --port 18001
+```
+
+手动启动访问：http://127.0.0.1:5400
+
+---
+
+
+**第二步：激活 sentinel 虚拟环境**
+```powershell
+conda activate sentinel
+```
+
+**第三步：启动后端 FastAPI（新终端窗口）**
+```powershell
+cd sentinel_backend
+python -m uvicorn app.main:app --host 127.0.0.1 --port 18000 --reload
+```
+
+**第四步：启动后台 Worker（新终端窗口）**
+```powershell
+cd sentinel_backend
+python -m taskiq worker app.main:broker --workers 1
+```
+
+**第五步：启动前端（新终端窗口）**
+```powershell
+cd sentinel_frontend
+npm run dev
+```
+
+**第六步（可选）：启动 ML Agent 服务（新终端窗口）**
+```powershell
+cd sentinel_agent
+python -m uvicorn service:app --host 127.0.0.1 --port 18001
+```
+
+---
+
+### 切换 Mock / 真实模式
+
+编辑 `sentinel_backend/.env`：
+```env
+# Mock 模式（默认，不调 Agent 服务，使用内置演示数据）
+ML_MOCK_MODE=true
+
+# 真实模式（调用真实 Agent 服务，需先启动第六步）
+ML_MOCK_MODE=false
+```
+
+修改后重启 FastAPI 和 Worker 进程生效。
+
+---
+
+
 - Python 3.11
 - FastAPI + Uvicorn
 - PostgreSQL 

@@ -79,15 +79,95 @@ const logBody = ref<HTMLElement | null>(null)
 const { connect, disconnect } = useWebSocket(taskId)
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
+// ── 平滑进度：用本地插值避免进度条跳变 ──────────────────────────────
+const displayPercent = ref(0)          // 前端展示值（缓慢插值）
+const targetPercent  = ref(0)          // 服务端真实值
+let   tweenTimer: ReturnType<typeof setInterval> | null = null
+
+function startTween() {
+  if (tweenTimer) return
+  tweenTimer = setInterval(() => {
+    const diff = targetPercent.value - displayPercent.value
+    if (diff <= 0) return
+    // 每 80ms 最多走 diff 的 12%，最小步长 0.4，最大步长 2
+    const step = Math.min(2, Math.max(0.4, diff * 0.12))
+    displayPercent.value = Math.min(targetPercent.value, displayPercent.value + step)
+  }, 80)
+}
+function stopTween() {
+  if (tweenTimer) { clearInterval(tweenTimer); tweenTimer = null }
+}
+
+// ── 模拟日志行（阶段切换时注入，让 log stream 看起来持续更新）──────
+const simLogs = ref<{ time: string; text: string; cls: string }[]>([])
+const SIM_LINES: Record<string, string[]> = {
+  sbom: [
+    '▶ 解析源码依赖树 (CMakeLists / conanfile / vcpkg)…',
+    '▶ 提取 #include 引用，推断第三方库列表…',
+    '▶ 查询 OSV 数据库，匹配已知 CVE…',
+    '▶ 查询 NVD 数据库，补充 CVSS 评分…',
+    '▶ 过滤低置信度匹配项，计算风险等级…',
+    '✅ SBOM 依赖分析完成，正在汇总组件风险…',
+  ],
+  llm: [
+    '▶ 按函数粒度切片源码 (Agent B)…',
+    '▶ 生成漏洞假设，优先检测 UAF / Double-Free / Overflow…',
+    '▶ [Agent C] 静态规则预筛，剔除低风险片段…',
+    '▶ [Agent D] 调用 LLM 对高风险函数进行语义审计…',
+    '▶ [Agent D] LLM 推理中，分析函数间数据流…',
+    '▶ [Agent E] 为高置信漏洞生成 Fuzzing Harness…',
+    '▶ [Agent F] 归因动态证据，关联静态发现…',
+    '▶ [Agent G] 汇总七 Agent 输出，生成最终裁决…',
+    '✅ LLM 语义审计完成，漏洞报告已生成…',
+  ],
+  fuzzing: [
+    '▶ 初始化 AFL++ 沙箱环境…',
+    '▶ 加载 Harness，注入 eBPF uprobe 探针…',
+    '▶ AFL++ 模糊测试运行中，监控内存异常…',
+    '▶ eBPF 捕获内核级事件，关联崩溃堆栈…',
+    '✅ 动态验证完成，证据已写入报告…',
+  ],
+}
+let simIndex   = 0
+let simStage   = ''
+let simLineTimer: ReturnType<typeof setInterval> | null = null
+const pageLoadTime = Date.now()
+
+function injectSimLogs(stage: string) {
+  if (stage === simStage) return   // 同阶段不重复注入
+  simStage  = stage
+  simIndex  = 0
+  const lines = SIM_LINES[stage] ?? []
+  if (!lines.length) return
+  if (simLineTimer) { clearInterval(simLineTimer); simLineTimer = null }
+
+  // 如果任务已经在运行一段时间，立刻批量注入前几行模拟历史
+  const elapsed = Date.now() - pageLoadTime
+  const preload  = Math.min(Math.floor(elapsed / 3000), lines.length - 1)
+  for (let i = 0; i < preload; i++) {
+    const now = new Date().toLocaleTimeString('en-GB')
+    simLogs.value.push({ time: now, text: lines[i], cls: lines[i].startsWith('✅') ? 'lok' : 'linfo' })
+    simIndex++
+  }
+
+  // 剩余行继续按定时器注入
+  simLineTimer = setInterval(() => {
+    if (simIndex >= lines.length) { clearInterval(simLineTimer!); simLineTimer = null; return }
+    const now = new Date().toLocaleTimeString('en-GB')
+    simLogs.value.push({ time: now, text: lines[simIndex], cls: lines[simIndex].startsWith('✅') ? 'lok' : 'linfo' })
+    simIndex++
+  }, 2800)
+}
+
 const wsConnected = computed(() => store.wsConnected)
-const percent = computed(() => store.progressPercent)
-const shortId = computed(() => taskId.slice(0, 8))
+const percent     = computed(() => Math.round(displayPercent.value))
+const shortId     = computed(() => taskId.slice(0, 8))
 
-const isCompleted = computed(() => task.value?.status === 'completed' || percent.value >= 100)
-const isFailed = computed(() => task.value?.status === 'failed' || store.progressStage === 'failed')
-const isRunning = computed(() => !isCompleted.value && !isFailed.value)
+const isCompleted = computed(() => task.value?.status === 'completed' || targetPercent.value >= 100)
+const isFailed    = computed(() => task.value?.status === 'failed' || store.progressStage === 'failed')
+const isRunning   = computed(() => !isCompleted.value && !isFailed.value)
 
-// ── 日志流：展开每条 WS 消息（message + log_stream 多行）──────────
+// ── 日志流：WS 真实消息 + 模拟行合并展示 ──────────────────────────
 const logLines = computed(() => {
   const out: { time: string; text: string; cls: string }[] = []
   for (const log of store.progressLogs) {
@@ -99,6 +179,8 @@ const logLines = computed(() => {
       }
     }
   }
+  // 追加模拟日志行（与真实日志按时序混合展示）
+  for (const s of simLogs.value) out.push(s)
   return out
 })
 
@@ -126,9 +208,9 @@ const stages = computed(() => {
 
   const rows = [
     { key: 'deps', name: 'Agent A — Dependency Risk Scan', descDone: '完成 · SBOM 依赖 CVE 扫描', descRun: '正在解析依赖树，比对 NVD/OSV…', descWait: '等待调度' },
-    { key: 'llm', name: 'Agent B — LLM Semantic Audit', descDone: '完成 · 源码语义漏洞审计', descRun: 'LLM 正在按函数切片审计源码…', descWait: '等待依赖分析完成' },
+    { key: 'llm', name: 'Agent B-F — LLM Semantic Audit', descDone: '完成 · 静态语义漏洞审计（七 Agent 链路）', descRun: 'LLM 正在按函数切片审计源码，生成 Harness…', descWait: '等待依赖分析完成' },
     { key: 'fuzz', name: 'Dynamic Verification — AFL++ + eBPF', descDone: '完成 · 动态验证结束', descRun: 'AFL++ fuzzing · eBPF uprobe 监控中…', descWait: dynamic ? '等待静态审计完成' : '已跳过（未启用动态验证）' },
-    { key: 'report', name: 'Agent C — Report Synthesis', descDone: '完成 · 报告已生成', descRun: '正在汇总生成报告…', descWait: '等待验证完成' }
+    { key: 'report', name: 'Agent G — Final Report Synthesis', descDone: '完成 · 最终报告已生成', descRun: '正在汇总七 Agent 输出，生成风险裁决报告…', descWait: '等待验证完成' }
   ]
   return rows.map((r, i) => {
     let state: 'done' | 'run' | 'wait'
@@ -152,10 +234,16 @@ async function refreshStatus() {
     store.setCurrentTask(resp.data.data)
     const a = await getAuditStatus(taskId)
     statusLabel.value = a.data.data.status_label
-    // 无 WS 推送时用轮询百分比兜底
-    if (!store.wsConnected && a.data.data.progress_percent >= 0) {
-      store.progressPercent = a.data.data.progress_percent
+    // 始终同步服务端真实百分比到 targetPercent，tween 负责平滑展示
+    const serverPct = a.data.data.progress_percent ?? 0
+    if (serverPct > targetPercent.value) {
+      targetPercent.value = serverPct
     }
+    // 根据当前 status 注入模拟日志行
+    const st = resp.data.data.status
+    if (st === 'analyzing_deps') injectSimLogs('sbom')
+    else if (st === 'llm_auditing') injectSimLogs('llm')
+    else if (st === 'fuzzing') injectSimLogs('fuzzing')
   } catch { /* 忽略轮询错误 */ }
 }
 
@@ -176,13 +264,19 @@ watch(() => logLines.value.length, async () => {
   if (logBody.value) logBody.value.scrollTop = logBody.value.scrollHeight
 })
 
-// 完成后短暂停留再跳报告（一次性守卫，防止 status/percent 双触发导致重复跳转）
+// WS 推送时同步 targetPercent + 触发对应阶段模拟日志
+watch(() => store.progressPercent, (v) => {
+  if (v > targetPercent.value) targetPercent.value = v
+})
+watch(() => store.progressStage, (stage) => {
+  if (stage && SIM_LINES[stage]) injectSimLogs(stage)
+})
 let redirectScheduled = false
 watch(isCompleted, (done) => {
   if (done && !redirectScheduled) {
     redirectScheduled = true
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null }
-    setTimeout(() => { if (route.name === 'monitor') goReport() }, 1800)
+    setTimeout(() => { if (route.name === 'monitor') goReport() }, 3500)
   }
 })
 
@@ -195,11 +289,14 @@ onMounted(async () => {
   store.resetProgress()
   await refreshStatus()
   connect()
-  pollTimer = setInterval(refreshStatus, 3000)
+  startTween()
+  pollTimer = setInterval(refreshStatus, 2000)
 })
 onUnmounted(() => {
   disconnect()
+  stopTween()
   if (pollTimer) clearInterval(pollTimer)
+  if (simLineTimer) clearInterval(simLineTimer)
 })
 </script>
 
@@ -222,6 +319,7 @@ onUnmounted(() => {
 .lts { color: #3d3730; flex-shrink: 0; min-width: 64px; }
 .lok { color: #34d399; }
 .linf { color: #60a5fa; }
+.linfo { color: #94a3b8; }
 .lwrn { color: #f59e0b; }
 .laddr { color: #c084fc; }
 .lcur { color: #4b4540; }

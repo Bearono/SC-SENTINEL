@@ -85,13 +85,18 @@ _MOCK_AGENT_B_RESPONSE = {
 }
 
 
-async def _call_agent_b(source_root: str, cpp_files: list[str]) -> dict:
+async def _call_agent_b(
+    source_root: str,
+    cpp_files: list[str],
+    target_vulns: list[str] | None = None,
+) -> dict:
     """
     调用 ML-B 同学的 Agent B HTTP 接口，获取源码漏洞语义审计结果。
 
     Args:
-        source_root: 解压后的源码根目录（绝对路径）
-        cpp_files:   C/C++ 文件路径列表（相对于 source_root）
+        source_root:   解压后的源码根目录（绝对路径）
+        cpp_files:     C/C++ 文件路径列表（相对于 source_root）
+        target_vulns:  目标漏洞类型列表，如 ["UAF", "heap_overflow"]
 
     Returns:
         Agent B 返回的原始 JSON 字典
@@ -102,21 +107,22 @@ async def _call_agent_b(source_root: str, cpp_files: list[str]) -> dict:
         return _MOCK_AGENT_B_RESPONSE
 
     request_body = {
-        "source_root": source_root,
-        "cpp_files":   cpp_files,
-        # 可选：附加目标漏洞类型约束（由 task.target_vulns 传入，此处预留扩展点）
+        "source_root":   source_root,
+        "cpp_files":     cpp_files,
+        "target_vulns":  target_vulns or [],   # 前端选择的目标漏洞类型
+        "generate_harness": True,
     }
 
     logger.info(f"[LLM] 调用 Agent B 接口: {settings.ML_AGENT_B_URL}")
     try:
-        async with httpx.AsyncClient(timeout=300.0) as client:  # LLM 调用最多等 5 分钟
+        async with httpx.AsyncClient(timeout=900.0) as client:  # LLM 调用最多等 15 分钟（七 Agent 链路较长）
             resp = await client.post(settings.ML_AGENT_B_URL, json=request_body)
             resp.raise_for_status()
             data = resp.json()
             logger.info(f"[LLM] Agent B 响应成功，HTTP {resp.status_code}")
             return data
     except httpx.TimeoutException:
-        logger.error("[LLM] Agent B 调用超时（300s）")
+        logger.error("[LLM] Agent B 调用超时（900s）")
         raise
     except httpx.HTTPStatusError as e:
         logger.error(f"[LLM] Agent B 返回错误 {e.response.status_code}: {e.response.text[:500]}")
@@ -167,7 +173,12 @@ async def _save_vulnerabilities(task_db_id: str, vulns: list[dict]) -> list[str]
     max_retries=1,        # LLM 调用失败最多重试 1 次（防止过度消耗 token）
     retry_on_error=True,
 )
-async def run_llm_audit(task_db_id: str, source_path: str, is_dynamic: bool = False) -> dict:
+async def run_llm_audit(
+    task_db_id: str,
+    source_path: str,
+    is_dynamic: bool = False,
+    target_vulns_json: str = "",
+) -> dict:
     """
     LLM Multi-Agent 静态审计任务（阶段二）。
 
@@ -177,14 +188,31 @@ async def run_llm_audit(task_db_id: str, source_path: str, is_dynamic: bool = Fa
       3. 批量写入 vulnerability 表
       4. 根据 is_dynamic 决定：触发 Fuzzing 阶段 or 直接 Finalize
 
-    Labels（由 pipeline.trigger_llm_stage 注入）：
-      task_db_id : str  → PostgreSQL task.id
-      stage      : "llm"
+    Args:
+        task_db_id:        PostgreSQL task.id
+        source_path:       解压后的源码根目录
+        is_dynamic:        是否触发 Fuzzing 阶段
+        target_vulns_json: task.target_vulns 字段（JSON 字符串），如 '["UAF","heap_overflow"]'
 
     Returns:
         dict: {"vulns_found": int, "vuln_ids": list[str]}
     """
+    import json
+
     logger.info(f"[LLM] 开始审计 task={task_db_id}, source={source_path}")
+
+    # 兼容相对路径（与 sbom_task 保持一致）
+    if not Path(source_path).is_absolute():
+        source_path = str(Path(source_path).resolve())
+        logger.info(f"[LLM] 相对路径已转换为绝对路径: {source_path}")
+
+    # 如果收到的还是 zip 路径（直接提交到 llm 阶段时），先解压
+    if source_path.endswith(".zip") and Path(source_path).is_file():
+        from app.services.source_parser import parse_zip_source
+        logger.info(f"[LLM] 检测到 ZIP，解压中: {source_path}")
+        ctx = await asyncio.to_thread(parse_zip_source, source_path)
+        source_path = ctx.source_root
+        logger.info(f"[LLM] 解压完成，source_root: {source_path}")
 
     # ── 步骤 1: 枚举 C/C++ 文件列表（给 Agent B 使用）───────────────────────
     cpp_extensions = {".c", ".cpp", ".cc", ".cxx", ".h", ".hpp", ".hh"}
@@ -200,8 +228,20 @@ async def run_llm_audit(task_db_id: str, source_path: str, is_dynamic: bool = Fa
     else:
         logger.warning(f"[LLM] source_path 不是目录: {source_path}，跳过文件枚举")
 
+    # 解析前端传入的目标漏洞类型（JSON 字符串 → list）
+    target_vulns: list[str] = []
+    if target_vulns_json:
+        try:
+            parsed = json.loads(target_vulns_json)
+            if isinstance(parsed, list):
+                target_vulns = [str(v) for v in parsed]
+        except Exception:
+            logger.warning(f"[LLM] target_vulns_json 解析失败: {target_vulns_json!r}")
+
+    logger.info(f"[LLM] task={task_db_id} 目标漏洞类型: {target_vulns or '全部'}")
+
     # ── 步骤 2: 调用 Agent B ─────────────────────────────────────────────────
-    agent_b_result = await _call_agent_b(source_path, cpp_files)
+    agent_b_result = await _call_agent_b(source_path, cpp_files, target_vulns)
     vulns = agent_b_result.get("vulnerabilities", [])
 
     # ── 步骤 3: 写入数据库 ───────────────────────────────────────────────────

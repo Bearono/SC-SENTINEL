@@ -97,12 +97,25 @@ async def trigger_llm_stage(task_db_id: str, source_path: str, is_dynamic: bool)
     if await _is_task_cancelled(task_db_id):
         logger.info(f"[Pipeline] task={task_db_id} 已取消，跳过 LLM 阶段投递")
         return
+
+    # 从数据库读取 target_vulns，透传给 LLM 任务
+    target_vulns_json = ""
+    try:
+        from sqlalchemy import select
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(Task.target_vulns).where(Task.id == uuid.UUID(task_db_id))
+            )
+            target_vulns_json = result.scalar_one_or_none() or ""
+    except Exception as e:
+        logger.warning(f"[Pipeline] 读取 target_vulns 失败 task={task_db_id}: {e}")
+
     from app.worker.llm_task import run_llm_audit
     await (
         run_llm_audit
         .kicker()
         .with_labels(task_db_id=task_db_id, stage="llm")
-        .kiq(task_db_id, source_path, is_dynamic)   # is_dynamic 作为位置参数传入
+        .kiq(task_db_id, source_path, is_dynamic, target_vulns_json)
     )
     logger.info(f"[Pipeline] task={task_db_id} 第二阶段（LLM）已投递")
 

@@ -10,7 +10,8 @@ export default defineConfig({
     }
   },
   server: {
-    port: 5173,
+    port: 5400,
+    host: true,
     proxy: {
       // 所有 /api 请求代理到后端（含 WebSocket：/api/v1/ws/...）
       '/api': {

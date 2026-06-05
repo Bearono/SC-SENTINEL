@@ -80,14 +80,20 @@ _MOCK_AGENT_A_RESPONSE = {
 }
 
 
-async def _call_agent_a(dep_files: list[dict], includes: list[str], cpp_files: list[str]) -> dict:
+async def _call_agent_a(
+    dep_files: list[dict],
+    includes: list[str],
+    cpp_files: list[str],
+    source_root_path: str = "",
+) -> dict:
     """
     调用 ML-A 同学的 Agent A HTTP 接口，获取依赖 CVE 风险分析结果。
 
     Args:
-        dep_files: 依赖声明文件内容列表（来自 source_parser）
-        includes:  #include 引用列表（来自 source_parser）
-        cpp_files: C/C++ 文件路径列表（供 Agent A 评估覆盖范围）
+        dep_files:        依赖声明文件内容列表（来自 source_parser）
+        includes:         #include 引用列表（来自 source_parser）
+        cpp_files:        C/C++ 文件路径列表（供 Agent A 评估覆盖范围）
+        source_root_path: 解压后的源码根目录绝对路径（Agent 与后端同机时使用）
 
     Returns:
         Agent A 返回的原始 JSON 字典
@@ -98,9 +104,10 @@ async def _call_agent_a(dep_files: list[dict], includes: list[str], cpp_files: l
         return _MOCK_AGENT_A_RESPONSE
 
     request_body = {
-        "dep_files": dep_files,
-        "includes":  includes,
-        "cpp_files": cpp_files,
+        "source_root": source_root_path,  # 优先让 Agent A 直接读本地目录
+        "dep_files":   dep_files,
+        "includes":    includes,
+        "cpp_files":   cpp_files,
     }
 
     logger.info(f"[SBOM] 调用 Agent A 接口: {settings.ML_AGENT_A_URL}")
@@ -185,6 +192,11 @@ async def run_sbom_analysis(task_db_id: str, source_path: str, is_dynamic: bool 
     # ── 步骤 1: 解压 ZIP 或使用已解压目录 ────────────────────────────────────
     from app.services.source_parser import parse_zip_source, parse_source_context
 
+    # 相对路径转绝对路径（兼容本地开发和 Docker 容器两种场景）
+    if not Path(source_path).is_absolute():
+        source_path = str(Path(source_path).resolve())
+        logger.info(f"[SBOM] 相对路径已转换为绝对路径: {source_path}")
+
     source_root = source_path
     ctx = None
 
@@ -207,7 +219,12 @@ async def run_sbom_analysis(task_db_id: str, source_path: str, is_dynamic: bool 
     includes  = ctx.includes  if ctx else []
     cpp_files = ctx.cpp_files if ctx else []
 
-    agent_a_result = await _call_agent_a(dep_files, includes, cpp_files)
+    agent_a_result = await _call_agent_a(
+        dep_files=dep_files,
+        includes=includes,
+        cpp_files=cpp_files,
+        source_root_path=source_root,   # 同机部署时 Agent 直接读本地目录
+    )
     components = agent_a_result.get("components", [])
 
     # ── 步骤 3: 写入数据库 ───────────────────────────────────────────────────

@@ -1,11 +1,15 @@
 # ============================================================
-# SENTINEL 全栈本地编排（一键拉起 db + redis + api + worker + frontend）
+# SENTINEL 全栈本地编排
 #   启动：  docker compose up -d --build
 #   访问：  前端 http://localhost:8080   后端文档 http://localhost:18000/docs
 #   停止：  docker compose down
+#
+# 配置说明：
+#   在根目录 .env 中填写 LLM_API_KEY，docker compose 自动注入到所有容器
 # ============================================================
 services:
-  # ── PostgreSQL 数据库 ────────────────────────────────────────────────
+
+  # ── PostgreSQL 数据库 ──────────────────────────────────────────────────
   db:
     image: postgres:15-alpine
     container_name: sentinel_postgres
@@ -16,7 +20,7 @@ services:
       POSTGRES_DB: sentinel_db
       TZ: Asia/Shanghai
     ports:
-      - "5433:5432"   # 宿主机 5433（保留，方便本地 conda 直连调试）
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -25,7 +29,7 @@ services:
       timeout: 5s
       retries: 10
 
-  # ── Redis（TaskIQ 队列 + 结果后端）─────────────────────────────────────
+  # ── Redis（TaskIQ 队列 + 结果后端）────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: sentinel_redis
@@ -41,7 +45,34 @@ services:
       timeout: 3s
       retries: 10
 
-  # ── 后端 API 服务（FastAPI / uvicorn）─────────────────────────────────
+  # ── ML Agent 服务（七 Agent 审计链路）─────────────────────────────────
+  agent:
+    build:
+      context: ./sentinel_agent
+      dockerfile: Dockerfile
+    image: sentinel-agent:latest
+    container_name: sentinel_agent
+    restart: always
+    environment:
+      # 从根目录 .env 读取，三个变量都必须在 .env 中填写
+      LLM_API_KEY: "${LLM_API_KEY}"
+      LLM_BASE_URL: "${LLM_BASE_URL}"
+      LLM_MODEL: "${LLM_MODEL}"
+      LLM_TIMEOUT: "60"
+      LLM_DISABLE_PROXY: "1"
+      TZ: Asia/Shanghai
+    ports:
+      - "18001:18001"
+    volumes:
+      - uploads_data:/app/uploads
+    command: ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "18001"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:18001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── 后端 API 服务（FastAPI）────────────────────────────────────────────
   api:
     build:
       context: ./sentinel_backend
@@ -54,17 +85,19 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      agent:
+        condition: service_started
     environment:
-      # 容器内通过服务名互联（覆盖 config.py 中的本地默认值）
       DATABASE_URL: "postgresql+asyncpg://sentinel_admin:123456@db:5432/sentinel_db"
       REDIS_URL: "redis://redis:6379/0"
-      # ML 接口未就绪期间保持 Mock 模式，可独立演示完整流程
-      ML_MOCK_MODE: "true"
+      ML_AGENT_A_URL: "http://agent:18001/api/agent-a/analyze"
+      ML_AGENT_B_URL: "http://agent:18001/api/agent-b/audit"
+      ML_MOCK_MODE: "${ML_MOCK_MODE:-false}"
       TZ: Asia/Shanghai
     ports:
       - "18000:18000"
     volumes:
-      - uploads_data:/app/uploads   # 与 worker 共享上传源码
+      - uploads_data:/app/uploads
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "18000"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:18000/health"]
@@ -72,7 +105,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # ── 后台任务 Worker（TaskIQ 消费进程）─────────────────────────────────
+  # ── 后台任务 Worker（TaskIQ）──────────────────────────────────────────
   worker:
     build:
       context: ./sentinel_backend
@@ -85,20 +118,20 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      agent:
+        condition: service_started
     environment:
       DATABASE_URL: "postgresql+asyncpg://sentinel_admin:123456@db:5432/sentinel_db"
       REDIS_URL: "redis://redis:6379/0"
-      ML_MOCK_MODE: "true"
+      ML_AGENT_A_URL: "http://agent:18001/api/agent-a/analyze"
+      ML_AGENT_B_URL: "http://agent:18001/api/agent-b/audit"
+      ML_MOCK_MODE: "${ML_MOCK_MODE:-false}"
       TZ: Asia/Shanghai
     volumes:
-      - uploads_data:/app/uploads   # 读取 api 写入的上传源码
-      # 动态验证沙箱需要宿主机 Docker（属安全侧，未启用时可忽略）：
-      # - /var/run/docker.sock:/var/run/docker.sock
-    # 关键：从 app.main 启动 broker，确保 SentinelMiddleware 被加载
-    # （broker.py 的 docstring 命令不会注册中间件，会导致状态/WS 推送失效）
+      - uploads_data:/app/uploads
     command: ["taskiq", "worker", "app.main:broker", "--workers", "1"]
 
-  # ── 前端（Vue 构建产物 + Nginx）───────────────────────────────────────
+  # ── 前端（Vue + Nginx）────────────────────────────────────────────────
   frontend:
     build:
       context: ./sentinel_frontend
@@ -107,7 +140,8 @@ services:
     container_name: sentinel_frontend
     restart: always
     depends_on:
-      - api
+      api:
+        condition: service_started
     ports:
       - "8080:80"
 

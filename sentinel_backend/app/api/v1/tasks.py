@@ -119,7 +119,8 @@ async def create_task(
         is_dynamic=is_dynamic_bool,
     )
     db.add(task)
-    await db.flush()  # flush 使 task 对象获得数据库写入后的完整状态
+    await db.flush()   # 让 ORM 填充 server_default 字段（created_at 等）
+    await db.commit()  # 立即落库，防止 audit/submit 竞态查不到该记录
 
     return ok(
         TaskCreateOut.model_validate(task).model_dump(mode="json"),
