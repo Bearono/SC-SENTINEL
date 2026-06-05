@@ -1,6 +1,6 @@
 from core.risk_level import max_risk
 from core.integration_schema import to_backend_components
-from cve.dependency_parser import infer_components, deduplicate_evidence
+from cve.dependency_parser import infer_components, deduplicate_evidence, get_ignored_headers
 from cve.nvd_client import query_nvd_by_keyword
 from cve.osv_client import query_osv_package
 from cve.risk_inference import normalize_vulnerability_risk
@@ -45,13 +45,17 @@ def run_agent_a(source_files, metadata_files):
         source_types = sorted({item.get("source") for item in evidence if item.get("source")})
         risk_profile = build_component_risk_profile(matched, risk)
         component_confidence = infer_component_confidence(evidence)
+        component_origin = infer_component_origin(evidence)
+        version_confidence = infer_version_confidence(version, evidence)
 
         enriched.append({
             "name": name,
             "library_name": name,
             "version": version,
+            "version_confidence": version_confidence,
             "purl_name": purl_name,
             "component_confidence": component_confidence,
+            "component_origin": component_origin,
             "source_types": source_types,
             "evidence": evidence,
 
@@ -87,7 +91,8 @@ def run_agent_a(source_files, metadata_files):
                 1 for c in enriched if c.get("risk_level") in {"high", "critical"}
             ),
             "queried_sources": ["OSV", "NVD"]
-        }
+        },
+        "ignored_headers": get_ignored_headers(),
     }
     result["integration"] = to_backend_components(result)
     return result
@@ -157,6 +162,28 @@ def infer_component_confidence(evidence_items):
     if len(evidence_items) >= 2:
         score += 0.10
     return round(min(score, 0.98), 2)
+
+
+def infer_component_origin(evidence_items):
+    evidence_types = {item.get("evidence_type") for item in evidence_items}
+    if "package_manifest" in evidence_types:
+        return "third_party_manifest"
+    if "link_flag" in evidence_types or "build_file" in evidence_types:
+        return "third_party_build_link"
+    if "include" in evidence_types:
+        return "known_third_party_include"
+    return "metadata"
+
+
+def infer_version_confidence(version, evidence_items):
+    if not version or version == "unknown":
+        return 0.2
+    for item in evidence_items:
+        if item.get("version_hint") == version:
+            if item.get("evidence_type") == "package_manifest":
+                return 0.95
+            return 0.8
+    return 0.55
 
 
 def build_component_risk_profile(vulnerabilities, risk_level):

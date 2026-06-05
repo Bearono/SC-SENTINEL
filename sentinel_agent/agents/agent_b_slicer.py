@@ -86,6 +86,9 @@ def run_agent_b(source_files):
 
         for fn in functions:
             fn["context"] = context
+            fn["parameters"] = extract_function_parameters(fn["signature"])
+            fn["local_variables"] = extract_local_variables(fn["body"])
+            fn["effect_summary"] = infer_effect_summary(fn)
             all_functions.append(fn)
 
     known_function_names = {fn["function_name"] for fn in all_functions}
@@ -94,13 +97,20 @@ def run_agent_b(source_files):
         fn["callee_functions"] = infer_callees(fn, known_function_names)
         fn["call_chain_upstream"] = infer_callers(fn, all_functions)
 
+    call_graph = build_call_graph(all_functions)
+    memory_effects = {
+        fn["function_name"]: fn["effect_summary"]
+        for fn in all_functions
+    }
+
     slices = []
     for idx, fn in enumerate(all_functions, start=1):
         slice_id = make_id("SLICE", idx)
 
         risk_keywords = find_risk_keywords(fn)
-        risk_score = score_slice_risk(fn, risk_keywords)
-        code_slice = build_slice_code(fn, risk_keywords)
+        cross_function_context = build_cross_function_context(fn, all_functions)
+        risk_score = score_slice_risk(fn, risk_keywords, cross_function_context)
+        code_slice = build_slice_code(fn, risk_keywords, cross_function_context)
 
         slices.append({
             "slice_id": slice_id,
@@ -122,6 +132,10 @@ def run_agent_b(source_files):
             "source_sink_pairs": infer_source_sink_pairs(fn),
             "caller_count": len(fn["call_chain_upstream"]),
             "callee_count": len(fn["callee_functions"]),
+            "parameters": fn["parameters"],
+            "local_variables": fn["local_variables"],
+            "effect_summary": fn["effect_summary"],
+            "cross_function_context": cross_function_context,
             "body_line_count": count_non_empty_lines(fn["body"]),
             "context_line_count": count_context_lines(fn["context"]),
 
@@ -141,12 +155,16 @@ def run_agent_b(source_files):
     return {
         "agent": "Agent B - Context Pruning and Code Slicing",
         "slices": slices,
+        "program_model": build_program_model(all_functions, call_graph, memory_effects),
+        "call_graph": call_graph,
+        "memory_effects": memory_effects,
         "summary": {
             "total_slices": len(slices),
             "total_source_files": len(source_files),
             "slices_with_risk_keywords": sum(1 for s in slices if s["risk_keywords"]),
             "high_priority_slices": sum(1 for s in slices if s["audit_priority"] == "high"),
-            "medium_priority_slices": sum(1 for s in slices if s["audit_priority"] == "medium")
+            "medium_priority_slices": sum(1 for s in slices if s["audit_priority"] == "medium"),
+            "cross_function_slices": sum(1 for s in slices if s.get("cross_function_context")),
         }
     }
 
@@ -340,6 +358,7 @@ def extract_functions_from_file(file_obj):
         functions.append({
             "file": file_obj["relative_path"],
             "function_name": function_name,
+            "signature": maybe_signature,
             "start_line": start_idx + 1,
             "end_line": end_idx + 1,
             "body": "\n".join(body_lines)
@@ -487,12 +506,17 @@ def find_risk_keywords(function_obj):
     return found
 
 
-def score_slice_risk(function_obj, risk_keywords):
+def score_slice_risk(function_obj, risk_keywords, cross_function_context=None):
     score = sum(RISK_KEYWORD_WEIGHTS.get(keyword, 1) for keyword in risk_keywords)
     if function_obj.get("call_chain_upstream"):
         score += 1
     if function_obj.get("callee_functions"):
         score += min(len(function_obj["callee_functions"]), 3)
+    effects = function_obj.get("effect_summary", {})
+    if any(effects.get(key) for key in ("frees_param", "frees_field", "writes_param", "stores_alias", "uses_after_call")):
+        score += 2
+    if cross_function_context:
+        score += min(len(cross_function_context), 4)
     return score
 
 
@@ -603,10 +627,191 @@ def get_function_inner_body(function_body):
 
 
 # ----------------------------------------------------------------------
-# 4. LLM-friendly slice construction
+# 4. Lightweight semantic program model
 # ----------------------------------------------------------------------
 
-def build_slice_code(function_obj, risk_keywords):
+def extract_function_parameters(signature):
+    open_idx = signature.find("(")
+    close_idx = signature.rfind(")")
+    if open_idx < 0 or close_idx <= open_idx:
+        return []
+    params_text = signature[open_idx + 1:close_idx].strip()
+    if not params_text or params_text == "void":
+        return []
+    params = []
+    for raw in split_top_level_commas(params_text):
+        text = raw.strip()
+        if not text:
+            continue
+        name_match = re.search(r'([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*$', text)
+        param_name = name_match.group(1) if name_match else text
+        params.append({
+            "name": param_name,
+            "declaration": text,
+            "is_pointer": "*" in text or "[" in text or text.endswith("]"),
+            "is_size": bool(re.search(r'\b(size_t|int|uint\d+_t|long|short)\b', text)) and re.search(r'(len|size|count|idx|index|n)\b', text, re.I) is not None,
+        })
+    return params
+
+
+def split_top_level_commas(text):
+    parts = []
+    current = []
+    depth = 0
+    for ch in text:
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth = max(0, depth - 1)
+        if ch == "," and depth == 0:
+            parts.append("".join(current))
+            current = []
+        else:
+            current.append(ch)
+    if current or text.strip():
+        parts.append("".join(current))
+    return parts
+
+
+def extract_local_variables(body):
+    cleaned = remove_comments(body)
+    locals_ = []
+    decl_pattern = re.compile(
+        r'\b(?:struct\s+[A-Za-z_][\w]*\s+)?(?:char|int|size_t|unsigned\s+char|uint\d+_t|int\d+_t|long|short|float|double|void)\s+([*\s]*)([A-Za-z_][A-Za-z0-9_]*)\s*(\[[^\]]+\])?',
+    )
+    for idx, line in enumerate(cleaned.splitlines(), start=1):
+        stripped = line.strip()
+        if "(" in stripped and not stripped.startswith(("char ", "int ", "size_t ", "unsigned ", "uint", "struct ")):
+            continue
+        for match in decl_pattern.finditer(stripped):
+            locals_.append({
+                "name": match.group(2),
+                "line_offset": idx,
+                "is_pointer": "*" in match.group(1),
+                "is_array": bool(match.group(3)),
+                "declaration": stripped,
+            })
+    return locals_
+
+
+def infer_effect_summary(function_obj):
+    body = remove_comments(get_function_inner_body(function_obj["body"]))
+    params = {p["name"] for p in function_obj.get("parameters", [])}
+    frees = re.findall(r'\bfree\s*\(\s*([^)]+?)\s*\)', body)
+    aliases = re.findall(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*=\s*([A-Za-z_][A-Za-z0-9_]*(?:\[[^\]]+\]|->[A-Za-z_][A-Za-z0-9_]*|\.[A-Za-z_][A-Za-z0-9_]*)?)\s*;', body)
+    writes = re.findall(r'\b(?:strcpy|strcat|sprintf|snprintf|memcpy|memmove|gets)\s*\(\s*([^,\)]+)', body)
+    return_expr = None
+    m = re.search(r'\breturn\s+([^;]+);', body)
+    if m:
+        return_expr = m.group(1).strip()
+
+    return {
+        "allocates": extract_allocations(body),
+        "frees": [expr.strip() for expr in frees],
+        "frees_param": [expr.strip() for expr in frees if base_identifier(expr) in params],
+        "frees_field": [expr.strip() for expr in frees if "->" in expr or "." in expr or "[" in expr],
+        "writes": [expr.strip() for expr in writes],
+        "writes_param": [expr.strip() for expr in writes if base_identifier(expr) in params],
+        "returns_allocated": bool(return_expr and any(name in return_expr for name in extract_allocations(body))),
+        "return_expr": return_expr,
+        "stores_alias": [{"target": left, "source": right} for left, right in aliases],
+        "uses_after_call": [],
+        "format_sinks": re.findall(r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|syslog)\s*\(', body),
+    }
+
+
+def extract_allocations(body):
+    names = []
+    for match in re.finditer(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(?:\([^)]*\)\s*)?(malloc|calloc|realloc)\s*\(', body):
+        names.append(match.group(1))
+    return names
+
+
+def base_identifier(expr):
+    expr = str(expr).strip()
+    expr = expr.lstrip("&*").strip()
+    match = re.match(r'([A-Za-z_][A-Za-z0-9_]*)', expr)
+    return match.group(1) if match else expr
+
+
+def build_call_graph(all_functions):
+    nodes = []
+    edges = []
+    for fn in all_functions:
+        nodes.append({
+            "function": fn["function_name"],
+            "file": fn["file"],
+            "line_range": [fn["start_line"], fn["end_line"]],
+        })
+        for callee in fn.get("callee_functions", []):
+            edges.append({
+                "caller": fn["function_name"],
+                "callee": callee,
+                "caller_file": fn["file"],
+            })
+    return {"nodes": nodes, "edges": edges}
+
+
+def build_program_model(all_functions, call_graph, memory_effects):
+    return {
+        "functions": [
+            {
+                "file": fn["file"],
+                "function": fn["function_name"],
+                "line_range": [fn["start_line"], fn["end_line"]],
+                "parameters": fn.get("parameters", []),
+                "local_variables": fn.get("local_variables", []),
+                "callee_functions": fn.get("callee_functions", []),
+                "caller_functions": fn.get("call_chain_upstream", []),
+                "effect_summary": fn.get("effect_summary", {}),
+            }
+            for fn in all_functions
+        ],
+        "call_graph": call_graph,
+        "memory_effects": memory_effects,
+    }
+
+
+def build_cross_function_context(function_obj, all_functions):
+    by_name = {fn["function_name"]: fn for fn in all_functions}
+    context = []
+    for callee_name in function_obj.get("callee_functions", []):
+        callee = by_name.get(callee_name)
+        if not callee:
+            continue
+        effects = callee.get("effect_summary", {})
+        interesting = []
+        if effects.get("frees_param") or effects.get("frees_field"):
+            interesting.append("callee_frees_argument")
+        if effects.get("writes_param") or effects.get("writes"):
+            interesting.append("callee_writes_argument")
+        if effects.get("returns_allocated"):
+            interesting.append("callee_returns_allocated")
+        if interesting:
+            context.append({
+                "caller": function_obj["function_name"],
+                "callee": callee_name,
+                "callee_file": callee["file"],
+                "callee_effects": effects,
+                "risk_signals": sorted(set(interesting)),
+                "trace": f"{function_obj['function_name']} -> {callee_name}: {', '.join(sorted(set(interesting)))}",
+            })
+    for caller in function_obj.get("call_chain_upstream", []):
+        context.append({
+            "caller": caller.get("function"),
+            "callee": function_obj["function_name"],
+            "caller_file": caller.get("file"),
+            "risk_signals": ["upstream_call"],
+            "trace": f"{caller.get('function')} -> {function_obj['function_name']}",
+        })
+    return context
+
+
+# ----------------------------------------------------------------------
+# 5. LLM-friendly slice construction
+# ----------------------------------------------------------------------
+
+def build_slice_code(function_obj, risk_keywords, cross_function_context=None):
     context = function_obj["context"]
     parts = []
 
@@ -632,6 +837,13 @@ def build_slice_code(function_obj, risk_keywords):
         parts.append(f"/* Callees: {', '.join(function_obj['callee_functions'])} */")
     else:
         parts.append("/* Callees: none */")
+
+    effects = function_obj.get("effect_summary") or {}
+    parts.append(f"/* Memory Effects: {effects} */")
+    if cross_function_context:
+        parts.append("/* Cross Function Context: */")
+        for item in cross_function_context:
+            parts.append(f"/* - {item.get('trace')} */")
 
     parts.append("\n/* ===== Related Includes ===== */")
     if context["includes"]:

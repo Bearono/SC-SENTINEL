@@ -2,7 +2,8 @@ import json
 import re
 from collections import defaultdict
 
-INCLUDE_PATTERN = re.compile(r'^\s*#\s*include\s*[<"]([^>"]+)[>"]', re.MULTILINE)
+INCLUDE_PATTERN = re.compile(r'^\s*#\s*include\s*([<"])([^>"]+)[>"]', re.MULTILINE)
+IGNORED_HEADERS = []
 
 # Alias dictionary: map headers / CMake names / package names to normalized component names.
 KNOWN_COMPONENTS = {
@@ -95,22 +96,28 @@ KNOWN_COMPONENTS = {
 SYSTEM_HEADER_PREFIXES = {
     "stdio", "stdlib", "string", "strings", "stdint", "stddef", "unistd",
     "errno", "time", "math", "vector", "string", "map", "set", "memory",
-    "algorithm", "iostream", "fstream", "sstream", "utility", "limits"
+    "algorithm", "iostream", "fstream", "sstream", "utility", "limits",
+    "ctype", "stdbool", "stdarg", "assert", "stddef", "limits", "float",
+    "wchar", "sys", "fcntl", "dirent"
 }
 
 
 def extract_includes(source_files):
     includes = []
     for f in source_files:
-        for header in INCLUDE_PATTERN.findall(f["content"]):
+        for delimiter, header in INCLUDE_PATTERN.findall(f["content"]):
             includes.append({
                 "file": f["relative_path"],
-                "header": header
+                "header": header,
+                "delimiter": delimiter,
+                "include_style": "system" if delimiter == "<" else "quoted"
             })
     return includes
 
 
 def infer_components(source_files, metadata_files):
+    global IGNORED_HEADERS
+    IGNORED_HEADERS = []
     evidence = defaultdict(list)
 
     _infer_from_includes(source_files, evidence)
@@ -130,10 +137,14 @@ def infer_components(source_files, metadata_files):
     return components
 
 
+def get_ignored_headers():
+    return list(IGNORED_HEADERS)
+
+
 def _infer_from_includes(source_files, evidence):
     for item in extract_includes(source_files):
         header = item["header"].lower()
-        normalized = normalize_header_component(header)
+        normalized = normalize_header_component(header, item.get("include_style"))
         if normalized:
             evidence[normalized].append({
                 "source": "include",
@@ -142,15 +153,13 @@ def _infer_from_includes(source_files, evidence):
                 "version_hint": None
             })
             continue
-
-        for component_name, info in KNOWN_COMPONENTS.items():
-            if header in [h.lower() for h in info.get("headers", [])]:
-                evidence[component_name].append({
-                    "source": "include",
-                    "file": item["file"],
-                    "evidence": f'#include <{item["header"]}>',
-                    "version_hint": None
-                })
+        IGNORED_HEADERS.append({
+            "file": item["file"],
+            "header": item["header"],
+            "include_style": item.get("include_style"),
+            "component_origin": infer_ignored_header_origin(header, item.get("include_style")),
+            "reason": "system_or_internal_header_not_queried_for_cve",
+        })
 
 
 def _infer_from_metadata(metadata_files, evidence):
@@ -320,7 +329,7 @@ def normalize_component_name(name):
     return None
 
 
-def normalize_header_component(header):
+def normalize_header_component(header, include_style="system"):
     for component_name, info in KNOWN_COMPONENTS.items():
         if header in [h.lower() for h in info.get("headers", [])]:
             return component_name
@@ -329,10 +338,22 @@ def normalize_header_component(header):
         stem = header.rsplit(".", 1)[0]
         if stem in SYSTEM_HEADER_PREFIXES:
             return None
-        return normalize_component_name(stem)
+        if include_style == "quoted":
+            return None
+        return normalize_component_name(stem) if stem in KNOWN_COMPONENTS else None
 
     prefix = header.split("/", 1)[0]
-    return normalize_component_name(prefix)
+    normalized = normalize_component_name(prefix)
+    return normalized if normalized in KNOWN_COMPONENTS else None
+
+
+def infer_ignored_header_origin(header, include_style):
+    stem = header.rsplit(".", 1)[0].split("/", 1)[0]
+    if include_style == "quoted":
+        return "internal_header"
+    if stem in SYSTEM_HEADER_PREFIXES:
+        return "system_header"
+    return "unknown_header"
 
 
 def add_dependency_evidence(evidence, name, source, file, evidence_text, version_hint=None):

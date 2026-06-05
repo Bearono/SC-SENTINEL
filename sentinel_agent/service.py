@@ -107,7 +107,7 @@ def audit_source(request: AgentBAuditRequest):
     )
     final_report = agent_g_result["final_report"]
 
-    backend_vulns = to_backend_vulnerabilities(agent_d_result)["vulnerabilities"]
+    backend_vulns = final_report.get("backend_vulnerabilities") or to_backend_vulnerabilities(agent_d_result)["vulnerabilities"]
     return {
         "vulnerabilities": backend_vulns,
         "summary": {

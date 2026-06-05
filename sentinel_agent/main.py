@@ -15,6 +15,7 @@ from agents.agent_g_final_report import run_agent_g
 
 
 def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packages"):
+    agent_root = Path(__file__).resolve().parent
     project_path = Path(project_path).resolve()
     project_name = project_path.name
     output_dir = Path(output_dir).resolve()
@@ -53,9 +54,10 @@ def run_pipeline(project_path, output_dir="outputs", harness_dir="harness_packag
     save_json(agent_e_result, output_dir / "agent_d_harness_packages.json")
 
     print("[7/9] Loading dynamic validation results...")
-    afl_result = load_json(Path("validation") / "afl_result_example.json", default={"crash_found": False})
-    ebpf_log = load_json(Path("validation") / "ebpf_log_example.json", default={"events": []})
-    asan_result = load_json(Path("validation") / "asan_validation_results.json", default={})
+    validation_dir = agent_root / "validation"
+    afl_result = load_json(validation_dir / "afl_result_example.json", default={"crash_found": False})
+    ebpf_log = load_json(validation_dir / "ebpf_log_example.json", default={"events": []})
+    asan_result = load_json(validation_dir / "asan_validation_results.json", default={})
 
     if asan_result:
         print("      ASan results loaded: "

@@ -118,6 +118,14 @@ def llm_audit_hypothesis(llm_client, agent_a_result, slc, hypothesis, function_l
         finding["hypothesis_id"] = hypothesis.get("hypothesis_id")
         finding["hypothesis_reason"] = hypothesis.get("reason")
         finding["hypothesis_confidence"] = hypothesis.get("confidence")
+        finding["cross_function_trace"] = hypothesis.get("cross_function_trace", [])
+        finding["dataflow_trace"] = hypothesis.get("dataflow_trace", [])
+        finding["evidence_lines"] = hypothesis.get("evidence_lines", [])
+        finding["quality_control"] = add_semantic_consistency(
+            finding.get("quality_control", {}),
+            hypothesis,
+            finding,
+        )
     return llm_findings, events
 
 
@@ -174,6 +182,9 @@ def finding_from_hypothesis(hypothesis, audit_source):
         "risk_level": hypothesis.get("risk_level", "medium"),
         "trigger_condition": hypothesis.get("reason", ""),
         "evidence": hypothesis.get("evidence", []),
+        "evidence_lines": hypothesis.get("evidence_lines", []),
+        "cross_function_trace": hypothesis.get("cross_function_trace", []),
+        "dataflow_trace": hypothesis.get("dataflow_trace", []),
         "confidence": hypothesis.get("confidence", 0.65),
         "suggested_fix": hypothesis.get("suggested_fix", ""),
         "static_status": "suspected",
@@ -185,6 +196,7 @@ def finding_from_hypothesis(hypothesis, audit_source):
             "calibrated_confidence": hypothesis.get("confidence", 0.65),
             "confidence_adjusted": False,
             "rule_consistency": "rule_only",
+            "semantic_consistency": "consistent",
             "warnings": []
         }
     }
@@ -195,8 +207,23 @@ def with_fallback_reason(finding, reason):
     qc = dict(finding.get("quality_control", {}))
     qc["fallback_reason"] = reason
     qc["rule_consistency"] = "rule_only"
+    qc.setdefault("semantic_consistency", "consistent")
     finding["quality_control"] = qc
     return finding
+
+
+def add_semantic_consistency(qc, hypothesis, finding):
+    qc = dict(qc or {})
+    warnings = list(qc.get("warnings", []))
+    hyp_cwes = set(hypothesis.get("cwe_candidates") or [])
+    finding_cwe = finding.get("cwe_id")
+    if finding_cwe and hyp_cwes and finding_cwe not in hyp_cwes:
+        qc["semantic_consistency"] = "conflict"
+        warnings.append(f"LLM CWE {finding_cwe} conflicts with rule hypothesis {sorted(hyp_cwes)}.")
+    else:
+        qc["semantic_consistency"] = "consistent"
+    qc["warnings"] = warnings
+    return qc
 
 
 def deduplicate_findings(findings):

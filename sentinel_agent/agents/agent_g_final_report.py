@@ -35,6 +35,8 @@ def run_agent_g(project_name, agent_a_result, agent_b_result, agent_c_result,
             "ebpf_evidence": evidence_link.get("matched_ebpf", []),
             "package_id": package.get("package_id") if package else None,
             "trace": build_trace(finding, hypothesis, package, evidence_link),
+            "trace_summary": build_trace_summary(finding, hypothesis, package, evidence_link),
+            "final_status": final_status(evidence_link.get("dynamic_status", "untriggered")),
             "final_conclusion": conclusion(
                 evidence_link.get("dynamic_status", "untriggered"),
                 evidence_link.get("evidence_level", "weak"),
@@ -78,7 +80,7 @@ def run_agent_g(project_name, agent_a_result, agent_b_result, agent_c_result,
         "hypotheses": agent_c_result.get("hypotheses", []),
         "final_findings": final_findings,
         "backend_components": to_backend_components(agent_a_result)["components"],
-        "backend_vulnerabilities": to_backend_vulnerabilities(agent_d_result)["vulnerabilities"],
+        "backend_vulnerabilities": to_backend_vulnerabilities({"static_findings": final_findings})["vulnerabilities"],
         "recommendations": [
             "Prioritize findings confirmed by ASan/AFL++/eBPF runtime evidence.",
             "Review high-risk dependency CVEs before release.",
@@ -116,7 +118,32 @@ def build_trace(finding, hypothesis, package, evidence_link):
         "dynamic_status": evidence_link.get("dynamic_status", "untriggered"),
         "evidence_sources": evidence_link.get("evidence_sources", []),
         "hypothesis_reason": (hypothesis or {}).get("reason"),
+        "cross_function_trace": finding.get("cross_function_trace") or (hypothesis or {}).get("cross_function_trace", []),
+        "dataflow_trace": finding.get("dataflow_trace") or (hypothesis or {}).get("dataflow_trace", []),
     }
+
+
+def build_trace_summary(finding, hypothesis, package, evidence_link):
+    pieces = [
+        f"slice={finding.get('source_slice_id')}",
+        f"hypothesis={finding.get('hypothesis_id')}",
+        f"finding={finding.get('finding_id')}",
+    ]
+    if package:
+        pieces.append(f"harness={package.get('package_id')}")
+    pieces.append(f"dynamic={evidence_link.get('dynamic_status', 'untriggered')}")
+    trace = finding.get("cross_function_trace") or (hypothesis or {}).get("cross_function_trace", [])
+    if trace:
+        pieces.append("trace=" + " | ".join(trace[:3]))
+    return " -> ".join(pieces)
+
+
+def final_status(dynamic_status):
+    if dynamic_status == "confirmed":
+        return "confirmed"
+    if dynamic_status == "need_review":
+        return "need_review"
+    return "untriggered"
 
 
 def conclusion(dynamic_status, evidence_level, evidence_sources):

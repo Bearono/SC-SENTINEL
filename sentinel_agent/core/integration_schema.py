@@ -17,6 +17,14 @@ CWE_TO_BACKEND_VULN_TYPE = {
     "CWE-134": "format_string",
 }
 
+VULN_TYPE_DISPLAY = {
+    "UAF": "Use After Free",
+    "double_free": "Double Free",
+    "heap_overflow": "Heap Buffer Overflow",
+    "stack_overflow": "Stack Buffer Overflow",
+    "format_string": "Format String",
+}
+
 
 def severity_from_risk(risk):
     risk = str(risk or "unknown").lower()
@@ -100,10 +108,18 @@ def to_backend_vulnerabilities(agent_c_result):
         line_number = line_range[0] if isinstance(line_range, list) and line_range else None
         rows.append({
             "vuln_type": to_backend_vuln_type(finding),
+            "vuln_type_display": VULN_TYPE_DISPLAY.get(to_backend_vuln_type(finding), finding.get("vulnerability_type", "Unknown")),
             "file_path": finding.get("file"),
             "line_number": line_number,
             "code_context": code_context_from_finding(finding),
             "trigger_cond": finding.get("trigger_condition", ""),
             "fix_advice": finding.get("suggested_fix", ""),
+            "confidence": finding.get("confidence"),
+            "source_slice_id": finding.get("source_slice_id"),
+            "hypothesis_id": finding.get("hypothesis_id"),
+            "finding_id": finding.get("finding_id"),
+            "trace_summary": " -> ".join(finding.get("cross_function_trace") or finding.get("dataflow_trace") or []),
+            "dynamic_status": finding.get("dynamic_status", "untriggered"),
+            "final_status": finding.get("final_status", "need_review"),
         })
     return {"vulnerabilities": rows}
