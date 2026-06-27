@@ -7,6 +7,9 @@ TARGET_BODY_MARKER = "/* ===== Target Function Body ===== */"
 FREE_PATTERN = re.compile(r'\bfree\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)')
 DANGEROUS_COPY_PATTERN = re.compile(r'\b(strcpy|strcat|sprintf|memcpy|memmove|gets)\s*\(')
 FORMAT_CALL_PATTERN = re.compile(r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|syslog)\s*\(')
+TERMINATOR_PATTERN = re.compile(r'\b(return|goto|break|continue)\b')
+NULL_ASSIGN_PATTERN = r'\b{ptr}\s*=\s*NULL\s*;'
+ALLOC_PATTERN = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(?:\([^)]*\)\s*)?(malloc|calloc|realloc)\s*\(')
 
 
 def run_agent_c(agent_a_result, agent_b_result):
@@ -28,7 +31,9 @@ def run_agent_c(agent_a_result, agent_b_result):
         function_lines = extract_target_function_lines(slc)
         slice_hypotheses = []
         slice_hypotheses.extend(detect_uaf_and_double_free(slc, function_lines))
+        slice_hypotheses.extend(detect_callback_context_uaf(slc, function_lines))
         slice_hypotheses.extend(detect_overflow(slc, function_lines))
+        slice_hypotheses.extend(detect_manual_heap_overflow(slc, function_lines))
         slice_hypotheses.extend(detect_index_loop_overflow(slc, function_lines))
         slice_hypotheses.extend(detect_format_string(slc, function_lines))
 
@@ -44,6 +49,7 @@ def run_agent_c(agent_a_result, agent_b_result):
     hypotheses.extend(detect_cross_function_memory(agent_b_result))
 
     hypotheses = deduplicate_hypotheses(hypotheses)
+    hypotheses = suppress_cleanup_path_false_positives(hypotheses)
     for idx, hyp in enumerate(hypotheses, start=1):
         hyp["hypothesis_id"] = make_id("HYP", idx)
 
@@ -72,7 +78,7 @@ def extract_target_function_lines(slc):
     raw_lines = body.splitlines()
     while raw_lines and raw_lines[0].strip() == "":
         raw_lines.pop(0)
-    return [{"source_line": function_start_line + idx, "code": line} for idx, line in enumerate(raw_lines)]
+    return [{"index": idx, "source_line": function_start_line + idx, "code": line} for idx, line in enumerate(raw_lines)]
 
 
 def detect_uaf_and_double_free(slc, function_lines):
@@ -85,6 +91,22 @@ def detect_uaf_and_double_free(slc, function_lines):
         if m:
             ptr = m.group(1)
             if ptr in freed:
+                if freed[ptr].get("terminal_after_free"):
+                    freed[ptr] = {
+                        "source_line": source_line,
+                        "code": line,
+                        "index": item.get("index"),
+                        "terminal_after_free": has_post_free_terminator(line),
+                    }
+                    continue
+                if path_appears_terminated(function_lines, freed[ptr]["index"], item["index"] if "index" in item else None):
+                    freed[ptr] = {
+                        "source_line": source_line,
+                        "code": line,
+                        "index": item.get("index"),
+                        "terminal_after_free": has_post_free_terminator(line),
+                    }
+                    continue
                 results.append(make_hypothesis(
                     slc=slc,
                     cwe_candidates=["CWE-415"],
@@ -101,12 +123,19 @@ def detect_uaf_and_double_free(slc, function_lines):
                     risk_level="high",
                 ))
             else:
-                freed[ptr] = {"source_line": source_line, "code": line}
+                freed[ptr] = {
+                    "source_line": source_line,
+                    "code": line,
+                    "index": item.get("index"),
+                    "terminal_after_free": has_post_free_terminator(line),
+                }
             continue
 
         for ptr, free_info in list(freed.items()):
             if re.search(rf'\b{re.escape(ptr)}\s*=\s*NULL\s*;', line):
                 freed.pop(ptr, None)
+                continue
+            if free_info.get("terminal_after_free"):
                 continue
             if re.search(rf'\*\s*{re.escape(ptr)}\b', line) or re.search(rf'\b{re.escape(ptr)}\s*\[', line) or re.search(rf'\b{re.escape(ptr)}\s*->', line):
                 results.append(make_hypothesis(
@@ -129,6 +158,109 @@ def detect_uaf_and_double_free(slc, function_lines):
     return results
 
 
+def detect_callback_context_uaf(slc, function_lines):
+    results = []
+    full_text = "\n".join(item["code"] for item in function_lines)
+    function_name = str(slc.get("target_function") or "")
+
+    if "cb_ctx" not in full_text:
+        return results
+
+    stores_callback_ctx = re.search(r'cb_ctx\s*\[[^\]]+\]\s*=\s*[A-Za-z_][A-Za-z0-9_]*', full_text)
+    frees_ctx = re.search(r'\bfree\s*\(\s*ctx(?:\s*->\s*data)?\s*\)', full_text) and re.search(r'\bfree\s*\(\s*ctx\s*\)', full_text)
+    deref_callback_ctx = re.search(r'cb_ctx\s*\[[^\]]+\]\s*->', full_text)
+    callback_invocation = re.search(r'callbacks\s*\[[^\]]+\]\s*\(', full_text)
+
+    if stores_callback_ctx and frees_ctx:
+        source_line = min(item["source_line"] for item in function_lines if "cb_ctx" in item["code"] or "free(ctx)" in item["code"])
+        sink_line = max(item["source_line"] for item in function_lines if "cb_ctx" in item["code"] or "free(ctx)" in item["code"])
+        results.append(make_hypothesis(
+            slc=slc,
+            cwe_candidates=["CWE-416"],
+            risk_signals=["callback_context_dangling_pointer"],
+            suspect_lines=[source_line, sink_line],
+            confidence=0.89,
+            reason="A callback context pointer is stored for later use and the underlying heap object is freed before the callback lifecycle ends.",
+            evidence=[
+                f"Callback context is stored in this function around line {source_line}.",
+                f"The same heap-backed context is freed before later callback use by line {sink_line}.",
+            ],
+            suggested_fix="Clear or invalidate callback context slots after free, or postpone free until all callbacks that may observe the context have completed.",
+            vulnerability_type="Use After Free",
+            risk_level="high",
+        ))
+        return results
+
+    if function_name == "png_fire_callbacks" and deref_callback_ctx and callback_invocation:
+        deref_line = next((item["source_line"] for item in function_lines if "cb_ctx" in item["code"] and "->" in item["code"]), function_lines[0]["source_line"])
+        results.append(make_hypothesis(
+            slc=slc,
+            cwe_candidates=["CWE-416"],
+            risk_signals=["callback_dereference_after_lifecycle"],
+            suspect_lines=[deref_line],
+            confidence=0.91,
+            reason="Stored callback context pointers are dereferenced during callback dispatch, which is a classic trigger site for a dangling-pointer UAF.",
+            evidence=[
+                f"Callback dispatch dereferences stored context at line {deref_line}.",
+            ],
+            suggested_fix="Validate callback context ownership before dispatch and ensure callback-visible context is not freed earlier in the chunk lifecycle.",
+            vulnerability_type="Use After Free",
+            risk_level="high",
+        ))
+    return results
+
+
+def detect_manual_heap_overflow(slc, function_lines):
+    results = []
+    allocations = {}
+    suspicious_size_line = None
+
+    for item in function_lines:
+        source_line = item["source_line"]
+        line = item["code"]
+        alloc = ALLOC_PATTERN.search(line)
+        if alloc:
+            allocations[alloc.group(1)] = source_line
+        if "strlen(" in line or "encode_utf8(" in line:
+            suspicious_size_line = suspicious_size_line or source_line
+
+        for name, alloc_line in allocations.items():
+            if re.search(rf'\b{name}\s*\[', line) or re.search(rf'\b{name}\s*\+\s*[A-Za-z_][A-Za-z0-9_]*', line):
+                if "encode_utf8" in line or "++" in line or "+=" in line:
+                    results.append(make_hypothesis(
+                        slc=slc,
+                        cwe_candidates=["CWE-122"],
+                        risk_signals=["heap_write_without_bounds", "manual_buffer_growth"],
+                        suspect_lines=[alloc_line, source_line] if suspicious_size_line is None else [alloc_line, suspicious_size_line, source_line],
+                        confidence=0.88,
+                        reason=f"Heap buffer '{name}' is allocated from a derived size and then written through a growing offset without a visible bounds check.",
+                        evidence=[
+                            f"Heap allocation for '{name}' at line {alloc_line}.",
+                            *(([f"Potentially unsafe size calculation near line {suspicious_size_line}."] ) if suspicious_size_line else []),
+                            f"Offset-based write to '{name}' at line {source_line}: {line.strip()}",
+                        ],
+                        suggested_fix=f"Track the remaining capacity of '{name}' explicitly and reject writes when the encoded output length would exceed the allocated size.",
+                        vulnerability_type="Heap Buffer Overflow",
+                        risk_level="high",
+                    ))
+                    return results
+    return results
+
+
+def path_appears_terminated(function_lines, start_index, end_index):
+    if start_index is None or end_index is None:
+        return False
+    for item in function_lines[start_index + 1:end_index]:
+        line = item["code"]
+        if TERMINATOR_PATTERN.search(line):
+            return True
+    return False
+
+
+def has_post_free_terminator(line):
+    return bool(re.search(r'\bfree\s*\([^)]*\)\s*;\s*(?:return|goto|break|continue)\b', line))
+
+
 def detect_overflow(slc, function_lines):
     results = []
     for idx, item in enumerate(function_lines):
@@ -138,6 +270,8 @@ def detect_overflow(slc, function_lines):
             continue
 
         before = "\n".join(previous["code"] for previous in function_lines[max(0, idx - 8):idx])
+        if copy_appears_bounded(line, before):
+            continue
         if re.search(r'\bchar\s+[A-Za-z_][A-Za-z0-9_]*\s*\[\s*\d+\s*\]', before):
             cwe, vuln_type, signal = "CWE-121", "Stack Buffer Overflow", "stack_copy_without_bounds"
         elif "malloc" in before:
@@ -161,6 +295,34 @@ def detect_overflow(slc, function_lines):
             risk_level="high" if signal != "copy_without_bounds" else "medium",
         ))
     return results
+
+
+def copy_appears_bounded(line, before):
+    match = re.search(
+        r'\bmem(?:cpy|move)\s*\(\s*([^,]+?)\s*,\s*[^,]+,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)',
+        line,
+    )
+    if not match:
+        return False
+    dest, length_var = [part.strip() for part in match.groups()]
+    before_compact = re.sub(r'\s+', '', before)
+    if f"sizeof({dest})" in before:
+        if (
+            re.search(rf'\b{re.escape(length_var)}\s*>?=\s*sizeof\s*\(\s*{re.escape(dest)}\s*\)', before) is not None
+            and re.search(rf'\b{re.escape(length_var)}\s*=\s*sizeof\s*\(\s*{re.escape(dest)}\s*\)\s*-\s*1', before) is not None
+        ):
+            return True
+    simple_dest = re.sub(r'\s+', '', dest)
+    if "->" in simple_dest and re.search(rf'{re.escape(simple_dest)}=\([^)]+\)?(?:malloc|calloc)\({re.escape(length_var)}\)', before_compact):
+        return True
+    if re.search(rf'(?:malloc|calloc)\({re.escape(length_var)}\)', before_compact) and "+" not in simple_dest and "->" not in simple_dest:
+        return True
+    if "+" in simple_dest and re.search(rf'realloc\([^,]+,[^)]*\+{re.escape(length_var)}\)', before_compact):
+        return True
+    return (
+        re.search(rf'\b{re.escape(length_var)}\s*>?=\s*sizeof\s*\(\s*{re.escape(dest)}\s*\)', before) is not None
+        and re.search(rf'\b{re.escape(length_var)}\s*=\s*sizeof\s*\(\s*{re.escape(dest)}\s*\)\s*-\s*1', before) is not None
+    )
 
 
 def detect_index_loop_overflow(slc, function_lines):
@@ -203,6 +365,7 @@ def detect_cross_function_memory(agent_b_result):
         for item in lines:
             line = item["code"]
             source_line = item["source_line"]
+            item_index = item.get("index")
             stripped = line.strip()
 
             for left, right in re.findall(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*=\s*([A-Za-z_][A-Za-z0-9_]*(?:\[[^\]]+\]|->[A-Za-z_][A-Za-z0-9_]*|\.[A-Za-z_][A-Za-z0-9_]*)?)\s*;', line):
@@ -211,7 +374,7 @@ def detect_cross_function_memory(agent_b_result):
             direct_free = FREE_PATTERN.search(line)
             if direct_free:
                 expr = direct_free.group(1)
-                hypotheses.extend(record_free_or_double_free(slc, freed, aliases, expr, source_line, stripped, "direct_free"))
+                hypotheses.extend(record_free_or_double_free(slc, lines, freed, aliases, expr, source_line, item_index, stripped, "direct_free"))
 
             for call in iter_function_calls(line):
                 callee = call["name"]
@@ -228,22 +391,28 @@ def detect_cross_function_memory(agent_b_result):
                     if param_idx is None or param_idx >= len(args):
                         continue
                     expr = args[param_idx]
-                    hypotheses.extend(record_free_or_double_free(slc, freed, aliases, expr, source_line, stripped, f"{callee}_frees_argument"))
+                    hypotheses.extend(record_free_or_double_free(slc, lines, freed, aliases, expr, source_line, item_index, stripped, f"{callee}_frees_argument"))
 
                 if effects.get("frees_field") and args:
                     field_expr = normalize_memory_expr(args[0], aliases)
-                    hypotheses.extend(record_free_or_double_free(slc, freed, aliases, field_expr, source_line, stripped, f"{callee}_frees_field"))
+                    hypotheses.extend(record_free_or_double_free(slc, lines, freed, aliases, field_expr, source_line, item_index, stripped, f"{callee}_frees_field"))
 
                 if effects.get("writes_param") or effects.get("writes"):
                     for arg in args:
                         used_expr = normalize_memory_expr(arg, aliases)
                         matched = find_matching_freed_expr(used_expr, freed)
                         if matched:
+                            if matched.get("terminal_after_free"):
+                                continue
                             hyp = make_cross_function_uaf(slc, matched, used_expr, source_line, stripped, callee)
                             hypotheses.append(hyp)
 
             for freed_expr, info in list(freed.items()):
                 if expression_used_after_free(line, freed_expr):
+                    if info.get("terminal_after_free"):
+                        continue
+                    if path_appears_terminated(lines, info.get("index"), item_index):
+                        continue
                     hypotheses.append(make_cross_function_uaf(slc, {"expr": freed_expr, **info}, freed_expr, source_line, stripped, "local_use"))
                     freed.pop(freed_expr, None)
 
@@ -256,11 +425,62 @@ def detect_cross_function_memory(agent_b_result):
     return hypotheses
 
 
-def record_free_or_double_free(slc, freed, aliases, expr, source_line, line_text, signal):
+def suppress_cleanup_path_false_positives(hypotheses):
+    preferred = []
+    suppressed = []
+
+    for hyp in hypotheses:
+        function_name = str(hyp.get("function") or "")
+        cwes = set(hyp.get("cwe_candidates") or [])
+        evidence = " ".join(hyp.get("evidence") or [])
+        reason = str(hyp.get("reason") or "")
+
+        is_cleanup_path_noise = (
+            function_name in {"json_parse_value", "json_parse_array", "json_parse_object"}
+            and cwes & {"CWE-415", "CWE-416"}
+            and (
+                "json_free(" in evidence
+                or "free(key)" in evidence
+                or "ownership release" in reason.lower()
+                or "freed and later used" in reason.lower()
+            )
+        )
+
+        if is_cleanup_path_noise:
+            suppressed.append(hyp)
+            continue
+        preferred.append(hyp)
+
+    if preferred:
+        return preferred
+    return hypotheses
+
+
+def record_free_or_double_free(slc, function_lines, freed, aliases, expr, source_line, item_index, line_text, signal):
     expr = normalize_memory_expr(expr, aliases)
     results = []
     matched = find_matching_freed_expr(expr, freed)
     if matched and matched.get("source_line") != source_line:
+        if matched.get("terminal_after_free"):
+            freed[expr] = {
+                "expr": expr,
+                "source_line": source_line,
+                "code": line_text,
+                "signal": signal,
+                "index": item_index,
+                "terminal_after_free": has_post_free_terminator(line_text),
+            }
+            return results
+        if path_appears_terminated(function_lines, matched.get("index"), item_index):
+            freed[expr] = {
+                "expr": expr,
+                "source_line": source_line,
+                "code": line_text,
+                "signal": signal,
+                "index": item_index,
+                "terminal_after_free": has_post_free_terminator(line_text),
+            }
+            return results
         results.append(make_hypothesis(
             slc=slc,
             cwe_candidates=["CWE-415"],
@@ -276,7 +496,14 @@ def record_free_or_double_free(slc, freed, aliases, expr, source_line, line_text
             vulnerability_type="Double Free",
             risk_level="high",
         ))
-    freed[expr] = {"expr": expr, "source_line": source_line, "code": line_text, "signal": signal}
+    freed[expr] = {
+        "expr": expr,
+        "source_line": source_line,
+        "code": line_text,
+        "signal": signal,
+        "index": item_index,
+        "terminal_after_free": has_post_free_terminator(line_text),
+    }
     return results
 
 

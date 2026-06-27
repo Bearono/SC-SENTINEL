@@ -1,0 +1,20 @@
+{
+  "vulnerabilities": [
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "src\\main.c",
+      "line_number": 33,
+      "code_context": "First free at line 33.\nSecond free at line 39: free(buf);",
+      "trigger_cond": "Pointer 'buf' is freed more than once without reset or reallocation.",
+      "fix_advice": "Set buf to NULL after free and enforce single ownership.",
+      "confidence": 0.78,
+      "source_slice_id": "SLICE-0009",
+      "hypothesis_id": "HYP-0001",
+      "finding_id": "FINDING-0001",
+      "trace_summary": "main -> json_free: callee_frees_argument",
+      "dynamic_status": "untriggered",
+      "final_status": "need_review"
+    }
+  ]
+}

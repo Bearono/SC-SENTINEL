@@ -1,26 +1,8 @@
-"""
-阶段三任务：Docker 沙箱动态验证（AFL++ + eBPF）
-──────────────────────────────────────────────────────────────────────────────
-执行手册第 2.3 节、阶段三任务清单第 4 点：
-
-  在 Taskiq 异步任务中调用 sandbox_manager 完成完整验证生命周期：
-    1. 调用 sandbox_manager.run_sandbox_verification()（在线程池中阻塞运行）
-    2. 将 SandboxResult 写入数据库：
-       - 更新 vulnerability.verify_status = CONFIRMED / FALSE_POSITIVE
-       - 更新 vulnerability.afl_log = AFL++ 崩溃日志
-       - 批量写入 ebpf_event_log 表（eBPF 捕获的内核事件）
-    3. 将 Task 状态更新为 COMPLETED
-    4. 广播最终完成消息到 WebSocket
-
-关键防御机制（执行手册 + 任务清单第 3 点）：
-  - asyncio.wait_for 超时控制：超过 SANDBOX_TIMEOUT_SECONDS 强制中断
-  - sandbox_manager 内部 finally 块强制 stop + remove 容器
-  - Taskiq 不重试（max_retries=0），防止容器资源泄露
-"""
 import asyncio
 import logging
 import uuid
 from datetime import datetime, timezone
+from typing import Any
 
 from app.core.broker import broker
 from app.core.config import settings
@@ -30,180 +12,298 @@ from app.core.ws_manager import ws_manager
 logger = logging.getLogger(__name__)
 
 
-async def _save_fuzzing_results(
-    task_db_id: str,
-    sandbox_result,
-) -> None:
-    """
-    将 SandboxResult 写入数据库：
-      - 更新 vulnerability 表的验证状态和 AFL++ 日志
-      - 批量插入 ebpf_event_log 表
-    """
+def _event_timestamp(value: Any) -> int:
+    try:
+        return int(value)
+    except Exception:
+        return 0
+
+
+async def _save_fuzzing_results(task_db_id: str, sandbox_result) -> None:
     from sqlalchemy import select
     from app.models.task import Task, TaskStatus
     from app.models.vulnerability import Vulnerability, VerifyStatus
     from app.models.ebpf_event_log import EbpfEventLog, EbpfEventType
 
-    # ── 更新漏洞验证状态 ─────────────────────────────────────────────────────
+    strong_ebpf_to_vuln_type = {
+        "double_free": "double_free",
+        "use_after_free": "use_after_free",
+        "heap_overflow": "buffer_overflow",
+        "stack_overflow": "buffer_overflow",
+    }
+    weak_ebpf_events = {
+        "double_free_suspected",
+        "use_after_free_suspected",
+        "heap_overflow_suspected",
+        "stack_write_suspected",
+        "possible_buffer_overflow",
+        "format_string_suspected",
+    }
+    # Weak sink-reachability events are recorded, but they are not proof of a
+    # concrete heap/stack overflow.
+    ebpf_type_map = {
+        "double_free": EbpfEventType.DOUBLE_FREE,
+        "double_free_suspected": EbpfEventType.DOUBLE_FREE,
+        "use_after_free": EbpfEventType.USE_AFTER_FREE,
+        "use_after_free_suspected": EbpfEventType.USE_AFTER_FREE,
+        "heap_overflow": EbpfEventType.HEAP_OVERFLOW,
+        "heap_overflow_suspected": EbpfEventType.OUT_OF_BOUNDS,
+        "stack_overflow": EbpfEventType.STACK_OVERFLOW,
+        "stack_write_suspected": EbpfEventType.OUT_OF_BOUNDS,
+        "possible_buffer_overflow": EbpfEventType.OUT_OF_BOUNDS,
+        "format_string_suspected": EbpfEventType.FORMAT_STRING,
+        "null_deref": EbpfEventType.NULL_DEREF,
+        "out_of_bounds": EbpfEventType.OUT_OF_BOUNDS,
+    }
+
+    package_results = list(getattr(sandbox_result, "package_results", []) or [])
+
     async with AsyncSessionLocal() as session:
         result = await session.execute(
-            select(Vulnerability).where(
-                Vulnerability.task_id == uuid.UUID(task_db_id),
-                Vulnerability.verify_status == VerifyStatus.UNVERIFIED,
-            )
+            select(Vulnerability).where(Vulnerability.task_id == uuid.UUID(task_db_id))
         )
         vulns = result.scalars().all()
+        vulns_by_id = {str(v.id): v for v in vulns}
 
-        for v in vulns:
-            if sandbox_result.crash_found:
-                v.verify_status = VerifyStatus.CONFIRMED
-                v.afl_log = sandbox_result.afl_crash_log[:5000]  # 截断防超长
-            else:
-                v.verify_status = VerifyStatus.FALSE_POSITIVE
+        if package_results:
+            for package_result in package_results:
+                vuln = vulns_by_id.get(str(package_result.get("vuln_id") or ""))
+                if not vuln:
+                    continue
 
-        # ── 写入 eBPF 事件日志 ────────────────────────────────────────────────
-        _EBPF_TYPE_MAP = {
-            "double_free":     EbpfEventType.DOUBLE_FREE,
-            "use_after_free":  EbpfEventType.USE_AFTER_FREE,
-            "heap_overflow":   EbpfEventType.HEAP_OVERFLOW,
-            "null_deref":      EbpfEventType.NULL_DEREF,
-            "stack_overflow":  EbpfEventType.STACK_OVERFLOW,
-            "out_of_bounds":   EbpfEventType.OUT_OF_BOUNDS,
-        }
+                crash_found = bool(package_result.get("crash_found"))
+                error = package_result.get("error")
+                vuln_type_lower = vuln.vuln_type.lower() if vuln.vuln_type else ""
 
-        if vulns and sandbox_result.ebpf_events:
-            # 将 eBPF 事件关联到第一个漏洞（最有关联的主漏洞）
-            primary_vuln_id = vulns[0].id
-            for evt in sandbox_result.ebpf_events[:100]:  # 最多写入 100 条
-                event_type_str = evt.get("event", "other")
-                event_type = _EBPF_TYPE_MAP.get(event_type_str, EbpfEventType.OTHER)
+                ebpf_events = list(package_result.get("ebpf_events") or [])
 
-                log = EbpfEventLog(
-                    vuln_id=primary_vuln_id,
-                    timestamp=int(evt.get("ts", 0)),
-                    event_type=event_type,
-                    function_name=evt.get("fn"),
-                    memory_addr=evt.get("addr"),
-                    raw_data=str(evt),
-                )
-                session.add(log)
+                # eBPF閫氱敤绾犳閫昏緫锛氬熀浜庡疄闄呮崟鑾风殑浜嬩欢绫诲瀷
+                strong_detected_types = set()
+                weak_event_names = set()
+                for evt in ebpf_events:
+                    event_name = evt.get("event") or evt.get("event_type") or ""
+                    if event_name in strong_ebpf_to_vuln_type:
+                        strong_detected_types.add(strong_ebpf_to_vuln_type[event_name])
+                    elif event_name in weak_ebpf_events:
+                        weak_event_names.add(event_name)
+
+                if strong_detected_types:
+                    ebpf_primary_type = sorted(strong_detected_types)[0]
+                    if ebpf_primary_type != vuln_type_lower and vuln_type_lower not in strong_detected_types:
+                        vuln.llm_original_type = vuln.vuln_type
+                        vuln.vuln_type = ebpf_primary_type
+                        vuln.ebpf_corrected = True
+                        logger.info(
+                            "[eBPF Correction] vuln=%s corrected %s -> %s based on strong events: %s",
+                            vuln.id,
+                            vuln.llm_original_type,
+                            ebpf_primary_type,
+                            sorted(strong_detected_types),
+                        )
+
+                if crash_found:
+                    vuln.verify_status = VerifyStatus.CONFIRMED
+                elif vuln_type_lower in strong_detected_types:
+                    vuln.verify_status = VerifyStatus.CONFIRMED
+                    logger.info(
+                        "[eBPF Confirmation] vuln=%s confirmed by strong eBPF events: %s",
+                        vuln.id,
+                        sorted(strong_detected_types),
+                    )
+                elif strong_detected_types:
+                    vuln.verify_status = VerifyStatus.UNVERIFIED
+                elif weak_event_names:
+                    vuln.verify_status = VerifyStatus.UNVERIFIED
+                    logger.info(
+                        "[eBPF Weak Evidence] vuln=%s left unverified; weak events only: %s",
+                        vuln.id,
+                        sorted(weak_event_names),
+                    )
+                elif error:
+                    vuln.verify_status = VerifyStatus.UNVERIFIED
+                else:
+                    vuln.verify_status = VerifyStatus.FALSE_POSITIVE
+
+                # 鏃ュ織鑱氬悎
+                log_parts = []
+                if package_result.get("package_id"):
+                    log_parts.append(f"[SENTINEL] harness={package_result['package_id']}")
+                if error:
+                    log_parts.append(f"[SENTINEL] error={error}")
+                if package_result.get("afl_crash_log"):
+                    log_parts.append(package_result["afl_crash_log"])
+                elif package_result.get("afl_log"):
+                    log_parts.append(package_result["afl_log"])
+                if package_result.get("runtime_evidence_log"):
+                    log_parts.append("[SENTINEL] runtime evidence:\n" + package_result["runtime_evidence_log"])
+                vuln.afl_log = "\n".join(log_parts)[:5000] if log_parts else None
+
+                # 淇濆瓨eBPF浜嬩欢
+                for evt in ebpf_events[:100]:
+                    event_name = evt.get("event") or evt.get("event_type") or "other"
+                    session.add(EbpfEventLog(
+                        vuln_id=vuln.id,
+                        timestamp=_event_timestamp(evt.get("ts") or evt.get("timestamp")),
+                        event_type=ebpf_type_map.get(event_name, EbpfEventType.OTHER),
+                        function_name=evt.get("fn") or evt.get("function"),
+                        memory_addr=evt.get("addr") or evt.get("address"),
+                        raw_data=str(evt),
+                    ))
+        else:
+            # 鍏煎legacy鍗曚綋sandbox缁撴灉
+            for vuln in vulns:
+                if sandbox_result.crash_found:
+                    vuln.verify_status = VerifyStatus.CONFIRMED
+                    vuln.afl_log = sandbox_result.afl_crash_log[:5000]
+                elif sandbox_result.error:
+                    vuln.verify_status = VerifyStatus.UNVERIFIED
+                    vuln.afl_log = sandbox_result.error[:5000]
+                else:
+                    vuln.verify_status = VerifyStatus.FALSE_POSITIVE
 
         await session.commit()
         logger.info(
-            f"[Fuzzing] task={task_db_id} 写入 {len(vulns)} 条漏洞验证状态, "
-            f"{len(sandbox_result.ebpf_events)} 条 eBPF 事件"
+            "[Fuzzing] task=%s saved dynamic results: vulns=%s package_results=%s ebpf=%s",
+            task_db_id,
+            len(vulns),
+            len(package_results),
+            len(getattr(sandbox_result, "ebpf_events", []) or []),
         )
 
-    # ── 更新 Task 状态为 COMPLETED ───────────────────────────────────────────
     async with AsyncSessionLocal() as session:
-        result = await session.execute(
-            select(Task).where(Task.id == uuid.UUID(task_db_id))
-        )
+        result = await session.execute(select(Task).where(Task.id == uuid.UUID(task_db_id)))
         task = result.scalar_one_or_none()
         if task and task.status not in (TaskStatus.FAILED, TaskStatus.COMPLETED):
             task.status = TaskStatus.COMPLETED
             task.completed_at = datetime.now(timezone.utc)
             await session.commit()
-            logger.info(f"[Fuzzing] task={task_db_id} 状态更新为 COMPLETED")
 
 
 @broker.task(
     task_name="dynamic_fuzzing",
-    max_retries=0,        # Fuzzing 不重试（防止容器资源泄露）
+    max_retries=0,
     retry_on_error=False,
 )
-async def run_dynamic_fuzzing(task_db_id: str, source_path: str) -> dict:
-    """
-    Docker 沙箱动态验证任务（阶段三）。
-
-    执行步骤：
-      1. 在线程池中运行同步的 sandbox_manager（Docker SDK 是同步阻塞库）
-      2. asyncio.wait_for 超时控制（配置项 SANDBOX_TIMEOUT_SECONDS）
-      3. 写入验证结果到数据库
-      4. 广播最终完成进度到 WebSocket
-
-    Labels（由 pipeline.trigger_fuzzing_stage 注入）：
-      task_db_id : str → PostgreSQL task.id
-      stage      : "fuzzing"
-
-    Returns:
-        dict: {"crash_found": bool, "ebpf_events": int, "elapsed_seconds": float}
-    """
+async def run_dynamic_fuzzing(
+    task_db_id: str,
+    source_path: str,
+    harness_bundle_root: str | None = None,
+) -> dict:
     from app.services.sandbox_manager import run_sandbox_verification, SandboxResult
 
-    logger.info(f"[Fuzzing] 开始动态验证 task={task_db_id}, source={source_path}")
+    logger.info(
+        "[Fuzzing] Starting dynamic verification task=%s source=%s harness=%s",
+        task_db_id,
+        source_path,
+        harness_bundle_root,
+    )
+
+    await ws_manager.broadcast(
+        task_db_id,
+        {
+            "stage": "fuzzing",
+            "percent": 70,
+            "message": "鍚姩 AFL++ fuzzer锛屽姞杞?harness...",
+            "log_stream": "[FUZZING] Starting dynamic verification...\n",
+        },
+    )
+
+    # 瀹氭椂鎺ㄩ€佽繘搴︽棩蹇?姣?绉?
+    async def progress_heartbeat():
+        progress_messages = [
+            "[FUZZING] AFL++ initializing corpus...\n",
+            "[FUZZING] eBPF uprobe monitoring active...\n",
+            "[FUZZING] Mutation engine running...\n",
+            "[FUZZING] Collecting coverage feedback...\n",
+            "[FUZZING] Exploring new paths...\n",
+        ]
+        msg_idx = 0
+        while True:
+            await asyncio.sleep(5)
+            if msg_idx < len(progress_messages):
+                await ws_manager.broadcast(
+                    task_db_id,
+                    {
+                        "stage": "fuzzing",
+                        "percent": 70 + msg_idx * 5,
+                        "message": "AFL++ fuzzing in progress...",
+                        "log_stream": progress_messages[msg_idx],
+                    },
+                )
+                msg_idx += 1
+
+    heartbeat_task = asyncio.create_task(progress_heartbeat())
 
     sandbox_result: SandboxResult = SandboxResult()
-
     try:
-        # ── 关键：asyncio.wait_for 超时 + asyncio.to_thread 线程池隔离 ────────
-        # Docker SDK (docker-py) 是完全同步阻塞的库，
-        # 必须放在 to_thread() 里执行，避免阻塞 TaskIQ Worker 的事件循环。
-        # 同时用 wait_for 设置总超时，超时后抛出 asyncio.TimeoutError。
         sandbox_result = await asyncio.wait_for(
             asyncio.to_thread(
                 run_sandbox_verification,
                 task_db_id=task_db_id,
                 source_path=source_path,
+                harness_bundle_root=harness_bundle_root,
                 sandbox_image=settings.SANDBOX_IMAGE,
                 timeout_secs=settings.SANDBOX_TIMEOUT_SECONDS,
                 cpu_quota=settings.SANDBOX_CPU_QUOTA,
                 mem_limit=settings.SANDBOX_MEM_LIMIT,
+                package_timeout_secs=settings.SANDBOX_PACKAGE_TIMEOUT_SECONDS,
             ),
-            timeout=settings.SANDBOX_TIMEOUT_SECONDS + 60,  # 额外 60s 给清理流程
+            timeout=settings.SANDBOX_TIMEOUT_SECONDS + 60,
         )
-
     except asyncio.TimeoutError:
-        logger.error(f"[Fuzzing] task={task_db_id} 沙箱验证超时 ({settings.SANDBOX_TIMEOUT_SECONDS}s)")
+        from app.services.sandbox_manager import force_kill_container
+
         sandbox_result.timed_out = True
-        sandbox_result.error = f"沙箱验证超时（超过 {settings.SANDBOX_TIMEOUT_SECONDS}s）"
-        # 注意：sandbox_manager 内部的 finally 块会负责销毁容器，无需在此重复
+        sandbox_result.error = f"Sandbox verification timed out after {settings.SANDBOX_TIMEOUT_SECONDS}s"
+        logger.error("[Fuzzing] task=%s timed out", task_db_id)
+        await asyncio.to_thread(force_kill_container, task_db_id)
+    except Exception as exc:
+        sandbox_result.error = str(exc)
+        logger.error("[Fuzzing] task=%s failed: %s", task_db_id, exc, exc_info=True)
+    finally:
+        heartbeat_task.cancel()
+        try:
+            await heartbeat_task
+        except asyncio.CancelledError:
+            pass
 
-    except Exception as e:
-        logger.error(f"[Fuzzing] task={task_db_id} 沙箱验证异常: {e}", exc_info=True)
-        sandbox_result.error = str(e)
-
-    # ── 将结果写入数据库 ─────────────────────────────────────────────────────
     try:
         await _save_fuzzing_results(task_db_id, sandbox_result)
-    except Exception as e:
-        logger.error(f"[Fuzzing] task={task_db_id} 写入数据库失败: {e}", exc_info=True)
+    except Exception as exc:
+        logger.error("[Fuzzing] task=%s failed to save results: %s", task_db_id, exc, exc_info=True)
 
-    # ── 广播最终完成消息 ─────────────────────────────────────────────────────
+    package_results = list(getattr(sandbox_result, "package_results", []) or [])
+    confirmed = sum(1 for item in package_results if item.get("crash_found"))
+    errored = sum(1 for item in package_results if item.get("error"))
+
     if sandbox_result.error and not sandbox_result.crash_found:
-        # 沙箱出现错误（但未崩溃也算）
+        final_msg = f"Dynamic verification finished with error: {sandbox_result.error[:160]}"
+    elif package_results:
         final_msg = (
-            f"⚠️ 动态验证完成（{'超时' if sandbox_result.timed_out else '异常'}）"
-            f"：{sandbox_result.error[:100]}"
+            f"Dynamic verification completed: {confirmed}/{len(package_results)} "
+            f"harness packages triggered crashes, {errored} package errors."
         )
     elif sandbox_result.crash_found:
-        ebpf_count = len(sandbox_result.ebpf_events)
-        final_msg = (
-            f"🎉 动态验证完成！发现崩溃证据！"
-            f"eBPF 捕获 {ebpf_count} 个内核事件，漏洞已确认（CONFIRMED）。"
-        )
+        final_msg = "Dynamic verification completed: generic sandbox crash found."
     else:
-        final_msg = (
-            f"✅ 动态验证完成，运行时长 {sandbox_result.elapsed_seconds:.1f}s。"
-            f"未触发崩溃（漏洞可能需要特定触发条件）。"
-        )
+        final_msg = f"Dynamic verification completed in {sandbox_result.elapsed_seconds:.1f}s; no crash triggered."
 
     await ws_manager.broadcast(
         task_db_id,
         {
-            "stage":      "done",
-            "percent":    100,
-            "message":    final_msg,
+            "stage": "done",
+            "percent": 100,
+            "message": final_msg,
             "log_stream": sandbox_result.afl_crash_log[:2000],
         },
     )
 
-    result_summary = {
-        "crash_found":     sandbox_result.crash_found,
-        "ebpf_events":     len(sandbox_result.ebpf_events),
+    return {
+        "crash_found": sandbox_result.crash_found,
+        "package_results": len(package_results),
+        "confirmed_package_results": confirmed,
+        "ebpf_events": len(getattr(sandbox_result, "ebpf_events", []) or []),
         "elapsed_seconds": sandbox_result.elapsed_seconds,
-        "timed_out":       sandbox_result.timed_out,
-        "error":           sandbox_result.error,
+        "timed_out": sandbox_result.timed_out,
+        "error": sandbox_result.error,
     }
-    logger.info(f"[Fuzzing] task={task_db_id} 动态验证完成: {result_summary}")
-    return result_summary

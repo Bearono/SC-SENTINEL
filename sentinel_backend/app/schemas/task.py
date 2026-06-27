@@ -146,6 +146,8 @@ class VulnerabilityOut(BaseModel):
     verify_status: VerifyStatus
     crash_output: Optional[str] = None
     ebpf_logs: List[EbpfLogOut] = []
+    llm_original_type: Optional[str] = None  # LLM初始分类(如被eBPF纠正)
+    ebpf_corrected: bool = False              # 是否被eBPF纠正
 
     model_config = {"from_attributes": True}
 

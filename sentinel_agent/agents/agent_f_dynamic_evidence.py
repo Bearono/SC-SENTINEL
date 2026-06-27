@@ -87,7 +87,7 @@ def match_asan_evidence(finding, asan_result):
 def evidence_matches_finding(evidence, finding):
     if not evidence:
         return False
-    if evidence.get("cwe_id") != finding.get("cwe_id"):
+    if not cwe_matches(evidence.get("cwe_id"), finding.get("cwe_id")):
         return False
     target_fn = evidence.get("target_function")
     if target_fn and target_fn != finding.get("function"):
@@ -121,6 +121,7 @@ def afl_text_matches_cwe(afl_result, cwe_id):
     keywords = {
         "CWE-416": ["use-after-free", "heap-use-after-free", "uaf"],
         "CWE-415": ["double-free", "double free"],
+        "CWE-120": ["heap-buffer-overflow", "stack-buffer-overflow", "buffer-overflow", "buffer overflow"],
         "CWE-122": ["heap-buffer-overflow", "heap overflow", "buffer-overflow"],
         "CWE-121": ["stack-buffer-overflow", "stack overflow", "buffer-overflow"],
         "CWE-134": ["format-string", "format string", "%n"],
@@ -135,6 +136,7 @@ def match_ebpf_events(finding, ebpf_log):
     desired = {
         "CWE-416": {"free", "use_after_free", "use_after_free_suspected"},
         "CWE-415": {"free", "double_free", "double_free_suspected"},
+        "CWE-120": {"malloc", "heap_overflow", "heap_overflow_suspected", "stack_overflow", "stack_write_suspected", "out_of_bounds"},
         "CWE-122": {"malloc", "heap_overflow", "heap_overflow_suspected", "out_of_bounds"},
         "CWE-121": {"stack_overflow", "stack_write_suspected", "out_of_bounds"},
         "CWE-134": {"format_string", "format_string_suspected", "out_of_bounds"},
@@ -143,3 +145,10 @@ def match_ebpf_events(finding, ebpf_log):
         ev for ev in ebpf_log.get("events", [])
         if ev.get("event_type") in desired or ev.get("event") in desired
     ]
+
+
+def cwe_matches(evidence_cwe, finding_cwe):
+    if evidence_cwe == finding_cwe:
+        return True
+    buffer_cwes = {"CWE-120", "CWE-121", "CWE-122"}
+    return evidence_cwe in buffer_cwes and finding_cwe in buffer_cwes

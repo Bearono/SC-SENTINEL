@@ -1,0 +1,951 @@
+{
+  "agent": "Agent C - Static Vulnerability Audit",
+  "audit_mode": "rule_fallback_only",
+  "static_findings": [
+    {
+      "finding_id": "FINDING-0001",
+      "source_slice_id": "SLICE-0005",
+      "file": "double_free_direct.c",
+      "function": "challenge",
+      "line_range": [
+        8,
+        10
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Execution reaches free(buf) twice without reset or reallocation.",
+      "evidence": [
+        "Pointer 'buf' is first freed at source line 8.",
+        "Pointer 'buf' is freed again at source line 10: free(buf);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Set buf to NULL after free and avoid duplicate ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0002",
+      "source_slice_id": "SLICE-0007",
+      "file": "double_free_error_path.c",
+      "function": "parse_record",
+      "line_range": [
+        9,
+        13
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "evidence": [
+        "Pointer 'tmp' is first freed at source line 9.",
+        "Pointer 'tmp' is freed again at source line 13: free(tmp);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Set tmp to NULL after free and avoid duplicate ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0003",
+      "source_slice_id": "SLICE-0007",
+      "file": "double_free_error_path.c",
+      "function": "parse_record",
+      "line_range": [
+        9,
+        17
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "evidence": [
+        "Pointer 'tmp' is first freed at source line 9.",
+        "Pointer 'tmp' is freed again at source line 17: free(tmp);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Set tmp to NULL after free and avoid duplicate ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0004",
+      "source_slice_id": "SLICE-0009",
+      "file": "format_string_fprintf.c",
+      "function": "log_event",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'fprintf' uses a non-literal format argument at source line 3: fprintf(out, event);",
+        "Format argument expression: event"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0005",
+      "source_slice_id": "SLICE-0011",
+      "file": "format_string_printf.c",
+      "function": "say",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'printf' uses a non-literal format argument at source line 3: printf(msg);",
+        "Format argument expression: msg"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0006",
+      "source_slice_id": "SLICE-0013",
+      "file": "format_string_snprintf.c",
+      "function": "render",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'snprintf' uses a non-literal format argument at source line 3: snprintf(dst, dst_len, fmt);",
+        "Format argument expression: fmt"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0007",
+      "source_slice_id": "SLICE-0015",
+      "file": "format_string_syslog_like.c",
+      "function": "tiny_syslog",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'printf' uses a non-literal format argument at source line 4: printf(fmt);",
+        "Format argument expression: fmt"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0008",
+      "source_slice_id": "SLICE-0018",
+      "file": "heap_overflow_integer_trunc.c",
+      "function": "store_message",
+      "line_range": [
+        11,
+        11
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 11: memcpy(buf, msg, len);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0009",
+      "source_slice_id": "SLICE-0020",
+      "file": "heap_overflow_memcpy_len.c",
+      "function": "decode_packet",
+      "line_range": [
+        9,
+        9
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 9: memcpy(buf, packet, packet_len);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0010",
+      "source_slice_id": "SLICE-0022",
+      "file": "heap_overflow_off_by_one.c",
+      "function": "read_token",
+      "line_range": [
+        10,
+        10
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 10: memcpy(buf, token, len + 1);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0011",
+      "source_slice_id": "SLICE-0024",
+      "file": "heap_overflow_strcpy.c",
+      "function": "copy_badge",
+      "line_range": [
+        9,
+        9
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 9: strcpy(badge, input);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0012",
+      "source_slice_id": "SLICE-0030",
+      "file": "stack_overflow_sprintf.c",
+      "function": "make_banner",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 4: sprintf(banner, \"player:%s\", name);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0013",
+      "source_slice_id": "SLICE-0032",
+      "file": "stack_overflow_strcpy.c",
+      "function": "enter_name",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 4: strcpy(local, name);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    },
+    {
+      "finding_id": "FINDING-0014",
+      "source_slice_id": "SLICE-0039",
+      "file": "uaf_direct.c",
+      "function": "challenge",
+      "line_range": [
+        10,
+        13
+      ],
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'score' is dereferenced or accessed after free.",
+      "evidence": [
+        "Pointer 'score' is freed at source line 10.",
+        "Pointer 'score' is used again at source line 13: printf(\"score=%d\\n\", *score);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Do not access score after free; set it to NULL and guard future uses.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      }
+    }
+  ],
+  "audited_slices": [
+    {
+      "slice_id": "SLICE-0001",
+      "target_file": "double_free_alias.c",
+      "target_function": "consume",
+      "risk_keywords": [
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0002",
+      "target_file": "double_free_alias.c",
+      "target_function": "main",
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0003",
+      "target_file": "double_free_cleanup.c",
+      "target_function": "blob_destroy",
+      "risk_keywords": [
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0004",
+      "target_file": "double_free_cleanup.c",
+      "target_function": "main",
+      "risk_keywords": [
+        "malloc"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0005",
+      "target_file": "double_free_direct.c",
+      "target_function": "challenge",
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0007",
+      "target_file": "double_free_error_path.c",
+      "target_function": "parse_record",
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0009",
+      "target_file": "format_string_fprintf.c",
+      "target_function": "log_event",
+      "risk_keywords": [
+        "fprintf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0011",
+      "target_file": "format_string_printf.c",
+      "target_function": "say",
+      "risk_keywords": [
+        "printf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0013",
+      "target_file": "format_string_snprintf.c",
+      "target_function": "render",
+      "risk_keywords": [
+        "snprintf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0015",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "tiny_syslog",
+      "risk_keywords": [
+        "printf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0018",
+      "target_file": "heap_overflow_integer_trunc.c",
+      "target_function": "store_message",
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "memcpy"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0020",
+      "target_file": "heap_overflow_memcpy_len.c",
+      "target_function": "decode_packet",
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "memcpy"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0022",
+      "target_file": "heap_overflow_off_by_one.c",
+      "target_function": "read_token",
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "memcpy"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0024",
+      "target_file": "heap_overflow_strcpy.c",
+      "target_function": "copy_badge",
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "strcpy"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0030",
+      "target_file": "stack_overflow_sprintf.c",
+      "target_function": "make_banner",
+      "risk_keywords": [
+        "sprintf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0032",
+      "target_file": "stack_overflow_strcpy.c",
+      "target_function": "enter_name",
+      "risk_keywords": [
+        "strcpy"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0034",
+      "target_file": "uaf_array_slot.c",
+      "target_function": "release_slot",
+      "risk_keywords": [
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0035",
+      "target_file": "uaf_array_slot.c",
+      "target_function": "main",
+      "risk_keywords": [
+        "malloc"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0036",
+      "target_file": "uaf_cross_function.c",
+      "target_function": "close_ticket",
+      "risk_keywords": [
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0037",
+      "target_file": "uaf_cross_function.c",
+      "target_function": "print_ticket",
+      "risk_keywords": [
+        "printf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0039",
+      "target_file": "uaf_direct.c",
+      "target_function": "challenge",
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "printf"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0041",
+      "target_file": "uaf_struct_field.c",
+      "target_function": "reset_name",
+      "risk_keywords": [
+        "free"
+      ]
+    },
+    {
+      "slice_id": "SLICE-0042",
+      "target_file": "uaf_struct_field.c",
+      "target_function": "main",
+      "risk_keywords": [
+        "malloc",
+        "printf"
+      ]
+    }
+  ],
+  "skipped_slices": [
+    {
+      "slice_id": "SLICE-0006",
+      "target_file": "double_free_direct.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0008",
+      "target_file": "double_free_error_path.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0010",
+      "target_file": "format_string_fprintf.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0012",
+      "target_file": "format_string_printf.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0014",
+      "target_file": "format_string_snprintf.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0016",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "dispatch_log",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0017",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0019",
+      "target_file": "heap_overflow_integer_trunc.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0021",
+      "target_file": "heap_overflow_memcpy_len.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0023",
+      "target_file": "heap_overflow_off_by_one.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0025",
+      "target_file": "heap_overflow_strcpy.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0026",
+      "target_file": "stack_overflow_index.c",
+      "target_function": "set_checkpoint",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0027",
+      "target_file": "stack_overflow_index.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0028",
+      "target_file": "stack_overflow_loop.c",
+      "target_function": "copy_loop",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0029",
+      "target_file": "stack_overflow_loop.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0031",
+      "target_file": "stack_overflow_sprintf.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0033",
+      "target_file": "stack_overflow_strcpy.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0038",
+      "target_file": "uaf_cross_function.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    },
+    {
+      "slice_id": "SLICE-0040",
+      "target_file": "uaf_direct.c",
+      "target_function": "main",
+      "reason": "No memory-risk keyword found in this slice."
+    }
+  ],
+  "llm_errors": [],
+  "quality_events": [],
+  "quality_summary": {
+    "total_quality_events": 0,
+    "json_retry_events": 0,
+    "confidence_adjusted_count": 0,
+    "consistent_with_rule_count": 0,
+    "cwe_conflict_count": 0,
+    "llm_error_count": 0
+  },
+  "summary": {
+    "total_input_slices": 42,
+    "audited_slices": 23,
+    "skipped_slices": 19,
+    "total_findings": 14,
+    "high_risk_findings": 14,
+    "llm_available": false,
+    "llm_error_count": 0,
+    "llm_findings": 0,
+    "rule_fallback_findings": 14
+  },
+  "vulnerabilities": [
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_direct.c",
+      "line_number": 8,
+      "code_context": "Pointer 'buf' is first freed at source line 8.\nPointer 'buf' is freed again at source line 10: free(buf);",
+      "trigger_cond": "Execution reaches free(buf) twice without reset or reallocation.",
+      "fix_advice": "Set buf to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_error_path.c",
+      "line_number": 9,
+      "code_context": "Pointer 'tmp' is first freed at source line 9.\nPointer 'tmp' is freed again at source line 13: free(tmp);",
+      "trigger_cond": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "fix_advice": "Set tmp to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_error_path.c",
+      "line_number": 9,
+      "code_context": "Pointer 'tmp' is first freed at source line 9.\nPointer 'tmp' is freed again at source line 17: free(tmp);",
+      "trigger_cond": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "fix_advice": "Set tmp to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_fprintf.c",
+      "line_number": 3,
+      "code_context": "Function 'fprintf' uses a non-literal format argument at source line 3: fprintf(out, event);\nFormat argument expression: event",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_printf.c",
+      "line_number": 3,
+      "code_context": "Function 'printf' uses a non-literal format argument at source line 3: printf(msg);\nFormat argument expression: msg",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_snprintf.c",
+      "line_number": 3,
+      "code_context": "Function 'snprintf' uses a non-literal format argument at source line 3: snprintf(dst, dst_len, fmt);\nFormat argument expression: fmt",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_syslog_like.c",
+      "line_number": 4,
+      "code_context": "Function 'printf' uses a non-literal format argument at source line 4: printf(fmt);\nFormat argument expression: fmt",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_integer_trunc.c",
+      "line_number": 11,
+      "code_context": "Dangerous copy-style function call at source line 11: memcpy(buf, msg, len);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_memcpy_len.c",
+      "line_number": 9,
+      "code_context": "Dangerous copy-style function call at source line 9: memcpy(buf, packet, packet_len);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_off_by_one.c",
+      "line_number": 10,
+      "code_context": "Dangerous copy-style function call at source line 10: memcpy(buf, token, len + 1);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_strcpy.c",
+      "line_number": 9,
+      "code_context": "Dangerous copy-style function call at source line 9: strcpy(badge, input);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "file_path": "stack_overflow_sprintf.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style function call at source line 4: sprintf(banner, \"player:%s\", name);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "file_path": "stack_overflow_strcpy.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style function call at source line 4: strcpy(local, name);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "UAF",
+      "file_path": "uaf_direct.c",
+      "line_number": 10,
+      "code_context": "Pointer 'score' is freed at source line 10.\nPointer 'score' is used again at source line 13: printf(\"score=%d\\n\", *score);",
+      "trigger_cond": "Pointer 'score' is dereferenced or accessed after free.",
+      "fix_advice": "Do not access score after free; set it to NULL and guard future uses."
+    }
+  ],
+  "integration": {
+    "vulnerabilities": [
+      {
+        "vuln_type": "double_free",
+        "file_path": "double_free_direct.c",
+        "line_number": 8,
+        "code_context": "Pointer 'buf' is first freed at source line 8.\nPointer 'buf' is freed again at source line 10: free(buf);",
+        "trigger_cond": "Execution reaches free(buf) twice without reset or reallocation.",
+        "fix_advice": "Set buf to NULL after free and avoid duplicate ownership."
+      },
+      {
+        "vuln_type": "double_free",
+        "file_path": "double_free_error_path.c",
+        "line_number": 9,
+        "code_context": "Pointer 'tmp' is first freed at source line 9.\nPointer 'tmp' is freed again at source line 13: free(tmp);",
+        "trigger_cond": "Execution reaches free(tmp) twice without reset or reallocation.",
+        "fix_advice": "Set tmp to NULL after free and avoid duplicate ownership."
+      },
+      {
+        "vuln_type": "double_free",
+        "file_path": "double_free_error_path.c",
+        "line_number": 9,
+        "code_context": "Pointer 'tmp' is first freed at source line 9.\nPointer 'tmp' is freed again at source line 17: free(tmp);",
+        "trigger_cond": "Execution reaches free(tmp) twice without reset or reallocation.",
+        "fix_advice": "Set tmp to NULL after free and avoid duplicate ownership."
+      },
+      {
+        "vuln_type": "format_string",
+        "file_path": "format_string_fprintf.c",
+        "line_number": 3,
+        "code_context": "Function 'fprintf' uses a non-literal format argument at source line 3: fprintf(out, event);\nFormat argument expression: event",
+        "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+        "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+      },
+      {
+        "vuln_type": "format_string",
+        "file_path": "format_string_printf.c",
+        "line_number": 3,
+        "code_context": "Function 'printf' uses a non-literal format argument at source line 3: printf(msg);\nFormat argument expression: msg",
+        "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+        "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+      },
+      {
+        "vuln_type": "format_string",
+        "file_path": "format_string_snprintf.c",
+        "line_number": 3,
+        "code_context": "Function 'snprintf' uses a non-literal format argument at source line 3: snprintf(dst, dst_len, fmt);\nFormat argument expression: fmt",
+        "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+        "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+      },
+      {
+        "vuln_type": "format_string",
+        "file_path": "format_string_syslog_like.c",
+        "line_number": 4,
+        "code_context": "Function 'printf' uses a non-literal format argument at source line 4: printf(fmt);\nFormat argument expression: fmt",
+        "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+        "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+      },
+      {
+        "vuln_type": "heap_overflow",
+        "file_path": "heap_overflow_integer_trunc.c",
+        "line_number": 11,
+        "code_context": "Dangerous copy-style function call at source line 11: memcpy(buf, msg, len);\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "heap_overflow",
+        "file_path": "heap_overflow_memcpy_len.c",
+        "line_number": 9,
+        "code_context": "Dangerous copy-style function call at source line 9: memcpy(buf, packet, packet_len);\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "heap_overflow",
+        "file_path": "heap_overflow_off_by_one.c",
+        "line_number": 10,
+        "code_context": "Dangerous copy-style function call at source line 10: memcpy(buf, token, len + 1);\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "heap_overflow",
+        "file_path": "heap_overflow_strcpy.c",
+        "line_number": 9,
+        "code_context": "Dangerous copy-style function call at source line 9: strcpy(badge, input);\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "stack_overflow",
+        "file_path": "stack_overflow_sprintf.c",
+        "line_number": 4,
+        "code_context": "Dangerous copy-style function call at source line 4: sprintf(banner, \"player:%s\", name);\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "stack_overflow",
+        "file_path": "stack_overflow_strcpy.c",
+        "line_number": 4,
+        "code_context": "Dangerous copy-style function call at source line 4: strcpy(local, name);\nRule fallback cannot fully prove destination bounds.",
+        "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+        "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+      },
+      {
+        "vuln_type": "UAF",
+        "file_path": "uaf_direct.c",
+        "line_number": 10,
+        "code_context": "Pointer 'score' is freed at source line 10.\nPointer 'score' is used again at source line 13: printf(\"score=%d\\n\", *score);",
+        "trigger_cond": "Pointer 'score' is dereferenced or accessed after free.",
+        "fix_advice": "Do not access score after free; set it to NULL and guard future uses."
+      }
+    ]
+  }
+}

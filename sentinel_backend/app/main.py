@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from taskiq_fastapi import init as taskiq_init
 
 from app.core.config import settings
@@ -30,6 +31,31 @@ import app.worker.pipeline      # noqa: F401, E402
 logger = logging.getLogger(__name__)
 
 
+async def ensure_runtime_enum_values(conn) -> None:
+    """Keep existing local Postgres volumes compatible with model enum growth."""
+    await conn.execute(text("""
+DO $$
+DECLARE
+    enum_value text;
+BEGIN
+    FOREACH enum_value IN ARRAY ARRAY['OUT_OF_BOUNDS', 'FORMAT_STRING']
+    LOOP
+        IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'ebpf_event_type_enum')
+           AND NOT EXISTS (
+               SELECT 1
+               FROM pg_enum e
+               JOIN pg_type t ON t.oid = e.enumtypid
+               WHERE t.typname = 'ebpf_event_type_enum'
+                 AND e.enumlabel = enum_value
+           )
+        THEN
+            EXECUTE format('ALTER TYPE ebpf_event_type_enum ADD VALUE %L', enum_value);
+        END IF;
+    END LOOP;
+END $$;
+"""))
+
+
 # ── 生命周期管理 ────────────────────────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,6 +66,7 @@ async def lifespan(app: FastAPI):
     """
     logger.info("🚀 SENTINEL 启动中，正在连接数据库并初始化表结构...")
     async with engine.begin() as conn:
+        await ensure_runtime_enum_values(conn)
         # 开发用：自动建表（不会覆盖已有表）
         await conn.run_sync(Base.metadata.create_all)
     logger.info("✅ 数据库表结构初始化完毕")

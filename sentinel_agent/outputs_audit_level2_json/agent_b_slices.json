@@ -1,0 +1,1987 @@
+{
+  "agent": "Agent B - Context Pruning and Code Slicing",
+  "slices": [
+    {
+      "slice_id": "SLICE-0009",
+      "target_file": "src\\main.c",
+      "target_function": "main",
+      "line_range": [
+        12,
+        42
+      ],
+      "related_includes": [
+        {
+          "line": 6,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 7,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 8,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 9,
+          "code": "#include <string.h>"
+        }
+      ],
+      "related_macros": [
+        {
+          "line_range": [
+            11,
+            11
+          ],
+          "code": "#define MAX_INPUT (1 << 20)  /* 1 MB */"
+        }
+      ],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "json_free",
+        "json_print"
+      ],
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "fprintf"
+      ],
+      "risk_score": 11,
+      "audit_priority": "high",
+      "dataflow_hints": [
+        "explicit_free",
+        "external_input",
+        "format_sink",
+        "heap_allocation",
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [
+        {
+          "source": "argv",
+          "sink": "format"
+        },
+        {
+          "source": "argv",
+          "sink": "free"
+        },
+        {
+          "source": "argv",
+          "sink": "pointer_access"
+        },
+        {
+          "source": "file_read",
+          "sink": "format"
+        },
+        {
+          "source": "file_read",
+          "sink": "free"
+        },
+        {
+          "source": "file_read",
+          "sink": "pointer_access"
+        },
+        {
+          "source": "stdin",
+          "sink": "format"
+        },
+        {
+          "source": "stdin",
+          "sink": "free"
+        },
+        {
+          "source": "stdin",
+          "sink": "pointer_access"
+        }
+      ],
+      "caller_count": 0,
+      "callee_count": 2,
+      "parameters": [
+        {
+          "name": "argc",
+          "declaration": "int argc",
+          "is_pointer": false,
+          "is_size": false
+        },
+        {
+          "name": "argv",
+          "declaration": "char *argv[]",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [
+        {
+          "name": "main",
+          "line_offset": 2,
+          "is_pointer": false,
+          "is_array": false,
+          "declaration": "int main(int argc, char *argv[])"
+        },
+        {
+          "name": "argc",
+          "line_offset": 2,
+          "is_pointer": false,
+          "is_array": false,
+          "declaration": "int main(int argc, char *argv[])"
+        },
+        {
+          "name": "argv",
+          "line_offset": 2,
+          "is_pointer": true,
+          "is_array": false,
+          "declaration": "int main(int argc, char *argv[])"
+        },
+        {
+          "name": "buf",
+          "line_offset": 5,
+          "is_pointer": true,
+          "is_array": false,
+          "declaration": "char   *buf = NULL;"
+        },
+        {
+          "name": "len",
+          "line_offset": 6,
+          "is_pointer": false,
+          "is_array": false,
+          "declaration": "size_t  len = 0;"
+        }
+      ],
+      "effect_summary": {
+        "allocates": [
+          "buf"
+        ],
+        "frees": [
+          "buf",
+          "buf"
+        ],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "1",
+        "stores_alias": [
+          {
+            "target": "fp",
+            "source": "stdin"
+          },
+          {
+            "target": "buf",
+            "source": "NULL"
+          }
+        ],
+        "uses_after_call": [],
+        "format_sinks": [
+          "fprintf"
+        ]
+      },
+      "cross_function_context": [
+        {
+          "caller": "main",
+          "callee": "json_free",
+          "callee_file": "src\\json_parser.c",
+          "callee_effects": {
+            "allocates": [],
+            "frees": [
+              "val->key",
+              "val->v.string",
+              "val"
+            ],
+            "frees_param": [
+              "val->key",
+              "val->v.string",
+              "val"
+            ],
+            "frees_field": [
+              "val->key",
+              "val->v.string"
+            ],
+            "writes": [],
+            "writes_param": [],
+            "returns_allocated": false,
+            "return_expr": null,
+            "stores_alias": [],
+            "uses_after_call": [],
+            "format_sinks": []
+          },
+          "risk_signals": [
+            "callee_frees_argument"
+          ],
+          "trace": "main -> json_free: callee_frees_argument"
+        }
+      ],
+      "body_line_count": 25,
+      "context_line_count": 5,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\main.c */\n/* Target Function: main */\n/* Line Range: 12-42 */\n/* Risk Keywords: malloc, free, fprintf */\n/* Upstream Callers: none */\n/* Callees: json_free, json_print */\n/* Memory Effects: {'allocates': ['buf'], 'frees': ['buf', 'buf'], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': '1', 'stores_alias': [{'target': 'fp', 'source': 'stdin'}, {'target': 'buf', 'source': 'NULL'}], 'uses_after_call': [], 'format_sinks': ['fprintf']} */\n/* Cross Function Context: */\n/* - main -> json_free: callee_frees_argument */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n/* ===== Related Macros ===== */\n#define MAX_INPUT (1 << 20)  /* 1 MB */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char *argv[])\n{\n    FILE   *fp  = stdin;\n    char   *buf = NULL;\n    size_t  len = 0;\n\n    if (argc >= 2) {\n        fp = fopen(argv[1], \"rb\");\n        if (!fp) { perror(\"fopen\"); return 1; }\n    }\n\n    buf = (char *)malloc(MAX_INPUT);\n    if (!buf) { fputs(\"OOM\\n\", stderr); return 1; }\n\n    len = fread(buf, 1, MAX_INPUT - 1, fp);\n    if (argc >= 2) fclose(fp);\n    buf[len] = '\\0';\n\n    json_value_t *root = json_parse(buf, len);\n    if (!root) {\n        fprintf(stderr, \"Parse error\\n\");\n        free(buf);\n        return 1;\n    }\n\n    json_print(root, 0);\n    json_free(root);\n    free(buf);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0006",
+      "target_file": "src\\json_parser.c",
+      "target_function": "json_free",
+      "line_range": [
+        362,
+        375
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "src\\main.c",
+          "line_range": [
+            12,
+            42
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "free"
+      ],
+      "risk_score": 7,
+      "audit_priority": "high",
+      "dataflow_hints": [
+        "explicit_free",
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [],
+      "caller_count": 1,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "val",
+          "declaration": "json_value_t *val",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [
+          "val->key",
+          "val->v.string",
+          "val"
+        ],
+        "frees_param": [
+          "val->key",
+          "val->v.string",
+          "val"
+        ],
+        "frees_field": [
+          "val->key",
+          "val->v.string"
+        ],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": null,
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "cross_function_context": [
+        {
+          "caller": "main",
+          "callee": "json_free",
+          "caller_file": "src\\main.c",
+          "risk_signals": [
+            "upstream_call"
+          ],
+          "trace": "main -> json_free"
+        }
+      ],
+      "body_line_count": 13,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: json_free */\n/* Line Range: 362-375 */\n/* Risk Keywords: free */\n/* Upstream Callers: main */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': ['val->key', 'val->v.string', 'val'], 'frees_param': ['val->key', 'val->v.string', 'val'], 'frees_field': ['val->key', 'val->v.string'], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': None, 'stores_alias': [], 'uses_after_call': [], 'format_sinks': []} */\n/* Cross Function Context: */\n/* - main -> json_free */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\n\nvoid json_free(json_value_t *val)\n{\n    if (!val) return;\n    json_free(val->next);\n    free(val->key);\n    switch (val->type) {\n    case JSON_STRING: free(val->v.string); break;\n    case JSON_ARRAY:\n    case JSON_OBJECT: json_free(val->v.children); break;\n    default: break;\n    }\n    free(val);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0008",
+      "target_file": "src\\json_parser.c",
+      "target_function": "json_print",
+      "line_range": [
+        394,
+        420
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "src\\main.c",
+          "line_range": [
+            12,
+            42
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "printf"
+      ],
+      "risk_score": 4,
+      "audit_priority": "medium",
+      "dataflow_hints": [
+        "format_sink",
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [],
+      "caller_count": 1,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "val",
+          "declaration": "const json_value_t *val",
+          "is_pointer": true,
+          "is_size": false
+        },
+        {
+          "name": "indent",
+          "declaration": "int indent",
+          "is_pointer": false,
+          "is_size": false
+        }
+      ],
+      "local_variables": [],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": null,
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": [
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf"
+        ]
+      },
+      "cross_function_context": [
+        {
+          "caller": "main",
+          "callee": "json_print",
+          "caller_file": "src\\main.c",
+          "risk_signals": [
+            "upstream_call"
+          ],
+          "trace": "main -> json_print"
+        }
+      ],
+      "body_line_count": 26,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: json_print */\n/* Line Range: 394-420 */\n/* Risk Keywords: printf */\n/* Upstream Callers: main */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': [], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': None, 'stores_alias': [], 'uses_after_call': [], 'format_sinks': ['printf', 'printf', 'printf', 'printf', 'printf', 'printf', 'printf', 'printf', 'printf']} */\n/* Cross Function Context: */\n/* - main -> json_print */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\n\nvoid json_print(const json_value_t *val, int indent)\n{\n    if (!val) return;\n    for (int i = 0; i < indent; i++) putchar(' ');\n    if (val->key) printf(\"\\\"%s\\\": \", val->key);\n    switch (val->type) {\n    case JSON_NULL:   printf(\"null\\n\"); break;\n    case JSON_BOOL:   printf(\"%s\\n\", val->v.boolean ? \"true\" : \"false\"); break;\n    case JSON_NUMBER: printf(\"%g\\n\", val->v.number); break;\n    case JSON_STRING: printf(\"\\\"%s\\\"\\n\", val->v.string ? val->v.string : \"\"); break;\n    case JSON_ARRAY:\n        printf(\"[\\n\");\n        json_print(val->v.children, indent + 2);\n        for (int i = 0; i < indent; i++) putchar(' ');\n        printf(\"]\\n\");\n        break;\n    case JSON_OBJECT:\n        printf(\"{\\n\");\n        json_print(val->v.children, indent + 2);\n        for (int i = 0; i < indent; i++) putchar(' ');\n        printf(\"}\\n\");\n        break;\n    default: break;\n    }\n    json_print(val->next, indent);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0005",
+      "target_file": "src\\json_parser.c",
+      "target_function": "parse_hex4",
+      "line_range": [
+        84,
+        96
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "risk_score": 2,
+      "audit_priority": "medium",
+      "dataflow_hints": [
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [
+        {
+          "source": "function_parameter",
+          "sink": "pointer_access"
+        }
+      ],
+      "caller_count": 0,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "s",
+          "declaration": "const char *s",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [
+        {
+          "name": "v",
+          "line_offset": 4,
+          "is_pointer": false,
+          "is_array": false,
+          "declaration": "unsigned int v = 0;"
+        },
+        {
+          "name": "c",
+          "line_offset": 7,
+          "is_pointer": false,
+          "is_array": false,
+          "declaration": "char c = s[i];"
+        }
+      ],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "v",
+        "stores_alias": [
+          {
+            "target": "c",
+            "source": "s[i]"
+          }
+        ],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "cross_function_context": [],
+      "body_line_count": 12,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: parse_hex4 */\n/* Line Range: 84-96 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': [], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': 'v', 'stores_alias': [{'target': 'c', 'source': 's[i]'}], 'uses_after_call': [], 'format_sinks': []} */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\n\nstatic unsigned int parse_hex4(const char *s)\n{\n    unsigned int v = 0;\n    for (int i = 0; i < 4; i++) {\n        v <<= 4;\n        char c = s[i];\n        if      (c >= '0' && c <= '9') v |= (unsigned)(c - '0');\n        else if (c >= 'a' && c <= 'f') v |= (unsigned)(c - 'a' + 10);\n        else if (c >= 'A' && c <= 'F') v |= (unsigned)(c - 'A' + 10);\n    }\n    return v;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0007",
+      "target_file": "src\\json_parser.c",
+      "target_function": "json_get_number",
+      "line_range": [
+        385,
+        393
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "risk_score": 0,
+      "audit_priority": "low",
+      "dataflow_hints": [
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [
+        {
+          "source": "function_parameter",
+          "sink": "pointer_access"
+        }
+      ],
+      "caller_count": 0,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "val",
+          "declaration": "const json_value_t *val",
+          "is_pointer": true,
+          "is_size": false
+        },
+        {
+          "name": "key",
+          "declaration": "const char *key",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "0.0",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "cross_function_context": [],
+      "body_line_count": 8,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: json_get_number */\n/* Line Range: 385-393 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': [], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': '0.0', 'stores_alias': [], 'uses_after_call': [], 'format_sinks': []} */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\n\ndouble json_get_number(const json_value_t *val, const char *key)\n{\n    if (!val || val->type != JSON_OBJECT) return 0.0;\n    for (const json_value_t *c = val->v.children; c; c = c->next)\n        if (c->key && strcmp(c->key, key) == 0 && c->type == JSON_NUMBER)\n            return c->v.number;\n    return 0.0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0004",
+      "target_file": "src\\json_parser.c",
+      "target_function": "encode_utf8",
+      "line_range": [
+        61,
+        83
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "risk_score": 0,
+      "audit_priority": "low",
+      "dataflow_hints": [
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [
+        {
+          "source": "function_parameter",
+          "sink": "pointer_access"
+        }
+      ],
+      "caller_count": 0,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "cp",
+          "declaration": "unsigned int cp",
+          "is_pointer": false,
+          "is_size": false
+        },
+        {
+          "name": "out",
+          "declaration": "char *out",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "1",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "cross_function_context": [],
+      "body_line_count": 23,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: encode_utf8 */\n/* Line Range: 61-83 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': [], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': '1', 'stores_alias': [], 'uses_after_call': [], 'format_sinks': []} */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\nstatic int encode_utf8(unsigned int cp, char *out)\n{\n    if (cp <= 0x7F) {\n        out[0] = (char)cp;\n        return 1;\n    } else if (cp <= 0x7FF) {\n        out[0] = (char)(0xC0 | (cp >> 6));\n        out[1] = (char)(0x80 | (cp & 0x3F));\n        return 2;\n    } else if (cp <= 0xFFFF) {\n        out[0] = (char)(0xE0 | (cp >> 12));\n        out[1] = (char)(0x80 | ((cp >> 6) & 0x3F));\n        out[2] = (char)(0x80 | (cp & 0x3F));\n        return 3;\n    } else {\n        /* Supplementary plane: 4 bytes */\n        out[0] = (char)(0xF0 | (cp >> 18));\n        out[1] = (char)(0x80 | ((cp >> 12) & 0x3F));\n        out[2] = (char)(0x80 | ((cp >> 6)  & 0x3F));\n        out[3] = (char)(0x80 | (cp & 0x3F));\n        return 4;\n    }\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0003",
+      "target_file": "src\\json_parser.c",
+      "target_function": "advance",
+      "line_range": [
+        46,
+        51
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "risk_score": 0,
+      "audit_priority": "low",
+      "dataflow_hints": [
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [],
+      "caller_count": 0,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "ctx",
+          "declaration": "json_ctx_t *ctx",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "-1",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "cross_function_context": [],
+      "body_line_count": 5,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: advance */\n/* Line Range: 46-51 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': [], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': '-1', 'stores_alias': [], 'uses_after_call': [], 'format_sinks': []} */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\n\nstatic int advance(json_ctx_t *ctx)\n{\n    if (ctx->pos >= ctx->len) return -1;\n    return (unsigned char)ctx->src[ctx->pos++];\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0002",
+      "target_file": "src\\json_parser.c",
+      "target_function": "peek",
+      "line_range": [
+        40,
+        45
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "risk_score": 0,
+      "audit_priority": "low",
+      "dataflow_hints": [
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [],
+      "caller_count": 0,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "ctx",
+          "declaration": "const json_ctx_t *ctx",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "-1",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "cross_function_context": [],
+      "body_line_count": 5,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: peek */\n/* Line Range: 40-45 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': [], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': '-1', 'stores_alias': [], 'uses_after_call': [], 'format_sinks': []} */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\n\nstatic int peek(const json_ctx_t *ctx)\n{\n    if (ctx->pos >= ctx->len) return -1;\n    return (unsigned char)ctx->src[ctx->pos];\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0001",
+      "target_file": "src\\json_parser.c",
+      "target_function": "skip_whitespace",
+      "line_range": [
+        30,
+        39
+      ],
+      "related_includes": [
+        {
+          "line": 20,
+          "code": "#include \"json_parser.h\""
+        },
+        {
+          "line": 22,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 23,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 24,
+          "code": "#include <string.h>"
+        },
+        {
+          "line": 25,
+          "code": "#include <ctype.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 127,
+          "code": "size_t out = 0;"
+        },
+        {
+          "line": 195,
+          "code": "size_t start = ctx->pos;"
+        },
+        {
+          "line": 210,
+          "code": "char tmp[64] = {0};"
+        },
+        {
+          "line": 211,
+          "code": "size_t numlen = ctx->pos - start;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "risk_score": 0,
+      "audit_priority": "low",
+      "dataflow_hints": [
+        "pointer_or_index_access"
+      ],
+      "source_sink_pairs": [],
+      "caller_count": 0,
+      "callee_count": 0,
+      "parameters": [
+        {
+          "name": "ctx",
+          "declaration": "json_ctx_t *ctx",
+          "is_pointer": true,
+          "is_size": false
+        }
+      ],
+      "local_variables": [],
+      "effect_summary": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": null,
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "cross_function_context": [],
+      "body_line_count": 9,
+      "context_line_count": 9,
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: src\\json_parser.c */\n/* Target Function: skip_whitespace */\n/* Line Range: 30-39 */\n/* Risk Keywords: none */\n/* Upstream Callers: none */\n/* Callees: none */\n/* Memory Effects: {'allocates': [], 'frees': [], 'frees_param': [], 'frees_field': [], 'writes': [], 'writes_param': [], 'returns_allocated': False, 'return_expr': None, 'stores_alias': [], 'uses_after_call': [], 'format_sinks': []} */\n\n/* ===== Related Includes ===== */\n#include \"json_parser.h\"\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t out = 0;\nsize_t start = ctx->pos;\nchar tmp[64] = {0};\nsize_t numlen = ctx->pos - start;\n\n/* ===== Target Function Body ===== */\n\nstatic void skip_whitespace(json_ctx_t *ctx)\n{\n    while (ctx->pos < ctx->len &&\n           (ctx->src[ctx->pos] == ' '  ||\n            ctx->src[ctx->pos] == '\\t' ||\n            ctx->src[ctx->pos] == '\\r' ||\n            ctx->src[ctx->pos] == '\\n'))\n        ctx->pos++;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    }
+  ],
+  "program_model": {
+    "functions": [
+      {
+        "file": "src\\json_parser.c",
+        "function": "skip_whitespace",
+        "line_range": [
+          30,
+          39
+        ],
+        "parameters": [
+          {
+            "name": "ctx",
+            "declaration": "json_ctx_t *ctx",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [],
+        "callee_functions": [],
+        "caller_functions": [],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": null,
+          "stores_alias": [],
+          "uses_after_call": [],
+          "format_sinks": []
+        }
+      },
+      {
+        "file": "src\\json_parser.c",
+        "function": "peek",
+        "line_range": [
+          40,
+          45
+        ],
+        "parameters": [
+          {
+            "name": "ctx",
+            "declaration": "const json_ctx_t *ctx",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [],
+        "callee_functions": [],
+        "caller_functions": [],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": "-1",
+          "stores_alias": [],
+          "uses_after_call": [],
+          "format_sinks": []
+        }
+      },
+      {
+        "file": "src\\json_parser.c",
+        "function": "advance",
+        "line_range": [
+          46,
+          51
+        ],
+        "parameters": [
+          {
+            "name": "ctx",
+            "declaration": "json_ctx_t *ctx",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [],
+        "callee_functions": [],
+        "caller_functions": [],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": "-1",
+          "stores_alias": [],
+          "uses_after_call": [],
+          "format_sinks": []
+        }
+      },
+      {
+        "file": "src\\json_parser.c",
+        "function": "encode_utf8",
+        "line_range": [
+          61,
+          83
+        ],
+        "parameters": [
+          {
+            "name": "cp",
+            "declaration": "unsigned int cp",
+            "is_pointer": false,
+            "is_size": false
+          },
+          {
+            "name": "out",
+            "declaration": "char *out",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [],
+        "callee_functions": [],
+        "caller_functions": [],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": "1",
+          "stores_alias": [],
+          "uses_after_call": [],
+          "format_sinks": []
+        }
+      },
+      {
+        "file": "src\\json_parser.c",
+        "function": "parse_hex4",
+        "line_range": [
+          84,
+          96
+        ],
+        "parameters": [
+          {
+            "name": "s",
+            "declaration": "const char *s",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [
+          {
+            "name": "v",
+            "line_offset": 4,
+            "is_pointer": false,
+            "is_array": false,
+            "declaration": "unsigned int v = 0;"
+          },
+          {
+            "name": "c",
+            "line_offset": 7,
+            "is_pointer": false,
+            "is_array": false,
+            "declaration": "char c = s[i];"
+          }
+        ],
+        "callee_functions": [],
+        "caller_functions": [],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": "v",
+          "stores_alias": [
+            {
+              "target": "c",
+              "source": "s[i]"
+            }
+          ],
+          "uses_after_call": [],
+          "format_sinks": []
+        }
+      },
+      {
+        "file": "src\\json_parser.c",
+        "function": "json_free",
+        "line_range": [
+          362,
+          375
+        ],
+        "parameters": [
+          {
+            "name": "val",
+            "declaration": "json_value_t *val",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [],
+        "callee_functions": [],
+        "caller_functions": [
+          {
+            "function": "main",
+            "file": "src\\main.c",
+            "line_range": [
+              12,
+              42
+            ]
+          }
+        ],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [
+            "val->key",
+            "val->v.string",
+            "val"
+          ],
+          "frees_param": [
+            "val->key",
+            "val->v.string",
+            "val"
+          ],
+          "frees_field": [
+            "val->key",
+            "val->v.string"
+          ],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": null,
+          "stores_alias": [],
+          "uses_after_call": [],
+          "format_sinks": []
+        }
+      },
+      {
+        "file": "src\\json_parser.c",
+        "function": "json_get_number",
+        "line_range": [
+          385,
+          393
+        ],
+        "parameters": [
+          {
+            "name": "val",
+            "declaration": "const json_value_t *val",
+            "is_pointer": true,
+            "is_size": false
+          },
+          {
+            "name": "key",
+            "declaration": "const char *key",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [],
+        "callee_functions": [],
+        "caller_functions": [],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": "0.0",
+          "stores_alias": [],
+          "uses_after_call": [],
+          "format_sinks": []
+        }
+      },
+      {
+        "file": "src\\json_parser.c",
+        "function": "json_print",
+        "line_range": [
+          394,
+          420
+        ],
+        "parameters": [
+          {
+            "name": "val",
+            "declaration": "const json_value_t *val",
+            "is_pointer": true,
+            "is_size": false
+          },
+          {
+            "name": "indent",
+            "declaration": "int indent",
+            "is_pointer": false,
+            "is_size": false
+          }
+        ],
+        "local_variables": [],
+        "callee_functions": [],
+        "caller_functions": [
+          {
+            "function": "main",
+            "file": "src\\main.c",
+            "line_range": [
+              12,
+              42
+            ]
+          }
+        ],
+        "effect_summary": {
+          "allocates": [],
+          "frees": [],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": null,
+          "stores_alias": [],
+          "uses_after_call": [],
+          "format_sinks": [
+            "printf",
+            "printf",
+            "printf",
+            "printf",
+            "printf",
+            "printf",
+            "printf",
+            "printf",
+            "printf"
+          ]
+        }
+      },
+      {
+        "file": "src\\main.c",
+        "function": "main",
+        "line_range": [
+          12,
+          42
+        ],
+        "parameters": [
+          {
+            "name": "argc",
+            "declaration": "int argc",
+            "is_pointer": false,
+            "is_size": false
+          },
+          {
+            "name": "argv",
+            "declaration": "char *argv[]",
+            "is_pointer": true,
+            "is_size": false
+          }
+        ],
+        "local_variables": [
+          {
+            "name": "main",
+            "line_offset": 2,
+            "is_pointer": false,
+            "is_array": false,
+            "declaration": "int main(int argc, char *argv[])"
+          },
+          {
+            "name": "argc",
+            "line_offset": 2,
+            "is_pointer": false,
+            "is_array": false,
+            "declaration": "int main(int argc, char *argv[])"
+          },
+          {
+            "name": "argv",
+            "line_offset": 2,
+            "is_pointer": true,
+            "is_array": false,
+            "declaration": "int main(int argc, char *argv[])"
+          },
+          {
+            "name": "buf",
+            "line_offset": 5,
+            "is_pointer": true,
+            "is_array": false,
+            "declaration": "char   *buf = NULL;"
+          },
+          {
+            "name": "len",
+            "line_offset": 6,
+            "is_pointer": false,
+            "is_array": false,
+            "declaration": "size_t  len = 0;"
+          }
+        ],
+        "callee_functions": [
+          "json_free",
+          "json_print"
+        ],
+        "caller_functions": [],
+        "effect_summary": {
+          "allocates": [
+            "buf"
+          ],
+          "frees": [
+            "buf",
+            "buf"
+          ],
+          "frees_param": [],
+          "frees_field": [],
+          "writes": [],
+          "writes_param": [],
+          "returns_allocated": false,
+          "return_expr": "1",
+          "stores_alias": [
+            {
+              "target": "fp",
+              "source": "stdin"
+            },
+            {
+              "target": "buf",
+              "source": "NULL"
+            }
+          ],
+          "uses_after_call": [],
+          "format_sinks": [
+            "fprintf"
+          ]
+        }
+      }
+    ],
+    "call_graph": {
+      "nodes": [
+        {
+          "function": "skip_whitespace",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            30,
+            39
+          ]
+        },
+        {
+          "function": "peek",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            40,
+            45
+          ]
+        },
+        {
+          "function": "advance",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            46,
+            51
+          ]
+        },
+        {
+          "function": "encode_utf8",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            61,
+            83
+          ]
+        },
+        {
+          "function": "parse_hex4",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            84,
+            96
+          ]
+        },
+        {
+          "function": "json_free",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            362,
+            375
+          ]
+        },
+        {
+          "function": "json_get_number",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            385,
+            393
+          ]
+        },
+        {
+          "function": "json_print",
+          "file": "src\\json_parser.c",
+          "line_range": [
+            394,
+            420
+          ]
+        },
+        {
+          "function": "main",
+          "file": "src\\main.c",
+          "line_range": [
+            12,
+            42
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "caller": "main",
+          "callee": "json_free",
+          "caller_file": "src\\main.c"
+        },
+        {
+          "caller": "main",
+          "callee": "json_print",
+          "caller_file": "src\\main.c"
+        }
+      ]
+    },
+    "memory_effects": {
+      "skip_whitespace": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": null,
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "peek": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "-1",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "advance": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "-1",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "encode_utf8": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "1",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "parse_hex4": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "v",
+        "stores_alias": [
+          {
+            "target": "c",
+            "source": "s[i]"
+          }
+        ],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "json_free": {
+        "allocates": [],
+        "frees": [
+          "val->key",
+          "val->v.string",
+          "val"
+        ],
+        "frees_param": [
+          "val->key",
+          "val->v.string",
+          "val"
+        ],
+        "frees_field": [
+          "val->key",
+          "val->v.string"
+        ],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": null,
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "json_get_number": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "0.0",
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": []
+      },
+      "json_print": {
+        "allocates": [],
+        "frees": [],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": null,
+        "stores_alias": [],
+        "uses_after_call": [],
+        "format_sinks": [
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf",
+          "printf"
+        ]
+      },
+      "main": {
+        "allocates": [
+          "buf"
+        ],
+        "frees": [
+          "buf",
+          "buf"
+        ],
+        "frees_param": [],
+        "frees_field": [],
+        "writes": [],
+        "writes_param": [],
+        "returns_allocated": false,
+        "return_expr": "1",
+        "stores_alias": [
+          {
+            "target": "fp",
+            "source": "stdin"
+          },
+          {
+            "target": "buf",
+            "source": "NULL"
+          }
+        ],
+        "uses_after_call": [],
+        "format_sinks": [
+          "fprintf"
+        ]
+      }
+    }
+  },
+  "call_graph": {
+    "nodes": [
+      {
+        "function": "skip_whitespace",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          30,
+          39
+        ]
+      },
+      {
+        "function": "peek",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          40,
+          45
+        ]
+      },
+      {
+        "function": "advance",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          46,
+          51
+        ]
+      },
+      {
+        "function": "encode_utf8",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          61,
+          83
+        ]
+      },
+      {
+        "function": "parse_hex4",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          84,
+          96
+        ]
+      },
+      {
+        "function": "json_free",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          362,
+          375
+        ]
+      },
+      {
+        "function": "json_get_number",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          385,
+          393
+        ]
+      },
+      {
+        "function": "json_print",
+        "file": "src\\json_parser.c",
+        "line_range": [
+          394,
+          420
+        ]
+      },
+      {
+        "function": "main",
+        "file": "src\\main.c",
+        "line_range": [
+          12,
+          42
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "caller": "main",
+        "callee": "json_free",
+        "caller_file": "src\\main.c"
+      },
+      {
+        "caller": "main",
+        "callee": "json_print",
+        "caller_file": "src\\main.c"
+      }
+    ]
+  },
+  "memory_effects": {
+    "skip_whitespace": {
+      "allocates": [],
+      "frees": [],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": null,
+      "stores_alias": [],
+      "uses_after_call": [],
+      "format_sinks": []
+    },
+    "peek": {
+      "allocates": [],
+      "frees": [],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": "-1",
+      "stores_alias": [],
+      "uses_after_call": [],
+      "format_sinks": []
+    },
+    "advance": {
+      "allocates": [],
+      "frees": [],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": "-1",
+      "stores_alias": [],
+      "uses_after_call": [],
+      "format_sinks": []
+    },
+    "encode_utf8": {
+      "allocates": [],
+      "frees": [],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": "1",
+      "stores_alias": [],
+      "uses_after_call": [],
+      "format_sinks": []
+    },
+    "parse_hex4": {
+      "allocates": [],
+      "frees": [],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": "v",
+      "stores_alias": [
+        {
+          "target": "c",
+          "source": "s[i]"
+        }
+      ],
+      "uses_after_call": [],
+      "format_sinks": []
+    },
+    "json_free": {
+      "allocates": [],
+      "frees": [
+        "val->key",
+        "val->v.string",
+        "val"
+      ],
+      "frees_param": [
+        "val->key",
+        "val->v.string",
+        "val"
+      ],
+      "frees_field": [
+        "val->key",
+        "val->v.string"
+      ],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": null,
+      "stores_alias": [],
+      "uses_after_call": [],
+      "format_sinks": []
+    },
+    "json_get_number": {
+      "allocates": [],
+      "frees": [],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": "0.0",
+      "stores_alias": [],
+      "uses_after_call": [],
+      "format_sinks": []
+    },
+    "json_print": {
+      "allocates": [],
+      "frees": [],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": null,
+      "stores_alias": [],
+      "uses_after_call": [],
+      "format_sinks": [
+        "printf",
+        "printf",
+        "printf",
+        "printf",
+        "printf",
+        "printf",
+        "printf",
+        "printf",
+        "printf"
+      ]
+    },
+    "main": {
+      "allocates": [
+        "buf"
+      ],
+      "frees": [
+        "buf",
+        "buf"
+      ],
+      "frees_param": [],
+      "frees_field": [],
+      "writes": [],
+      "writes_param": [],
+      "returns_allocated": false,
+      "return_expr": "1",
+      "stores_alias": [
+        {
+          "target": "fp",
+          "source": "stdin"
+        },
+        {
+          "target": "buf",
+          "source": "NULL"
+        }
+      ],
+      "uses_after_call": [],
+      "format_sinks": [
+        "fprintf"
+      ]
+    }
+  },
+  "summary": {
+    "total_slices": 9,
+    "total_source_files": 3,
+    "slices_with_risk_keywords": 3,
+    "high_priority_slices": 2,
+    "medium_priority_slices": 2,
+    "cross_function_slices": 3
+  }
+}

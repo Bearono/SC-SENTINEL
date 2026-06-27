@@ -74,6 +74,8 @@ def run_agent_g(project_name, agent_a_result, agent_b_result, agent_c_result,
                 1 for f in final_findings
                 if (f.get("asan_evidence") or {}).get("dynamic_status") == "confirmed"
             ),
+            "llm_mode": agent_d_result.get("audit_mode", "rule_fallback_only"),
+            "llm_available": agent_d_result.get("summary", {}).get("llm_available", False),
         },
         "component_risks": agent_a_result.get("components", []),
         "dependency_risk_only": dependency_only_risks,

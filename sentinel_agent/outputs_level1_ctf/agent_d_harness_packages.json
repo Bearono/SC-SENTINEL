@@ -1,0 +1,547 @@
+{
+  "agent": "Agent D - Harness Automatic Generation",
+  "harness_packages": [
+    {
+      "package_id": "HARNESS-0001",
+      "finding_id": "FINDING-0001",
+      "target_file": "double_free_direct.c",
+      "target_function": "challenge",
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "line_range": [
+        8,
+        10
+      ],
+      "trigger_condition": "Execution reaches free(buf) twice without reset or reallocation.",
+      "strategy": {
+        "strategy_name": "flag_path_trigger",
+        "argument_model": "int_flag",
+        "trigger_value": 1,
+        "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "double-free or heap-use-after-free"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001\\seeds\\seed_002_trigger_flag.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0001\\seeds\\seed_003_nonzero.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0002",
+      "finding_id": "FINDING-0002",
+      "target_file": "double_free_error_path.c",
+      "target_function": "parse_record",
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "line_range": [
+        9,
+        13
+      ],
+      "trigger_condition": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "strategy": {
+        "strategy_name": "flag_path_trigger",
+        "argument_model": "int_flag",
+        "trigger_value": 1,
+        "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "double-free or heap-use-after-free"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002\\seeds\\seed_002_trigger_flag.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0002\\seeds\\seed_003_nonzero.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0003",
+      "finding_id": "FINDING-0003",
+      "target_file": "double_free_error_path.c",
+      "target_function": "parse_record",
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "line_range": [
+        9,
+        17
+      ],
+      "trigger_condition": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "strategy": {
+        "strategy_name": "flag_path_trigger",
+        "argument_model": "int_flag",
+        "trigger_value": 1,
+        "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "double-free or heap-use-after-free"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003\\seeds\\seed_002_trigger_flag.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0003\\seeds\\seed_003_nonzero.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0004",
+      "finding_id": "FINDING-0004",
+      "target_file": "format_string_fprintf.c",
+      "target_function": "log_event",
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "line_range": [
+        3,
+        3
+      ],
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "strategy": {
+        "strategy_name": "format_string_payload",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 32,
+        "description": "Pass fuzzer-controlled bytes as a format string payload. Seeds include %x/%p/%s/%n patterns that can expose or corrupt memory when the target uses attacker input as the format argument.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "format string memory disclosure or write via %n"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004\\seeds\\seed_002_pointer_leak.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0004\\seeds\\seed_003_write_probe.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0005",
+      "finding_id": "FINDING-0005",
+      "target_file": "format_string_printf.c",
+      "target_function": "say",
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "line_range": [
+        3,
+        3
+      ],
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "strategy": {
+        "strategy_name": "format_string_payload",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 32,
+        "description": "Pass fuzzer-controlled bytes as a format string payload. Seeds include %x/%p/%s/%n patterns that can expose or corrupt memory when the target uses attacker input as the format argument.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "format string memory disclosure or write via %n"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005\\seeds\\seed_002_pointer_leak.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0005\\seeds\\seed_003_write_probe.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0006",
+      "finding_id": "FINDING-0006",
+      "target_file": "format_string_snprintf.c",
+      "target_function": "render",
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "line_range": [
+        3,
+        3
+      ],
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "strategy": {
+        "strategy_name": "format_string_payload",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 32,
+        "description": "Pass fuzzer-controlled bytes as a format string payload. Seeds include %x/%p/%s/%n patterns that can expose or corrupt memory when the target uses attacker input as the format argument.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "format string memory disclosure or write via %n"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006\\seeds\\seed_002_pointer_leak.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0006\\seeds\\seed_003_write_probe.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0007",
+      "finding_id": "FINDING-0007",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "tiny_syslog",
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "line_range": [
+        4,
+        4
+      ],
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "strategy": {
+        "strategy_name": "format_string_payload",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 32,
+        "description": "Pass fuzzer-controlled bytes as a format string payload. Seeds include %x/%p/%s/%n patterns that can expose or corrupt memory when the target uses attacker input as the format argument.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "format string memory disclosure or write via %n"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007\\seeds\\seed_002_pointer_leak.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0007\\seeds\\seed_003_write_probe.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0008",
+      "finding_id": "FINDING-0008",
+      "target_file": "heap_overflow_integer_trunc.c",
+      "target_function": "store_message",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        11,
+        11
+      ],
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008\\seeds\\seed_002_long_string.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0008\\seeds\\seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0009",
+      "finding_id": "FINDING-0009",
+      "target_file": "heap_overflow_memcpy_len.c",
+      "target_function": "decode_packet",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        9,
+        9
+      ],
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009\\seeds\\seed_002_long_string.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0009\\seeds\\seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0010",
+      "finding_id": "FINDING-0010",
+      "target_file": "heap_overflow_off_by_one.c",
+      "target_function": "read_token",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        10,
+        10
+      ],
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010\\seeds\\seed_002_long_string.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0010\\seeds\\seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0011",
+      "finding_id": "FINDING-0011",
+      "target_file": "heap_overflow_strcpy.c",
+      "target_function": "copy_badge",
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        9,
+        9
+      ],
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011\\seeds\\seed_002_long_string.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0011\\seeds\\seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0012",
+      "finding_id": "FINDING-0012",
+      "target_file": "stack_overflow_sprintf.c",
+      "target_function": "make_banner",
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        4,
+        4
+      ],
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012\\seeds\\seed_002_long_string.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0012\\seeds\\seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0013",
+      "finding_id": "FINDING-0013",
+      "target_file": "stack_overflow_strcpy.c",
+      "target_function": "enter_name",
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "line_range": [
+        4,
+        4
+      ],
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "strategy": {
+        "strategy_name": "oversized_string_input",
+        "argument_model": "const_char_ptr",
+        "min_input_size": 256,
+        "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013\\seeds\\seed_002_long_string.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0013\\seeds\\seed_003_pattern.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    },
+    {
+      "package_id": "HARNESS-0014",
+      "finding_id": "FINDING-0014",
+      "target_file": "uaf_direct.c",
+      "target_function": "challenge",
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "line_range": [
+        10,
+        13
+      ],
+      "trigger_condition": "Pointer 'score' is dereferenced or accessed after free.",
+      "strategy": {
+        "strategy_name": "flag_path_trigger",
+        "argument_model": "int_flag",
+        "trigger_value": 1,
+        "description": "Call the target function with flag=1 to force the vulnerable branch, such as double free or use-after-free path.",
+        "expected_sanitizer": "AddressSanitizer",
+        "expected_symptom": "double-free or heap-use-after-free"
+      },
+      "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014",
+      "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014\\afl_harness.c",
+      "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014\\libfuzzer_harness.c",
+      "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014\\Makefile",
+      "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014\\seeds",
+      "seed_files": [
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014\\seeds\\seed_001.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014\\seeds\\seed_002_trigger_flag.bin",
+        "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf\\HARNESS-0014\\seeds\\seed_003_nonzero.bin"
+      ],
+      "asan_build_command": "make asan",
+      "afl_build_command": "make afl",
+      "libfuzzer_build_command": "make libfuzzer",
+      "asan_run_command": "./asan_target seeds/seed_001.bin",
+      "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+      "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+    }
+  ],
+  "summary": {
+    "total_packages": 14,
+    "packages_by_cwe": {
+      "CWE-415": 3,
+      "CWE-134": 4,
+      "CWE-122": 4,
+      "CWE-121": 2,
+      "CWE-416": 1
+    }
+  }
+}

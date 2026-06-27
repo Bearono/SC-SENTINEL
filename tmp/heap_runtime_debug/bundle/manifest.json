@@ -1,0 +1,15 @@
+{
+  "task_id": "8aa558e8-975f-43c4-a111-d632796f08a1",
+  "bundle_root": "/app/uploads/harness_bundles/8aa558e8-975f-43c4-a111-d632796f08a1",
+  "packages": [
+    {
+      "package_id": "HARNESS-0001",
+      "finding_id": "FINDING-0001",
+      "vuln_id": "5e01bd86-3727-4181-8ad0-9e753b37ac88",
+      "cwe_id": "CWE-122",
+      "target_file": "heap_overflow_memcpy_len.c",
+      "target_function": "edit_chunk",
+      "package_dir": "/app/uploads/harness_bundles/8aa558e8-975f-43c4-a111-d632796f08a1/HARNESS-0001"
+    }
+  ]
+}

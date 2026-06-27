@@ -1,0 +1,53 @@
+{
+  "package_id": "HARNESS-0001",
+  "finding_id": "FINDING-0001",
+  "target_file": "heap_overflow_memcpy_len.c",
+  "target_function": "edit_chunk",
+  "cwe_id": "CWE-122",
+  "vulnerability_type": "Heap Buffer Overflow",
+  "risk_level": "high",
+  "line_range": [
+    8,
+    8
+  ],
+  "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+  "strategy": {
+    "strategy_name": "original_main_file_replay",
+    "argument_model": "original_main_file_arg",
+    "min_input_size": 1,
+    "description": "Compile the target source with main renamed to sentinel_original_main and replay fuzzer-generated files through the program's own argv path. This is preferred for CTF-style samples and static/internal target functions.",
+    "expected_sanitizer": "AddressSanitizer",
+    "expected_symptom": "heap-buffer-overflow"
+  },
+  "package_dir": "/app/harness_packages/service_a588f0709d8c/HARNESS-0001",
+  "afl_harness_file": "/app/harness_packages/service_a588f0709d8c/HARNESS-0001/afl_harness.c",
+  "libfuzzer_harness_file": "/app/harness_packages/service_a588f0709d8c/HARNESS-0001/libfuzzer_harness.c",
+  "makefile": "/app/harness_packages/service_a588f0709d8c/HARNESS-0001/Makefile",
+  "seed_dir": "/app/harness_packages/service_a588f0709d8c/HARNESS-0001/seeds",
+  "seed_files": [
+    "/app/harness_packages/service_a588f0709d8c/HARNESS-0001/seeds/seed_001.bin",
+    "/app/harness_packages/service_a588f0709d8c/HARNESS-0001/seeds/seed_002_long_string.bin",
+    "/app/harness_packages/service_a588f0709d8c/HARNESS-0001/seeds/seed_003_pattern.bin"
+  ],
+  "asan_build_command": "make asan",
+  "compile_command": "make asan",
+  "afl_build_command": "make afl",
+  "libfuzzer_build_command": "make libfuzzer",
+  "asan_run_command": "./asan_target seeds/seed_001.bin",
+  "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+  "prototype_confidence": 0.78,
+  "build_ready": true,
+  "manual_adaptation_required": false,
+  "compile_check": {
+    "executed": false,
+    "status": "skipped",
+    "reason": "compile_check_disabled",
+    "stderr_excerpt": ""
+  },
+  "llm_fixer": {
+    "enabled": false,
+    "status": "reserved",
+    "notes": "Compile stderr is captured for a future LLM harness fixer, but automatic mutation is disabled by default."
+  },
+  "notes": "Agent E generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+}

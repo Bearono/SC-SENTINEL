@@ -9,6 +9,17 @@
 # ============================================================
 services:
 
+  # AFL++ / eBPF sandbox image. This service is build-only; the worker starts
+  # short-lived sandbox containers through the Docker socket for each dynamic
+  # verification task.
+  sandbox:
+    build:
+      context: ./sentinel_backend
+      dockerfile: docker/Dockerfile.sandbox
+    image: sentinel-sandbox:latest
+    profiles: ["sandbox"]
+    command: ["bash", "-lc", "echo sentinel-sandbox image is ready"]
+
   # ── PostgreSQL 数据库 ──────────────────────────────────────────────────
   db:
     image: postgres:15-alpine
@@ -93,6 +104,8 @@ services:
       ML_AGENT_A_URL: "http://agent:18001/api/agent-a/analyze"
       ML_AGENT_B_URL: "http://agent:18001/api/agent-b/audit"
       ML_MOCK_MODE: "${ML_MOCK_MODE:-false}"
+      SANDBOX_TIMEOUT_SECONDS: "${SANDBOX_TIMEOUT_SECONDS:-180}"
+      SANDBOX_PACKAGE_TIMEOUT_SECONDS: "${SANDBOX_PACKAGE_TIMEOUT_SECONDS:-30}"
       TZ: Asia/Shanghai
     ports:
       - "18000:18000"
@@ -126,9 +139,12 @@ services:
       ML_AGENT_A_URL: "http://agent:18001/api/agent-a/analyze"
       ML_AGENT_B_URL: "http://agent:18001/api/agent-b/audit"
       ML_MOCK_MODE: "${ML_MOCK_MODE:-false}"
+      SANDBOX_TIMEOUT_SECONDS: "${SANDBOX_TIMEOUT_SECONDS:-180}"
+      SANDBOX_PACKAGE_TIMEOUT_SECONDS: "${SANDBOX_PACKAGE_TIMEOUT_SECONDS:-30}"
       TZ: Asia/Shanghai
     volumes:
       - uploads_data:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock
     command: ["taskiq", "worker", "app.main:broker", "--workers", "1"]
 
   # ── 前端（Vue + Nginx）────────────────────────────────────────────────

@@ -8,7 +8,7 @@
           <circle cx="8" cy="8.5" r="1.8" fill="white" />
         </svg>
       </span>
-      SENTINEL
+      SC-SENTINEL
     </RouterLink>
 
     <div class="ntabs">

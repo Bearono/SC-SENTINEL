@@ -1,0 +1,35 @@
+{
+  "agent": "Agent F - Dynamic Evidence Attribution Agent",
+  "evidence_links": [
+    {
+      "finding_id": "FINDING-0001",
+      "hypothesis_id": "HYP-0001",
+      "source_slice_id": "SLICE-0009",
+      "package_id": "HARNESS-0001",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_findings": 1,
+    "total_links": 1,
+    "confirmed_findings": 0,
+    "need_review_findings": 1,
+    "asan_confirmed_findings": 0
+  }
+}

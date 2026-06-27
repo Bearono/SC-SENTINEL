@@ -1,0 +1,1332 @@
+{
+  "agent": "Agent E - Final Judgement and Report",
+  "project_name": "level1_ctf",
+  "status": "completed",
+  "overall_risk": "high",
+  "summary": {
+    "total_components": 0,
+    "total_static_findings": 19,
+    "total_harness_packages": 19,
+    "confirmed_findings": 9,
+    "need_review_findings": 6,
+    "asan_confirmed_findings": 0
+  },
+  "component_risks": [],
+  "final_findings": [
+    {
+      "finding_id": "FINDING-0001",
+      "source_slice_id": "SLICE-0004",
+      "file": "double_free_alias.c",
+      "function": "main",
+      "line_range": [
+        15,
+        27
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Execution reaches free(data) twice without reset or reallocation.",
+      "evidence": [
+        "Pointer 'data' is first freed at source line 15.",
+        "Pointer 'data' is freed again at source line 27: free(data);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Set data to NULL after free and avoid duplicate ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0002",
+      "source_slice_id": "SLICE-0009",
+      "file": "double_free_direct.c",
+      "function": "main",
+      "line_range": [
+        15,
+        24
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Execution reaches free(data) twice without reset or reallocation.",
+      "evidence": [
+        "Pointer 'data' is first freed at source line 15.",
+        "Pointer 'data' is freed again at source line 24: free(data);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Set data to NULL after free and avoid duplicate ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0003",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        9,
+        13
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Execution reaches free(profile) twice without reset or reallocation.",
+      "evidence": [
+        "Pointer 'profile' is first freed at source line 9.",
+        "Pointer 'profile' is freed again at source line 13: free(profile);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Set profile to NULL after free and avoid duplicate ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0004",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        9,
+        17
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Execution reaches free(profile) twice without reset or reallocation.",
+      "evidence": [
+        "Pointer 'profile' is first freed at source line 9.",
+        "Pointer 'profile' is freed again at source line 17: free(profile);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Set profile to NULL after free and avoid duplicate ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0005",
+      "source_slice_id": "SLICE-0012",
+      "file": "format_string_fprintf.c",
+      "function": "log_event",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'fprintf' uses a non-literal format argument at source line 3: fprintf(out, event);",
+        "Format argument expression: event"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0006",
+      "source_slice_id": "SLICE-0014",
+      "file": "format_string_printf.c",
+      "function": "say",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'printf' uses a non-literal format argument at source line 3: printf(msg);",
+        "Format argument expression: msg"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0007",
+      "source_slice_id": "SLICE-0016",
+      "file": "format_string_snprintf.c",
+      "function": "render",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'snprintf' uses a non-literal format argument at source line 3: snprintf(dst, dst_len, fmt);",
+        "Format argument expression: fmt"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0008",
+      "source_slice_id": "SLICE-0018",
+      "file": "format_string_syslog_like.c",
+      "function": "tiny_syslog",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "evidence": [
+        "Function 'printf' uses a non-literal format argument at source line 4: printf(fmt);",
+        "Format argument expression: fmt"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0009",
+      "source_slice_id": "SLICE-0021",
+      "file": "heap_overflow_integer_trunc.c",
+      "function": "resize_then_write",
+      "line_range": [
+        10,
+        10
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 10: memcpy(buf, msg, len);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0010",
+      "source_slice_id": "SLICE-0023",
+      "file": "heap_overflow_memcpy_len.c",
+      "function": "edit_chunk",
+      "line_range": [
+        8,
+        8
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 8: memcpy(chunk, packet, packet_len);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0011",
+      "source_slice_id": "SLICE-0025",
+      "file": "heap_overflow_off_by_one.c",
+      "function": "rename_chunk",
+      "line_range": [
+        9,
+        9
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 9: memcpy(name, data, name_len + 1);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0012",
+      "source_slice_id": "SLICE-0027",
+      "file": "heap_overflow_strcpy.c",
+      "function": "create_and_edit",
+      "line_range": [
+        8,
+        8
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 8: strcpy(name, (const char *)data);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0013",
+      "source_slice_id": "SLICE-0033",
+      "file": "stack_overflow_sprintf.c",
+      "function": "make_banner",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 4: sprintf(banner, \"player:%s\", (const char *)name);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [],
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++ and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0014",
+      "source_slice_id": "SLICE-0035",
+      "file": "stack_overflow_strcpy.c",
+      "function": "set_player_name",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 4: strcpy(name, (const char *)data);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [],
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++ and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0015",
+      "source_slice_id": "SLICE-0037",
+      "file": "uaf_array_slot.c",
+      "function": "create_slot",
+      "line_range": [
+        6,
+        6
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 6: memcpy(slots[idx], data, copy_len);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0016",
+      "source_slice_id": "SLICE-0041",
+      "file": "uaf_cross_function.c",
+      "function": "edit_chunk",
+      "line_range": [
+        18,
+        18
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Possible Buffer Overflow",
+      "risk_level": "medium",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 18: memcpy(chunk, data, copy_len);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0017",
+      "source_slice_id": "SLICE-0043",
+      "file": "uaf_direct.c",
+      "function": "run_note_machine",
+      "line_range": [
+        17,
+        20
+      ],
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'note' is dereferenced or accessed after free.",
+      "evidence": [
+        "Pointer 'note' is freed at source line 17.",
+        "Pointer 'note' is used again at source line 20: puts(note->text);"
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Do not access note after free; set it to NULL and guard future uses.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0018",
+      "source_slice_id": "SLICE-0043",
+      "file": "uaf_direct.c",
+      "function": "run_note_machine",
+      "line_range": [
+        14,
+        14
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 14: memcpy(note->text, \"created\", 8);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    },
+    {
+      "finding_id": "FINDING-0019",
+      "source_slice_id": "SLICE-0045",
+      "file": "uaf_struct_field.c",
+      "function": "player_init",
+      "line_range": [
+        12,
+        12
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "evidence": [
+        "Dangerous copy-style function call at source line 12: memcpy(p->memo, data, copy_len);",
+        "Rule fallback cannot fully prove destination bounds."
+      ],
+      "confidence": 0.65,
+      "suggested_fix": "Validate length before copying and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "quality_control": {
+        "fallback_reason": "llm_not_configured",
+        "rule_consistency": "rule_only",
+        "warnings": []
+      },
+      "dynamic_status": "confirmed",
+      "evidence_level": "strong",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "final_conclusion": "This suspected vulnerability is dynamically confirmed by AFL++, eBPF. Evidence level: strong."
+    }
+  ],
+  "dynamic_validation": {
+    "asan_result": {
+      "source": "ASAN",
+      "schema_version": "part4.2",
+      "crash_found": true,
+      "summary": {
+        "total_harness_packages": 4,
+        "total_logs": 4,
+        "confirmed_findings": 4,
+        "failed_or_unconfirmed": 0
+      },
+      "results": [
+        {
+          "harness_id": "HARNESS-0001",
+          "finding_id": "FINDING-0001",
+          "target_file": "double_free_demo.c",
+          "target_function": "double_free_case",
+          "cwe_id": "CWE-415",
+          "vulnerability_type": "Double Free",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/asan_double_free.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "double-free",
+          "expected_asan_keyword": "double-free",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {},
+          "source_locations": [
+            {
+              "file": "../../samples/vulnerable_project/double_free_demo.c",
+              "line": 12
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c",
+              "line": 61
+            },
+            {
+              "file": "../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "../../samples/vulnerable_project/double_free_demo.c",
+              "line": 9
+            },
+            {
+              "file": "../../samples/vulnerable_project/double_free_demo.c",
+              "line": 4
+            }
+          ],
+          "stderr_excerpt": "==2877==ERROR: AddressSanitizer: attempting double-free on 0x503000000040 in thread T0:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c318461 in double_free_case ../../samples/vulnerable_project/double_free_demo.c:12\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #4 0x7b8148e29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #5 0x61909c318204 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/asan_target+0x1204)\n\n0x503000000040 is located 0 bytes inside of 32-byte region [0x503000000040,0x503000000060)\nfreed by thread T0 here:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c31844f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:9\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7b81492b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x61909c31843f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:4\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127 in __interceptor_free\n==2877==ABORTING",
+          "evidence": [
+            "AddressSanitizer reported: double-free",
+            "Expected CWE from static audit: CWE-415",
+            "Target source location: ../../samples/vulnerable_project/double_free_demo.c:12",
+            "Target source location: ../../samples/vulnerable_project/double_free_demo.c:9",
+            "Target source location: ../../samples/vulnerable_project/double_free_demo.c:4"
+          ]
+        },
+        {
+          "harness_id": "HARNESS-0002",
+          "finding_id": "FINDING-0002",
+          "target_file": "heap_overflow_demo.c",
+          "target_function": "heap_overflow_case",
+          "cwe_id": "CWE-122",
+          "vulnerability_type": "Heap Buffer Overflow",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/asan_heap.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "heap-buffer-overflow",
+          "expected_asan_keyword": "heap-buffer-overflow",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {
+            "access_type": "WRITE",
+            "size": 257
+          },
+          "source_locations": [
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+              "line": 10
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c",
+              "line": 63
+            },
+            {
+              "file": "csu/../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+              "line": 5
+            }
+          ],
+          "stderr_excerpt": "==2574==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000018 at pc 0x5f7b7ceab907 bp 0x7ffc5ecffb20 sp 0x7ffc5ecff2e8\nWRITE of size 257 at 0x602000000018 thread T0\n    #0 0x5f7b7ceab906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2ed in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10:5\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7233e6e29e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5f7b7ce3e324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x1e324) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n\n0x602000000018 is located 0 bytes to the right of 8-byte region [0x602000000010,0x602000000018)\nallocated by thread T0 here:\n    #0 0x5f7b7cec116e in __interceptor_malloc (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0xa116e) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2c5 in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5:25\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n\nSUMMARY: AddressSanitizer: heap-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c) in strcpy\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa 00[fa]fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+          "evidence": [
+            "AddressSanitizer reported: heap-buffer-overflow",
+            "Expected CWE from static audit: CWE-122",
+            "Memory access: WRITE of size 257",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5"
+          ]
+        },
+        {
+          "harness_id": "HARNESS-0003",
+          "finding_id": "FINDING-0003",
+          "target_file": "stack_overflow_demo.c",
+          "target_function": "stack_overflow_case",
+          "cwe_id": "CWE-121",
+          "vulnerability_type": "Stack Buffer Overflow",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/asan_stack.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "stack-buffer-overflow",
+          "expected_asan_keyword": "stack-buffer-overflow",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {
+            "access_type": "WRITE",
+            "size": 257
+          },
+          "source_locations": [
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+              "line": 5
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c",
+              "line": 63
+            },
+            {
+              "file": "csu/../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+              "line": 3
+            }
+          ],
+          "stderr_excerpt": "==2602==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffc10bd8308 at pc 0x5d4c87487907 bp 0x7ffc10bd82d0 sp 0x7ffc10bd7a98\nWRITE of size 257 at 0x7ffc10bd8308 thread T0\n    #0 0x5d4c87487906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n    #1 0x5d4c874d8379 in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5:5\n    #2 0x5d4c874d8057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c:63:9\n    #3 0x7e3601829d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7e3601829e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5d4c8741a324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x1e324) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n\nAddress 0x7ffc10bd8308 is located in stack of thread T0 at offset 40 in frame\n    #0 0x5d4c874d82bf in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3\n\n  This frame has 1 object(s):\n    [32, 40) 'buf' (line 4) <== Memory access at offset 40 overflows this variable\nHINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork\n      (longjmp and C++ exceptions *are* supported)\nSUMMARY: AddressSanitizer: stack-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a) in strcpy\nShadow bytes around the buggy address:\n  0x100002173010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173050: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1\n=>0x100002173060: 00[f3]f3 f3 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173070: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f3 f3 f3\n  0x100002173080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+          "evidence": [
+            "AddressSanitizer reported: stack-buffer-overflow",
+            "Expected CWE from static audit: CWE-121",
+            "Memory access: WRITE of size 257",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3"
+          ]
+        },
+        {
+          "harness_id": "HARNESS-0004",
+          "finding_id": "FINDING-0004",
+          "target_file": "uaf_demo.c",
+          "target_function": "uaf_case",
+          "cwe_id": "CWE-416",
+          "vulnerability_type": "Use After Free",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/asan_uaf.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "heap-use-after-free",
+          "expected_asan_keyword": "heap-use-after-free",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {
+            "access_type": "READ",
+            "size": 4
+          },
+          "source_locations": [
+            {
+              "file": "../../samples/vulnerable_project/uaf_demo.c",
+              "line": 14
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c",
+              "line": 61
+            },
+            {
+              "file": "../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "../../samples/vulnerable_project/uaf_demo.c",
+              "line": 11
+            },
+            {
+              "file": "../../samples/vulnerable_project/uaf_demo.c",
+              "line": 5
+            }
+          ],
+          "stderr_excerpt": "==2818==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000000030 at pc 0x5905d5ae44d2 bp 0x7fffd8f134e0 sp 0x7fffd8f134d0\nREAD of size 4 at 0x502000000030 thread T0\n    #0 0x5905d5ae44d1 in uaf_case ../../samples/vulnerable_project/uaf_demo.c:14\n    #1 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #2 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #3 0x7f94dfa29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #4 0x5905d5ae4244 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/asan_target+0x1244)\n\n0x502000000030 is located 0 bytes inside of 4-byte region [0x502000000030,0x502000000034)\nfreed by thread T0 here:\n    #0 0x7f94dfeb4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x5905d5ae448f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:11\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7f94dfeb4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x5905d5ae447f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:5\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: heap-use-after-free ../../samples/vulnerable_project/uaf_demo.c:14 in uaf_case\nShadow bytes around the buggy address:\n  0x0a047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0a047fff8000: fa fa 02 fa fa fa[fd]fa fa fa fa fa fa fa fa fa\n  0x0a047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9",
+          "evidence": [
+            "AddressSanitizer reported: heap-use-after-free",
+            "Expected CWE from static audit: CWE-416",
+            "Memory access: READ of size 4",
+            "Target source location: ../../samples/vulnerable_project/uaf_demo.c:14",
+            "Target source location: ../../samples/vulnerable_project/uaf_demo.c:11",
+            "Target source location: ../../samples/vulnerable_project/uaf_demo.c:5"
+          ]
+        }
+      ],
+      "results_by_finding_id": {
+        "FINDING-0001": {
+          "harness_id": "HARNESS-0001",
+          "finding_id": "FINDING-0001",
+          "target_file": "double_free_demo.c",
+          "target_function": "double_free_case",
+          "cwe_id": "CWE-415",
+          "vulnerability_type": "Double Free",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0001/asan_double_free.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "double-free",
+          "expected_asan_keyword": "double-free",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {},
+          "source_locations": [
+            {
+              "file": "../../samples/vulnerable_project/double_free_demo.c",
+              "line": 12
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c",
+              "line": 61
+            },
+            {
+              "file": "../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "../../samples/vulnerable_project/double_free_demo.c",
+              "line": 9
+            },
+            {
+              "file": "../../samples/vulnerable_project/double_free_demo.c",
+              "line": 4
+            }
+          ],
+          "stderr_excerpt": "==2877==ERROR: AddressSanitizer: attempting double-free on 0x503000000040 in thread T0:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c318461 in double_free_case ../../samples/vulnerable_project/double_free_demo.c:12\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #4 0x7b8148e29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #5 0x61909c318204 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0001/asan_target+0x1204)\n\n0x503000000040 is located 0 bytes inside of 32-byte region [0x503000000040,0x503000000060)\nfreed by thread T0 here:\n    #0 0x7b81492b4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x61909c31844f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:9\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7b81492b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x61909c31843f in double_free_case ../../samples/vulnerable_project/double_free_demo.c:4\n    #2 0x61909c3183a8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0001/afl_harness.c:61\n    #3 0x7b8148e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127 in __interceptor_free\n==2877==ABORTING",
+          "evidence": [
+            "AddressSanitizer reported: double-free",
+            "Expected CWE from static audit: CWE-415",
+            "Target source location: ../../samples/vulnerable_project/double_free_demo.c:12",
+            "Target source location: ../../samples/vulnerable_project/double_free_demo.c:9",
+            "Target source location: ../../samples/vulnerable_project/double_free_demo.c:4"
+          ]
+        },
+        "FINDING-0002": {
+          "harness_id": "HARNESS-0002",
+          "finding_id": "FINDING-0002",
+          "target_file": "heap_overflow_demo.c",
+          "target_function": "heap_overflow_case",
+          "cwe_id": "CWE-122",
+          "vulnerability_type": "Heap Buffer Overflow",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0002/asan_heap.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "heap-buffer-overflow",
+          "expected_asan_keyword": "heap-buffer-overflow",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {
+            "access_type": "WRITE",
+            "size": 257
+          },
+          "source_locations": [
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+              "line": 10
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c",
+              "line": 63
+            },
+            {
+              "file": "csu/../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c",
+              "line": 5
+            }
+          ],
+          "stderr_excerpt": "==2574==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000018 at pc 0x5f7b7ceab907 bp 0x7ffc5ecffb20 sp 0x7ffc5ecff2e8\nWRITE of size 257 at 0x602000000018 thread T0\n    #0 0x5f7b7ceab906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2ed in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10:5\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7233e6e29e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5f7b7ce3e324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x1e324) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n\n0x602000000018 is located 0 bytes to the right of 8-byte region [0x602000000010,0x602000000018)\nallocated by thread T0 here:\n    #0 0x5f7b7cec116e in __interceptor_malloc (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0xa116e) (BuildId: b8d7d63c64b81877686e922375546011d824839c)\n    #1 0x5f7b7cefc2c5 in heap_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5:25\n    #2 0x5f7b7cefc057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/afl_harness.c:63:9\n    #3 0x7233e6e29d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n\nSUMMARY: AddressSanitizer: heap-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0002/asan_target+0x8b906) (BuildId: b8d7d63c64b81877686e922375546011d824839c) in strcpy\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa 00[fa]fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+          "evidence": [
+            "AddressSanitizer reported: heap-buffer-overflow",
+            "Expected CWE from static audit: CWE-122",
+            "Memory access: WRITE of size 257",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:10",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0002/../../samples/vulnerable_project/heap_overflow_demo.c:5"
+          ]
+        },
+        "FINDING-0003": {
+          "harness_id": "HARNESS-0003",
+          "finding_id": "FINDING-0003",
+          "target_file": "stack_overflow_demo.c",
+          "target_function": "stack_overflow_case",
+          "cwe_id": "CWE-121",
+          "vulnerability_type": "Stack Buffer Overflow",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0003/asan_stack.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "stack-buffer-overflow",
+          "expected_asan_keyword": "stack-buffer-overflow",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {
+            "access_type": "WRITE",
+            "size": 257
+          },
+          "source_locations": [
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+              "line": 5
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c",
+              "line": 63
+            },
+            {
+              "file": "csu/../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c",
+              "line": 3
+            }
+          ],
+          "stderr_excerpt": "==2602==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffc10bd8308 at pc 0x5d4c87487907 bp 0x7ffc10bd82d0 sp 0x7ffc10bd7a98\nWRITE of size 257 at 0x7ffc10bd8308 thread T0\n    #0 0x5d4c87487906 in strcpy (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n    #1 0x5d4c874d8379 in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5:5\n    #2 0x5d4c874d8057 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/afl_harness.c:63:9\n    #3 0x7e3601829d8f in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16\n    #4 0x7e3601829e3f in __libc_start_main csu/../csu/libc-start.c:392:3\n    #5 0x5d4c8741a324 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x1e324) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a)\n\nAddress 0x7ffc10bd8308 is located in stack of thread T0 at offset 40 in frame\n    #0 0x5d4c874d82bf in stack_overflow_case /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3\n\n  This frame has 1 object(s):\n    [32, 40) 'buf' (line 4) <== Memory access at offset 40 overflows this variable\nHINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork\n      (longjmp and C++ exceptions *are* supported)\nSUMMARY: AddressSanitizer: stack-buffer-overflow (/home/aut/桌面/sentinel/harness_packages/HARNESS-0003/asan_target+0x8b906) (BuildId: 757a13e70f2bb38690b26372afef921a6fe4be4a) in strcpy\nShadow bytes around the buggy address:\n  0x100002173010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173050: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1\n=>0x100002173060: 00[f3]f3 f3 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173070: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f3 f3 f3\n  0x100002173080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x100002173090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1000021730b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb",
+          "evidence": [
+            "AddressSanitizer reported: stack-buffer-overflow",
+            "Expected CWE from static audit: CWE-121",
+            "Memory access: WRITE of size 257",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:5",
+            "Target source location: /home/aut/桌面/sentinel/harness_packages/HARNESS-0003/../../samples/vulnerable_project/stack_overflow_demo.c:3"
+          ]
+        },
+        "FINDING-0004": {
+          "harness_id": "HARNESS-0004",
+          "finding_id": "FINDING-0004",
+          "target_file": "uaf_demo.c",
+          "target_function": "uaf_case",
+          "cwe_id": "CWE-416",
+          "vulnerability_type": "Use After Free",
+          "log_file": "/mnt/vmshare/sentinel/harness_packages/HARNESS-0004/asan_uaf.log",
+          "dynamic_status": "confirmed",
+          "sanitizer": "AddressSanitizer",
+          "asan_bug_type": "heap-use-after-free",
+          "expected_asan_keyword": "heap-use-after-free",
+          "consistency": "matched_expected_cwe",
+          "crash_found": true,
+          "access": {
+            "access_type": "READ",
+            "size": 4
+          },
+          "source_locations": [
+            {
+              "file": "../../samples/vulnerable_project/uaf_demo.c",
+              "line": 14
+            },
+            {
+              "file": "/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c",
+              "line": 61
+            },
+            {
+              "file": "../csu/libc-start.c",
+              "line": 392
+            },
+            {
+              "file": "../../samples/vulnerable_project/uaf_demo.c",
+              "line": 11
+            },
+            {
+              "file": "../../samples/vulnerable_project/uaf_demo.c",
+              "line": 5
+            }
+          ],
+          "stderr_excerpt": "==2818==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000000030 at pc 0x5905d5ae44d2 bp 0x7fffd8f134e0 sp 0x7fffd8f134d0\nREAD of size 4 at 0x502000000030 thread T0\n    #0 0x5905d5ae44d1 in uaf_case ../../samples/vulnerable_project/uaf_demo.c:14\n    #1 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #2 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n    #3 0x7f94dfa29e3f in __libc_start_main_impl ../csu/libc-start.c:392\n    #4 0x5905d5ae4244 in _start (/home/aut/桌面/sentinel/harness_packages/HARNESS-0004/asan_target+0x1244)\n\n0x502000000030 is located 0 bytes inside of 4-byte region [0x502000000030,0x502000000034)\nfreed by thread T0 here:\n    #0 0x7f94dfeb4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127\n    #1 0x5905d5ae448f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:11\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\npreviously allocated by thread T0 here:\n    #0 0x7f94dfeb4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145\n    #1 0x5905d5ae447f in uaf_case ../../samples/vulnerable_project/uaf_demo.c:5\n    #2 0x5905d5ae43e8 in main /home/aut/桌面/sentinel/harness_packages/HARNESS-0004/afl_harness.c:61\n    #3 0x7f94dfa29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58\n\nSUMMARY: AddressSanitizer: heap-use-after-free ../../samples/vulnerable_project/uaf_demo.c:14 in uaf_case\nShadow bytes around the buggy address:\n  0x0a047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0a047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0a047fff8000: fa fa 02 fa fa fa[fd]fa fa fa fa fa fa fa fa fa\n  0x0a047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0a047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9",
+          "evidence": [
+            "AddressSanitizer reported: heap-use-after-free",
+            "Expected CWE from static audit: CWE-416",
+            "Memory access: READ of size 4",
+            "Target source location: ../../samples/vulnerable_project/uaf_demo.c:14",
+            "Target source location: ../../samples/vulnerable_project/uaf_demo.c:11",
+            "Target source location: ../../samples/vulnerable_project/uaf_demo.c:5"
+          ]
+        }
+      }
+    },
+    "afl_result": {
+      "crash_found": true,
+      "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+      "signal": "SIGABRT",
+      "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+      "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+    },
+    "ebpf_log": {
+      "events": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        },
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ],
+      "notes": "Part 0 mock eBPF log. Backend will replace this with bpftrace/libbpf output."
+    }
+  },
+  "recommendations": [
+    "Prioritize findings confirmed by ASan/AFL++/eBPF runtime evidence.",
+    "Review high-risk dependency CVEs before release.",
+    "Use generated harness packages as reproducible dynamic validation artifacts."
+  ]
+}

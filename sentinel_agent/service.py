@@ -1,4 +1,5 @@
 import uuid
+import base64
 from pathlib import Path
 import sys
 from typing import Any
@@ -19,6 +20,7 @@ from agents.agent_f_dynamic_evidence import run_agent_f
 from agents.agent_g_final_report import run_agent_g
 from core.file_scanner import scan_project_metadata_files, scan_source_files
 from core.integration_schema import to_backend_components, to_backend_vulnerabilities
+from core.llm_client import LLMClient
 
 
 class AgentARequest(BaseModel):
@@ -44,7 +46,14 @@ app = FastAPI(
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "sentinel-ml-agent", "version": "0.2.0"}
+    llm_client = LLMClient()
+    return {
+        "status": "ok",
+        "service": "sentinel-ml-agent",
+        "version": "0.2.0",
+        "llm_configured": llm_client.is_available(),
+        "llm_mode": "configured" if llm_client.is_available() else "rule_fallback_only",
+    }
 
 
 @app.post("/api/agent-a/analyze")
@@ -80,6 +89,7 @@ def audit_source(request: AgentBAuditRequest):
 
     if request.generate_harness:
         agent_e_result = run_agent_e(agent_d_result, harness_root=harness_dir, project_root=source_root)
+        embed_harness_package_files(agent_e_result)
     else:
         agent_e_result = {
             "agent": "Agent E - Harness Builder and Fixer Agent",
@@ -108,6 +118,7 @@ def audit_source(request: AgentBAuditRequest):
     final_report = agent_g_result["final_report"]
 
     backend_vulns = final_report.get("backend_vulnerabilities") or to_backend_vulnerabilities(agent_d_result)["vulnerabilities"]
+    llm_client = LLMClient()
     return {
         "vulnerabilities": backend_vulns,
         "summary": {
@@ -118,6 +129,10 @@ def audit_source(request: AgentBAuditRequest):
             "harness": agent_e_result.get("summary", {}),
             "evidence": agent_f_result.get("summary", {}),
             "overall_risk": final_report.get("overall_risk"),
+            "llm": {
+                "configured": llm_client.is_available(),
+                "mode": agent_d_result.get("audit_mode", "rule_fallback_only"),
+            },
         },
         "artifacts": {
             "output_dir": str(output_dir),
@@ -180,16 +195,23 @@ def normalize_dep_files(dep_files):
 def filter_findings_by_target_vulns(agent_c_result, target_vulns):
     if not target_vulns:
         return
-    targets = {normalize_target_vuln(item) for item in target_vulns}
+    targets = set()
+    for item in target_vulns:
+        targets.update(expand_target_vuln_aliases(item))
     targets.discard("")
     if not targets:
         return
 
     filtered = []
     for finding in agent_c_result.get("static_findings", []):
-        cwe = normalize_target_vuln(finding.get("cwe_id", ""))
-        vuln_type = normalize_target_vuln(finding.get("vulnerability_type", ""))
-        if cwe in targets or vuln_type in targets:
+        finding_keys = set()
+        for value in (
+            finding.get("cwe_id", ""),
+            finding.get("vulnerability_type", ""),
+            finding.get("vuln_type", ""),
+        ):
+            finding_keys.update(expand_target_vuln_aliases(value))
+        if finding_keys & targets:
             filtered.append(finding)
 
     agent_c_result["static_findings"] = filtered
@@ -203,3 +225,57 @@ def filter_findings_by_target_vulns(agent_c_result, target_vulns):
 
 def normalize_target_vuln(value):
     return str(value or "").strip().lower().replace("_", "-").replace(" ", "-")
+
+
+def expand_target_vuln_aliases(value):
+    normalized = normalize_target_vuln(value)
+    aliases = {
+        "uaf": {"uaf", "use-after-free", "use-after-free-suspected", "cwe-416"},
+        "use-after-free": {"uaf", "use-after-free", "use-after-free-suspected", "cwe-416"},
+        "use-after-free-suspected": {"uaf", "use-after-free", "use-after-free-suspected", "cwe-416"},
+        "cwe-416": {"uaf", "use-after-free", "use-after-free-suspected", "cwe-416"},
+        "double-free": {"double-free", "double-free-suspected", "cwe-415"},
+        "double-free-suspected": {"double-free", "double-free-suspected", "cwe-415"},
+        "cwe-415": {"double-free", "double-free-suspected", "cwe-415"},
+        "buffer-overflow": {"buffer-overflow", "heap-overflow", "heap-buffer-overflow", "possible-buffer-overflow", "stack-overflow", "stack-buffer-overflow", "cwe-120", "cwe-121", "cwe-122"},
+        "cwe-120": {"buffer-overflow", "heap-overflow", "heap-buffer-overflow", "possible-buffer-overflow", "stack-overflow", "stack-buffer-overflow", "cwe-120", "cwe-121", "cwe-122"},
+        "heap-overflow": {"buffer-overflow", "heap-overflow", "heap-buffer-overflow", "possible-buffer-overflow", "cwe-120", "cwe-122"},
+        "heap-buffer-overflow": {"buffer-overflow", "heap-overflow", "heap-buffer-overflow", "possible-buffer-overflow", "cwe-120", "cwe-122"},
+        "possible-buffer-overflow": {"buffer-overflow", "heap-overflow", "heap-buffer-overflow", "possible-buffer-overflow", "cwe-120", "cwe-122"},
+        "cwe-122": {"buffer-overflow", "heap-overflow", "heap-buffer-overflow", "possible-buffer-overflow", "cwe-120", "cwe-122"},
+        "stack-overflow": {"buffer-overflow", "stack-overflow", "stack-buffer-overflow", "cwe-120", "cwe-121"},
+        "stack-buffer-overflow": {"buffer-overflow", "stack-overflow", "stack-buffer-overflow", "cwe-120", "cwe-121"},
+        "cwe-121": {"buffer-overflow", "stack-overflow", "stack-buffer-overflow", "cwe-120", "cwe-121"},
+        "format-string": {"format-string", "format-string-vulnerability", "cwe-134"},
+        "format-string-vulnerability": {"format-string", "format-string-vulnerability", "cwe-134"},
+        "cwe-134": {"format-string", "format-string-vulnerability", "cwe-134"},
+    }
+    return aliases.get(normalized, {normalized})
+
+
+def embed_harness_package_files(agent_e_result: dict[str, Any]) -> None:
+    """
+    Include generated harness package contents in the HTTP response.
+
+    In Docker deployment the agent container and backend worker do not share the
+    agent's harness directory, so returning only filesystem paths is not enough
+    for the dynamic verification stage.
+    """
+    for package in agent_e_result.get("harness_packages", []):
+        package_dir = Path(str(package.get("package_dir", "")))
+        files: dict[str, str] = {}
+        seeds: dict[str, str] = {}
+
+        for name in ("afl_harness.c", "libfuzzer_harness.c", "Makefile", "README.md", "harness_config.json"):
+            path = package_dir / name
+            if path.is_file():
+                files[name] = path.read_text(encoding="utf-8", errors="replace")
+
+        seeds_dir = package_dir / "seeds"
+        if seeds_dir.is_dir():
+            for seed_path in sorted(seeds_dir.iterdir()):
+                if seed_path.is_file():
+                    seeds[seed_path.name] = base64.b64encode(seed_path.read_bytes()).decode("ascii")
+
+        package["embedded_files"] = files
+        package["embedded_seed_files_b64"] = seeds

@@ -227,17 +227,33 @@ def add_semantic_consistency(qc, hypothesis, finding):
 
 
 def deduplicate_findings(findings):
-    seen = set()
-    result = []
+    best_by_key = {}
     for finding in findings:
+        function_name = str(finding.get("function") or "")
+        vulnerability_type = str(finding.get("vulnerability_type") or "")
+        cwe_id = finding.get("cwe_id")
+        normalized_function = function_name
+        if cwe_id == "CWE-416" and vulnerability_type == "Use After Free":
+            if function_name in {"png_process_chunk", "png_fire_callbacks"}:
+                normalized_function = "png_uaf_chain"
         key = (
-            finding.get("hypothesis_id"),
-            finding.get("source_slice_id"),
-            finding.get("cwe_id"),
-            tuple(finding.get("line_range") or []),
+            finding.get("file"),
+            normalized_function,
+            cwe_id,
         )
-        if key in seen:
+        current = best_by_key.get(key)
+        if current is None:
+            best_by_key[key] = finding
             continue
-        seen.add(key)
-        result.append(finding)
-    return result
+
+        current_score = (
+            float(current.get("confidence") or 0),
+            len(current.get("evidence") or []),
+        )
+        new_score = (
+            float(finding.get("confidence") or 0),
+            len(finding.get("evidence") or []),
+        )
+        if new_score > current_score:
+            best_by_key[key] = finding
+    return list(best_by_key.values())

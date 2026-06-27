@@ -31,15 +31,17 @@ class Settings(BaseSettings):
     ML_MOCK_MODE: bool = True
 
     # ── Docker 沙箱配置 ────────────────────────────────────────────────────────
-    # 沙箱镜像名称（需提前 docker build 构建）
+    # 沙箱镜像名称(需提前 docker build 构建）
     SANDBOX_IMAGE: str = "sentinel-sandbox:latest"
     # 单次动态验证任务的最大运行时间（秒），超时后强制销毁容器
     # 执行手册：「运行 5 分钟，收集崩溃样本」
-    SANDBOX_TIMEOUT_SECONDS: int = 360   # 6 分钟（含编译 + eBPF 启动 + AFL 运行）
+    SANDBOX_TIMEOUT_SECONDS: int = 960   # 16 分钟（编译60s + AFL 900s = 15分钟fuzzing）
+    # 单个 harness package 的 AFL++ 运行时间。拉长到 900 秒（15分钟）提升crash发现率。
+    SANDBOX_PACKAGE_TIMEOUT_SECONDS: int = 900
     # 沙箱容器 CPU 限制（纳秒/100ms，即 nano_cpus；1 核 = 1_000_000_000）
-    SANDBOX_CPU_QUOTA: int = 1_000_000_000  # 限制 1 核
+    SANDBOX_CPU_QUOTA: int = 2_000_000_000  # 限制 2 核（提升稳定性）
     # 沙箱容器内存限制（字节），防止 OOM 拖垮宿主机
-    SANDBOX_MEM_LIMIT: str = "1g"   # 1 GB
+    SANDBOX_MEM_LIMIT: str = "2g"   # 2 GB（提升稳定性）
 
     model_config = SettingsConfigDict(
         env_file=".env",

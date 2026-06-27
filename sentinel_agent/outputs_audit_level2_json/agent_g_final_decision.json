@@ -1,0 +1,1546 @@
+{
+  "agent": "Agent G - Final Risk Decision and Report Agent",
+  "final_report": {
+    "agent": "Agent G - Final Risk Decision and Report Agent",
+    "project_name": "01_json_heapoverflow",
+    "status": "completed",
+    "overall_risk": "high",
+    "summary": {
+      "total_components": 1,
+      "total_slices": 9,
+      "total_hypotheses": 1,
+      "total_static_findings": 1,
+      "total_harness_packages": 1,
+      "confirmed_findings": 0,
+      "need_review_findings": 1,
+      "untriggered_findings": 0,
+      "dependency_risk_only": 1,
+      "asan_confirmed_findings": 0
+    },
+    "component_risks": [
+      {
+        "name": "openssl",
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "version_confidence": 0.95,
+        "purl_name": "openssl",
+        "component_confidence": 0.98,
+        "component_origin": "third_party_manifest",
+        "source_types": [
+          "CMakeLists.txt",
+          "Makefile",
+          "conanfile.txt"
+        ],
+        "evidence": [
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "find_package(OpenSSL)",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "openssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "ssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "crypto",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "openssl::ssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "openssl::crypto",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "conanfile.txt",
+            "file": "conanfile.txt",
+            "evidence": "openssl/1.0.1e",
+            "version_hint": "1.0.1e",
+            "evidence_type": "package_manifest"
+          },
+          {
+            "source": "Makefile",
+            "file": "Makefile",
+            "evidence": "openssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "Makefile",
+            "file": "Makefile",
+            "evidence": "ssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          }
+        ],
+        "matched_vulnerabilities": [
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0131",
+            "cve_id": "CVE-2003-0131",
+            "summary": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+            "published": "2003-03-24T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-007.txt.asc",
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625",
+              "http://eprint.iacr.org/2003/052/"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0655",
+            "cve_id": "CVE-2002-0655",
+            "summary": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0656",
+            "cve_id": "CVE-2002-0656",
+            "summary": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0657",
+            "cve_id": "CVE-2002-0657",
+            "summary": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-1999-0428",
+            "cve_id": "CVE-1999-0428",
+            "summary": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+            "published": "1999-03-22T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "CWE-384"
+            ],
+            "references": [
+              "http://www.osvdb.org/3936",
+              "http://www.osvdb.org/3936"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0147",
+            "cve_id": "CVE-2003-0147",
+            "summary": "OpenSSL does not use RSA blinding by default, which allows local and remote attackers to obtain the server's private key by determining factors using timing differences on (1) the number of extra reductions during Montgomery reduction, and (2) the use of different integer multiplication algorithms (\"Karatsuba\" and normal).",
+            "published": "2003-03-31T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://archives.neohapsis.com/archives/vulnwatch/2003-q1/0130.html",
+              "http://crypto.stanford.edu/~dabo/papers/ssl-timing.pdf",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0078",
+            "cve_id": "CVE-2003-0078",
+            "summary": "ssl3_get_record in s3_pkt.c for OpenSSL before 0.9.7a and 0.9.6 before 0.9.6i does not perform a MAC computation if an incorrect block cipher padding is used, which causes an information leak (timing discrepancy) that may make it easier to launch cryptographic attacks that rely on distinguishing between padding and MAC verification errors, possibly leading to extraction of the original plaintext, aka the \"Vaudenay timing attack.\"",
+            "published": "2003-03-03T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "CWE-203"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-001.txt.asc",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000570",
+              "http://marc.info/?l=bugtraq&m=104567627211904&w=2",
+              "http://marc.info/?l=bugtraq&m=104568426824439&w=2"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0659",
+            "cve_id": "CVE-2002-0659",
+            "summary": "The ASN1 library in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allows remote attackers to cause a denial of service via invalid encodings.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000516",
+              "http://rhn.redhat.com/errata/RHSA-2002-160.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2001-1141",
+            "cve_id": "CVE-2001-1141",
+            "summary": "The Pseudo-Random Number Generator (PRNG) in SSLeay and OpenSSL before 0.9.6b allows attackers to use the output of small PRNG requests to determine the internal state information, which could be used by attackers to predict future pseudo-random numbers.",
+            "published": "2001-07-10T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2001-013.txt.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000418",
+              "http://www.linux-mandrake.com/en/security/2001/MDKSA-2001-065.php3?dis=8.0",
+              "http://www.linuxsecurity.com/advisories/other_advisory-1483.html",
+              "http://www.osvdb.org/853"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2000-0535",
+            "cve_id": "CVE-2000-0535",
+            "summary": "OpenSSL 0.9.4 and OpenSSH for FreeBSD do not properly check for the existence of the /dev/random or /dev/urandom devices, which are absent on FreeBSD Alpha systems, which causes them to produce weak keys which may be more easily broken.",
+            "published": "2000-06-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340",
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340"
+            ]
+          }
+        ],
+        "matched_cves": [
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0131",
+            "cve_id": "CVE-2003-0131",
+            "summary": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+            "published": "2003-03-24T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-007.txt.asc",
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625",
+              "http://eprint.iacr.org/2003/052/"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0655",
+            "cve_id": "CVE-2002-0655",
+            "summary": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0656",
+            "cve_id": "CVE-2002-0656",
+            "summary": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0657",
+            "cve_id": "CVE-2002-0657",
+            "summary": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-1999-0428",
+            "cve_id": "CVE-1999-0428",
+            "summary": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+            "published": "1999-03-22T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "CWE-384"
+            ],
+            "references": [
+              "http://www.osvdb.org/3936",
+              "http://www.osvdb.org/3936"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0147",
+            "cve_id": "CVE-2003-0147",
+            "summary": "OpenSSL does not use RSA blinding by default, which allows local and remote attackers to obtain the server's private key by determining factors using timing differences on (1) the number of extra reductions during Montgomery reduction, and (2) the use of different integer multiplication algorithms (\"Karatsuba\" and normal).",
+            "published": "2003-03-31T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://archives.neohapsis.com/archives/vulnwatch/2003-q1/0130.html",
+              "http://crypto.stanford.edu/~dabo/papers/ssl-timing.pdf",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0078",
+            "cve_id": "CVE-2003-0078",
+            "summary": "ssl3_get_record in s3_pkt.c for OpenSSL before 0.9.7a and 0.9.6 before 0.9.6i does not perform a MAC computation if an incorrect block cipher padding is used, which causes an information leak (timing discrepancy) that may make it easier to launch cryptographic attacks that rely on distinguishing between padding and MAC verification errors, possibly leading to extraction of the original plaintext, aka the \"Vaudenay timing attack.\"",
+            "published": "2003-03-03T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "CWE-203"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-001.txt.asc",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000570",
+              "http://marc.info/?l=bugtraq&m=104567627211904&w=2",
+              "http://marc.info/?l=bugtraq&m=104568426824439&w=2"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0659",
+            "cve_id": "CVE-2002-0659",
+            "summary": "The ASN1 library in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allows remote attackers to cause a denial of service via invalid encodings.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000516",
+              "http://rhn.redhat.com/errata/RHSA-2002-160.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2001-1141",
+            "cve_id": "CVE-2001-1141",
+            "summary": "The Pseudo-Random Number Generator (PRNG) in SSLeay and OpenSSL before 0.9.6b allows attackers to use the output of small PRNG requests to determine the internal state information, which could be used by attackers to predict future pseudo-random numbers.",
+            "published": "2001-07-10T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2001-013.txt.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000418",
+              "http://www.linux-mandrake.com/en/security/2001/MDKSA-2001-065.php3?dis=8.0",
+              "http://www.linuxsecurity.com/advisories/other_advisory-1483.html",
+              "http://www.osvdb.org/853"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2000-0535",
+            "cve_id": "CVE-2000-0535",
+            "summary": "OpenSSL 0.9.4 and OpenSSH for FreeBSD do not properly check for the existence of the /dev/random or /dev/urandom devices, which are absent on FreeBSD Alpha systems, which causes them to produce weak keys which may be more easily broken.",
+            "published": "2000-06-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340",
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340"
+            ]
+          }
+        ],
+        "top_vulnerabilities": [
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0131",
+            "cve_id": "CVE-2003-0131",
+            "summary": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+            "published": "2003-03-24T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-007.txt.asc",
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625",
+              "http://eprint.iacr.org/2003/052/"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0655",
+            "cve_id": "CVE-2002-0655",
+            "summary": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0656",
+            "cve_id": "CVE-2002-0656",
+            "summary": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0657",
+            "cve_id": "CVE-2002-0657",
+            "summary": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-1999-0428",
+            "cve_id": "CVE-1999-0428",
+            "summary": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+            "published": "1999-03-22T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "CWE-384"
+            ],
+            "references": [
+              "http://www.osvdb.org/3936",
+              "http://www.osvdb.org/3936"
+            ]
+          }
+        ],
+        "risk_level": "high",
+        "risk_profile": {
+          "known_cve_count": 10,
+          "memory_safety_cve_count": 2,
+          "highest_cvss": 7.5,
+          "risk_level": "high",
+          "recommended_action": "Prioritize upgrade or patch before release; memory-safety CVEs are present."
+        },
+        "recommended_action": "Prioritize upgrade or patch before release; memory-safety CVEs are present.",
+        "summary": {
+          "vulnerability_count": 10,
+          "highest_risk": "high",
+          "high_or_critical_count": 5,
+          "queried_sources": [
+            "OSV",
+            "NVD"
+          ]
+        }
+      }
+    ],
+    "dependency_risk_only": [
+      {
+        "name": "openssl",
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "version_confidence": 0.95,
+        "purl_name": "openssl",
+        "component_confidence": 0.98,
+        "component_origin": "third_party_manifest",
+        "source_types": [
+          "CMakeLists.txt",
+          "Makefile",
+          "conanfile.txt"
+        ],
+        "evidence": [
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "find_package(OpenSSL)",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "openssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "ssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "crypto",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "openssl::ssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "CMakeLists.txt",
+            "file": "CMakeLists.txt",
+            "evidence": "openssl::crypto",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "conanfile.txt",
+            "file": "conanfile.txt",
+            "evidence": "openssl/1.0.1e",
+            "version_hint": "1.0.1e",
+            "evidence_type": "package_manifest"
+          },
+          {
+            "source": "Makefile",
+            "file": "Makefile",
+            "evidence": "openssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          },
+          {
+            "source": "Makefile",
+            "file": "Makefile",
+            "evidence": "ssl",
+            "version_hint": null,
+            "evidence_type": "build_file"
+          }
+        ],
+        "matched_vulnerabilities": [
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0131",
+            "cve_id": "CVE-2003-0131",
+            "summary": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+            "published": "2003-03-24T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-007.txt.asc",
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625",
+              "http://eprint.iacr.org/2003/052/"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0655",
+            "cve_id": "CVE-2002-0655",
+            "summary": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0656",
+            "cve_id": "CVE-2002-0656",
+            "summary": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0657",
+            "cve_id": "CVE-2002-0657",
+            "summary": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-1999-0428",
+            "cve_id": "CVE-1999-0428",
+            "summary": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+            "published": "1999-03-22T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "CWE-384"
+            ],
+            "references": [
+              "http://www.osvdb.org/3936",
+              "http://www.osvdb.org/3936"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0147",
+            "cve_id": "CVE-2003-0147",
+            "summary": "OpenSSL does not use RSA blinding by default, which allows local and remote attackers to obtain the server's private key by determining factors using timing differences on (1) the number of extra reductions during Montgomery reduction, and (2) the use of different integer multiplication algorithms (\"Karatsuba\" and normal).",
+            "published": "2003-03-31T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://archives.neohapsis.com/archives/vulnwatch/2003-q1/0130.html",
+              "http://crypto.stanford.edu/~dabo/papers/ssl-timing.pdf",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0078",
+            "cve_id": "CVE-2003-0078",
+            "summary": "ssl3_get_record in s3_pkt.c for OpenSSL before 0.9.7a and 0.9.6 before 0.9.6i does not perform a MAC computation if an incorrect block cipher padding is used, which causes an information leak (timing discrepancy) that may make it easier to launch cryptographic attacks that rely on distinguishing between padding and MAC verification errors, possibly leading to extraction of the original plaintext, aka the \"Vaudenay timing attack.\"",
+            "published": "2003-03-03T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "CWE-203"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-001.txt.asc",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000570",
+              "http://marc.info/?l=bugtraq&m=104567627211904&w=2",
+              "http://marc.info/?l=bugtraq&m=104568426824439&w=2"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0659",
+            "cve_id": "CVE-2002-0659",
+            "summary": "The ASN1 library in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allows remote attackers to cause a denial of service via invalid encodings.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000516",
+              "http://rhn.redhat.com/errata/RHSA-2002-160.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2001-1141",
+            "cve_id": "CVE-2001-1141",
+            "summary": "The Pseudo-Random Number Generator (PRNG) in SSLeay and OpenSSL before 0.9.6b allows attackers to use the output of small PRNG requests to determine the internal state information, which could be used by attackers to predict future pseudo-random numbers.",
+            "published": "2001-07-10T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2001-013.txt.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000418",
+              "http://www.linux-mandrake.com/en/security/2001/MDKSA-2001-065.php3?dis=8.0",
+              "http://www.linuxsecurity.com/advisories/other_advisory-1483.html",
+              "http://www.osvdb.org/853"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2000-0535",
+            "cve_id": "CVE-2000-0535",
+            "summary": "OpenSSL 0.9.4 and OpenSSH for FreeBSD do not properly check for the existence of the /dev/random or /dev/urandom devices, which are absent on FreeBSD Alpha systems, which causes them to produce weak keys which may be more easily broken.",
+            "published": "2000-06-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340",
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340"
+            ]
+          }
+        ],
+        "matched_cves": [
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0131",
+            "cve_id": "CVE-2003-0131",
+            "summary": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+            "published": "2003-03-24T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-007.txt.asc",
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625",
+              "http://eprint.iacr.org/2003/052/"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0655",
+            "cve_id": "CVE-2002-0655",
+            "summary": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0656",
+            "cve_id": "CVE-2002-0656",
+            "summary": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0657",
+            "cve_id": "CVE-2002-0657",
+            "summary": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-1999-0428",
+            "cve_id": "CVE-1999-0428",
+            "summary": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+            "published": "1999-03-22T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "CWE-384"
+            ],
+            "references": [
+              "http://www.osvdb.org/3936",
+              "http://www.osvdb.org/3936"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0147",
+            "cve_id": "CVE-2003-0147",
+            "summary": "OpenSSL does not use RSA blinding by default, which allows local and remote attackers to obtain the server's private key by determining factors using timing differences on (1) the number of extra reductions during Montgomery reduction, and (2) the use of different integer multiplication algorithms (\"Karatsuba\" and normal).",
+            "published": "2003-03-31T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://archives.neohapsis.com/archives/vulnwatch/2003-q1/0130.html",
+              "http://crypto.stanford.edu/~dabo/papers/ssl-timing.pdf",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0078",
+            "cve_id": "CVE-2003-0078",
+            "summary": "ssl3_get_record in s3_pkt.c for OpenSSL before 0.9.7a and 0.9.6 before 0.9.6i does not perform a MAC computation if an incorrect block cipher padding is used, which causes an information leak (timing discrepancy) that may make it easier to launch cryptographic attacks that rely on distinguishing between padding and MAC verification errors, possibly leading to extraction of the original plaintext, aka the \"Vaudenay timing attack.\"",
+            "published": "2003-03-03T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "CWE-203"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-001.txt.asc",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000570",
+              "http://marc.info/?l=bugtraq&m=104567627211904&w=2",
+              "http://marc.info/?l=bugtraq&m=104568426824439&w=2"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0659",
+            "cve_id": "CVE-2002-0659",
+            "summary": "The ASN1 library in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allows remote attackers to cause a denial of service via invalid encodings.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000516",
+              "http://rhn.redhat.com/errata/RHSA-2002-160.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2001-1141",
+            "cve_id": "CVE-2001-1141",
+            "summary": "The Pseudo-Random Number Generator (PRNG) in SSLeay and OpenSSL before 0.9.6b allows attackers to use the output of small PRNG requests to determine the internal state information, which could be used by attackers to predict future pseudo-random numbers.",
+            "published": "2001-07-10T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2001-013.txt.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000418",
+              "http://www.linux-mandrake.com/en/security/2001/MDKSA-2001-065.php3?dis=8.0",
+              "http://www.linuxsecurity.com/advisories/other_advisory-1483.html",
+              "http://www.osvdb.org/853"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2000-0535",
+            "cve_id": "CVE-2000-0535",
+            "summary": "OpenSSL 0.9.4 and OpenSSH for FreeBSD do not properly check for the existence of the /dev/random or /dev/urandom devices, which are absent on FreeBSD Alpha systems, which causes them to produce weak keys which may be more easily broken.",
+            "published": "2000-06-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 5.0,
+            "risk_level": "medium",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340",
+              "http://archives.neohapsis.com/archives/freebsd/2000-06/0083.html",
+              "http://www.securityfocus.com/bid/1340"
+            ]
+          }
+        ],
+        "top_vulnerabilities": [
+          {
+            "source": "NVD",
+            "id": "CVE-2003-0131",
+            "cve_id": "CVE-2003-0131",
+            "summary": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+            "published": "2003-03-24T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2003-007.txt.asc",
+              "ftp://ftp.sco.com/pub/security/OpenLinux/CSSA-2003-014.0.txt",
+              "ftp://patches.sgi.com/support/free/security/advisories/20030501-01-I",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000625",
+              "http://eprint.iacr.org/2003/052/"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0655",
+            "cve_id": "CVE-2002-0655",
+            "summary": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0656",
+            "cve_id": "CVE-2002-0656",
+            "summary": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-2002-0657",
+            "cve_id": "CVE-2002-0657",
+            "summary": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+            "published": "2002-08-12T04:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "NVD-CWE-Other"
+            ],
+            "references": [
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.0.txt",
+              "ftp://ftp.caldera.com/pub/security/OpenLinux/CSSA-2002-033.1.txt",
+              "ftp://ftp.freebsd.org/pub/FreeBSD/CERT/advisories/FreeBSD-SA-02:33.openssl.asc",
+              "http://distro.conectiva.com.br/atualizacoes/?id=a&anuncio=000513",
+              "http://www.cert.org/advisories/CA-2002-23.html"
+            ]
+          },
+          {
+            "source": "NVD",
+            "id": "CVE-1999-0428",
+            "cve_id": "CVE-1999-0428",
+            "summary": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+            "published": "1999-03-22T05:00:00.000",
+            "last_modified": "2026-04-16T00:27:16.627",
+            "severity_score": 7.5,
+            "risk_level": "high",
+            "weaknesses": [
+              "CWE-384"
+            ],
+            "references": [
+              "http://www.osvdb.org/3936",
+              "http://www.osvdb.org/3936"
+            ]
+          }
+        ],
+        "risk_level": "high",
+        "risk_profile": {
+          "known_cve_count": 10,
+          "memory_safety_cve_count": 2,
+          "highest_cvss": 7.5,
+          "risk_level": "high",
+          "recommended_action": "Prioritize upgrade or patch before release; memory-safety CVEs are present."
+        },
+        "recommended_action": "Prioritize upgrade or patch before release; memory-safety CVEs are present.",
+        "summary": {
+          "vulnerability_count": 10,
+          "highest_risk": "high",
+          "high_or_critical_count": 5,
+          "queried_sources": [
+            "OSV",
+            "NVD"
+          ]
+        }
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "HYP-0001",
+        "source_slice_id": "SLICE-0009",
+        "file": "src\\main.c",
+        "function": "main",
+        "line_range": [
+          33,
+          39
+        ],
+        "cwe_candidates": [
+          "CWE-415"
+        ],
+        "risk_signals": [
+          "double_free"
+        ],
+        "suspect_lines": [
+          33,
+          39
+        ],
+        "confidence": 0.78,
+        "reason": "Pointer 'buf' is freed more than once without reset or reallocation.",
+        "evidence": [
+          "First free at line 33.",
+          "Second free at line 39: free(buf);"
+        ],
+        "evidence_lines": [
+          {
+            "line": 33,
+            "description": "First free at line 33."
+          },
+          {
+            "line": 39,
+            "description": "Second free at line 39: free(buf);"
+          }
+        ],
+        "cross_function_trace": [
+          "main -> json_free: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> format",
+          "argv -> free",
+          "argv -> pointer_access",
+          "file_read -> format",
+          "suspect_lines=[33, 39]",
+          "signals=double_free",
+          "Pointer 'buf' is freed more than once without reset or reallocation."
+        ],
+        "suggested_fix": "Set buf to NULL after free and enforce single ownership.",
+        "vulnerability_type": "Double Free",
+        "risk_level": "high"
+      }
+    ],
+    "final_findings": [
+      {
+        "finding_id": "FINDING-0001",
+        "hypothesis_id": "HYP-0001",
+        "source_slice_id": "SLICE-0009",
+        "file": "src\\main.c",
+        "function": "main",
+        "line_range": [
+          33,
+          39
+        ],
+        "cwe_id": "CWE-415",
+        "vulnerability_type": "Double Free",
+        "risk_level": "high",
+        "trigger_condition": "Pointer 'buf' is freed more than once without reset or reallocation.",
+        "evidence": [
+          "First free at line 33.",
+          "Second free at line 39: free(buf);"
+        ],
+        "evidence_lines": [
+          {
+            "line": 33,
+            "description": "First free at line 33."
+          },
+          {
+            "line": 39,
+            "description": "Second free at line 39: free(buf);"
+          }
+        ],
+        "cross_function_trace": [
+          "main -> json_free: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> format",
+          "argv -> free",
+          "argv -> pointer_access",
+          "file_read -> format",
+          "suspect_lines=[33, 39]",
+          "signals=double_free",
+          "Pointer 'buf' is freed more than once without reset or reallocation."
+        ],
+        "confidence": 0.78,
+        "suggested_fix": "Set buf to NULL after free and enforce single ownership.",
+        "static_status": "suspected",
+        "audit_source": "rule_fallback",
+        "hypothesis_reason": "Pointer 'buf' is freed more than once without reset or reallocation.",
+        "hypothesis_confidence": 0.78,
+        "quality_control": {
+          "original_confidence": 0.78,
+          "calibrated_confidence": 0.78,
+          "confidence_adjusted": false,
+          "rule_consistency": "rule_only",
+          "semantic_consistency": "consistent",
+          "warnings": [],
+          "fallback_reason": "llm_not_configured"
+        },
+        "dynamic_status": "need_review",
+        "evidence_level": "medium",
+        "dynamic_evidence_sources": [
+          "eBPF"
+        ],
+        "asan_evidence": null,
+        "afl_evidence": null,
+        "ebpf_evidence": [
+          {
+            "timestamp": "2026-05-30T10:21:34",
+            "pid": 12345,
+            "process": "fuzz_target",
+            "function": "free",
+            "event_type": "free",
+            "address": "0x603000000040"
+          }
+        ],
+        "package_id": "HARNESS-0001",
+        "trace": {
+          "source_slice_id": "SLICE-0009",
+          "hypothesis_id": "HYP-0001",
+          "finding_id": "FINDING-0001",
+          "package_id": "HARNESS-0001",
+          "dynamic_status": "need_review",
+          "evidence_sources": [
+            "eBPF"
+          ],
+          "hypothesis_reason": "Pointer 'buf' is freed more than once without reset or reallocation.",
+          "cross_function_trace": [
+            "main -> json_free: callee_frees_argument"
+          ],
+          "dataflow_trace": [
+            "argv -> format",
+            "argv -> free",
+            "argv -> pointer_access",
+            "file_read -> format",
+            "suspect_lines=[33, 39]",
+            "signals=double_free",
+            "Pointer 'buf' is freed more than once without reset or reallocation."
+          ]
+        },
+        "trace_summary": "slice=SLICE-0009 -> hypothesis=HYP-0001 -> finding=FINDING-0001 -> harness=HARNESS-0001 -> dynamic=need_review -> trace=main -> json_free: callee_frees_argument",
+        "final_status": "need_review",
+        "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+      }
+    ],
+    "backend_components": [
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2003-0131",
+        "cvss_score": 7.5,
+        "severity": "high",
+        "description": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2003-0131"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2002-0655",
+        "cvss_score": 7.5,
+        "severity": "high",
+        "description": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0655"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2002-0656",
+        "cvss_score": 7.5,
+        "severity": "high",
+        "description": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0656"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2002-0657",
+        "cvss_score": 7.5,
+        "severity": "high",
+        "description": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0657"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-1999-0428",
+        "cvss_score": 7.5,
+        "severity": "high",
+        "description": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-1999-0428"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2003-0147",
+        "cvss_score": 5.0,
+        "severity": "medium",
+        "description": "OpenSSL does not use RSA blinding by default, which allows local and remote attackers to obtain the server's private key by determining factors using timing differences on (1) the number of extra reductions during Montgomery reduction, and (2) the use of different integer multiplication algorithms (\"Karatsuba\" and normal).",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2003-0147"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2003-0078",
+        "cvss_score": 5.0,
+        "severity": "medium",
+        "description": "ssl3_get_record in s3_pkt.c for OpenSSL before 0.9.7a and 0.9.6 before 0.9.6i does not perform a MAC computation if an incorrect block cipher padding is used, which causes an information leak (timing discrepancy) that may make it easier to launch cryptographic attacks that rely on distinguishing between padding and MAC verification errors, possibly leading to extraction of the original plaintext, aka the \"Vaudenay timing attack.\"",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2003-0078"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2002-0659",
+        "cvss_score": 5.0,
+        "severity": "medium",
+        "description": "The ASN1 library in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allows remote attackers to cause a denial of service via invalid encodings.",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0659"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2001-1141",
+        "cvss_score": 5.0,
+        "severity": "medium",
+        "description": "The Pseudo-Random Number Generator (PRNG) in SSLeay and OpenSSL before 0.9.6b allows attackers to use the output of small PRNG requests to determine the internal state information, which could be used by attackers to predict future pseudo-random numbers.",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2001-1141"
+      },
+      {
+        "library_name": "openssl",
+        "version": "1.0.1e",
+        "cve_id": "CVE-2000-0535",
+        "cvss_score": 5.0,
+        "severity": "medium",
+        "description": "OpenSSL 0.9.4 and OpenSSH for FreeBSD do not properly check for the existence of the /dev/random or /dev/urandom devices, which are absent on FreeBSD Alpha systems, which causes them to produce weak keys which may be more easily broken.",
+        "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2000-0535"
+      }
+    ],
+    "backend_vulnerabilities": [
+      {
+        "vuln_type": "double_free",
+        "vuln_type_display": "Double Free",
+        "file_path": "src\\main.c",
+        "line_number": 33,
+        "code_context": "First free at line 33.\nSecond free at line 39: free(buf);",
+        "trigger_cond": "Pointer 'buf' is freed more than once without reset or reallocation.",
+        "fix_advice": "Set buf to NULL after free and enforce single ownership.",
+        "confidence": 0.78,
+        "source_slice_id": "SLICE-0009",
+        "hypothesis_id": "HYP-0001",
+        "finding_id": "FINDING-0001",
+        "trace_summary": "main -> json_free: callee_frees_argument",
+        "dynamic_status": "need_review",
+        "final_status": "need_review"
+      }
+    ],
+    "recommendations": [
+      "Prioritize findings confirmed by ASan/AFL++/eBPF runtime evidence.",
+      "Review high-risk dependency CVEs before release.",
+      "Use generated harness packages as reproducible validation artifacts.",
+      "Treat untriggered high-confidence findings as review candidates, not confirmed vulnerabilities."
+    ],
+    "agent_summaries": {
+      "agent_a": {
+        "total_components": 1,
+        "high_risk_components": 1,
+        "queried_sources": [
+          "OSV",
+          "NVD"
+        ]
+      },
+      "agent_b": {
+        "total_slices": 9,
+        "total_source_files": 3,
+        "slices_with_risk_keywords": 3,
+        "high_priority_slices": 2,
+        "medium_priority_slices": 2,
+        "cross_function_slices": 3
+      },
+      "agent_c": {
+        "total_input_slices": 9,
+        "candidate_slices": 4,
+        "low_priority_slices": 5,
+        "total_hypotheses": 1,
+        "hypotheses_by_cwe": {
+          "CWE-415": 1
+        },
+        "component_context_count": 1
+      },
+      "agent_d": {
+        "total_hypotheses": 1,
+        "audited_hypotheses": 1,
+        "total_findings": 1,
+        "high_risk_findings": 1,
+        "llm_available": false,
+        "llm_error_count": 0,
+        "llm_findings": 0,
+        "rule_fallback_findings": 1
+      },
+      "agent_e": {
+        "total_packages": 1,
+        "packages_by_cwe": {
+          "CWE-415": 1
+        },
+        "build_ready_packages": 1,
+        "manual_adaptation_required": 0,
+        "compile_checks_executed": 0
+      },
+      "agent_f": {
+        "total_findings": 1,
+        "total_links": 1,
+        "confirmed_findings": 0,
+        "need_review_findings": 1,
+        "asan_confirmed_findings": 0
+      }
+    }
+  },
+  "summary": {
+    "total_components": 1,
+    "total_slices": 9,
+    "total_hypotheses": 1,
+    "total_static_findings": 1,
+    "total_harness_packages": 1,
+    "confirmed_findings": 0,
+    "need_review_findings": 1,
+    "untriggered_findings": 0,
+    "dependency_risk_only": 1,
+    "asan_confirmed_findings": 0
+  }
+}

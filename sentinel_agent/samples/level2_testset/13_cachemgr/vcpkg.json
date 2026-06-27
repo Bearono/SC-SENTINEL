@@ -1,0 +1,5 @@
+{
+  "name": "hsts-cache",
+  "version": "7.88.0",
+  "description": "Shared HSTS cache importer with duplicate-host replacement cleanup double free."
+}

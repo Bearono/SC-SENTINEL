@@ -143,6 +143,8 @@ export interface Vulnerability {
   verify_status: VerifyStatus
   crash_output: string | null
   ebpf_logs: EbpfLog[]
+  llm_original_type?: string // LLM初始分类(如被eBPF纠正)
+  ebpf_corrected?: boolean    // 是否被eBPF纠正
 }
 
 // ── 报告摘要（对应后端 ReportSummary）──────────────────────────────

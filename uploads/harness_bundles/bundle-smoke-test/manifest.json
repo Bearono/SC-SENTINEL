@@ -1,0 +1,42 @@
+{
+  "task_id": "bundle-smoke-test",
+  "bundle_root": "D:\\SC-SENTINEL\\uploads\\harness_bundles\\bundle-smoke-test",
+  "packages": [
+    {
+      "package_id": "HARNESS-0001",
+      "finding_id": "FINDING-0016",
+      "vuln_id": "00000000-0000-0000-0000-000000000001",
+      "cwe_id": "CWE-134",
+      "target_file": "format_string_snprintf.c",
+      "target_function": "render",
+      "package_dir": "D:\\SC-SENTINEL\\uploads\\harness_bundles\\bundle-smoke-test\\HARNESS-0001"
+    },
+    {
+      "package_id": "HARNESS-0002",
+      "finding_id": "FINDING-0017",
+      "vuln_id": null,
+      "cwe_id": "CWE-134",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "tiny_syslog",
+      "package_dir": "D:\\SC-SENTINEL\\uploads\\harness_bundles\\bundle-smoke-test\\HARNESS-0002"
+    },
+    {
+      "package_id": "HARNESS-0003",
+      "finding_id": "FINDING-0018",
+      "vuln_id": null,
+      "cwe_id": "CWE-134",
+      "target_file": "format_string_printf.c",
+      "target_function": "say",
+      "package_dir": "D:\\SC-SENTINEL\\uploads\\harness_bundles\\bundle-smoke-test\\HARNESS-0003"
+    },
+    {
+      "package_id": "HARNESS-0004",
+      "finding_id": "FINDING-0019",
+      "vuln_id": null,
+      "cwe_id": "CWE-134",
+      "target_file": "format_string_fprintf.c",
+      "target_function": "log_event",
+      "package_dir": "D:\\SC-SENTINEL\\uploads\\harness_bundles\\bundle-smoke-test\\HARNESS-0004"
+    }
+  ]
+}

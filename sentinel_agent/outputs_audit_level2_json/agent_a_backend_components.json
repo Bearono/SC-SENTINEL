@@ -1,0 +1,94 @@
+{
+  "components": [
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2003-0131",
+      "cvss_score": 7.5,
+      "severity": "high",
+      "description": "The SSL and TLS components for OpenSSL 0.9.6i and earlier, 0.9.7, and 0.9.7a allow remote attackers to perform an unauthorized RSA private key operation via a modified Bleichenbacher attack that uses a large number of SSL or TLS connections using PKCS #1 v1.5 padding that cause OpenSSL to leak information regarding the relationship between ciphertext and the associated plaintext, aka the \"Klima-Pokorny-Rosa attack.\"",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2003-0131"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2002-0655",
+      "cvss_score": 7.5,
+      "severity": "high",
+      "description": "OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, does not properly handle ASCII representations of integers on 64 bit platforms, which could allow attackers to cause a denial of service and possibly execute arbitrary code.",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0655"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2002-0656",
+      "cvss_score": 7.5,
+      "severity": "high",
+      "description": "Buffer overflows in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allow remote attackers to execute arbitrary code via (1) a large client master key in SSL2 or (2) a large session ID in SSL3.",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0656"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2002-0657",
+      "cvss_score": 7.5,
+      "severity": "high",
+      "description": "Buffer overflow in OpenSSL 0.9.7 before 0.9.7-beta3, with Kerberos enabled, allows attackers to execute arbitrary code via a long master key.",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0657"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-1999-0428",
+      "cvss_score": 7.5,
+      "severity": "high",
+      "description": "OpenSSL and SSLeay allow remote attackers to reuse SSL sessions and bypass access controls.",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-1999-0428"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2003-0147",
+      "cvss_score": 5.0,
+      "severity": "medium",
+      "description": "OpenSSL does not use RSA blinding by default, which allows local and remote attackers to obtain the server's private key by determining factors using timing differences on (1) the number of extra reductions during Montgomery reduction, and (2) the use of different integer multiplication algorithms (\"Karatsuba\" and normal).",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2003-0147"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2003-0078",
+      "cvss_score": 5.0,
+      "severity": "medium",
+      "description": "ssl3_get_record in s3_pkt.c for OpenSSL before 0.9.7a and 0.9.6 before 0.9.6i does not perform a MAC computation if an incorrect block cipher padding is used, which causes an information leak (timing discrepancy) that may make it easier to launch cryptographic attacks that rely on distinguishing between padding and MAC verification errors, possibly leading to extraction of the original plaintext, aka the \"Vaudenay timing attack.\"",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2003-0078"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2002-0659",
+      "cvss_score": 5.0,
+      "severity": "medium",
+      "description": "The ASN1 library in OpenSSL 0.9.6d and earlier, and 0.9.7-beta2 and earlier, allows remote attackers to cause a denial of service via invalid encodings.",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2002-0659"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2001-1141",
+      "cvss_score": 5.0,
+      "severity": "medium",
+      "description": "The Pseudo-Random Number Generator (PRNG) in SSLeay and OpenSSL before 0.9.6b allows attackers to use the output of small PRNG requests to determine the internal state information, which could be used by attackers to predict future pseudo-random numbers.",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2001-1141"
+    },
+    {
+      "library_name": "openssl",
+      "version": "1.0.1e",
+      "cve_id": "CVE-2000-0535",
+      "cvss_score": 5.0,
+      "severity": "medium",
+      "description": "OpenSSL 0.9.4 and OpenSSH for FreeBSD do not properly check for the existence of the /dev/random or /dev/urandom devices, which are absent on FreeBSD Alpha systems, which causes them to produce weak keys which may be more easily broken.",
+      "nvd_url": "https://nvd.nist.gov/vuln/detail/CVE-2000-0535"
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "agent": "Agent A - Dependency Risk Identification",
+  "components": [],
+  "components_rich": [],
+  "summary": {
+    "total_components": 0,
+    "high_risk_components": 0,
+    "queried_sources": [
+      "OSV",
+      "NVD"
+    ]
+  },
+  "ignored_headers": [
+    {
+      "file": "ctf_input.h",
+      "header": "stdio.h",
+      "include_style": "system",
+      "component_origin": "system_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "ctf_input.h",
+      "header": "stdlib.h",
+      "include_style": "system",
+      "component_origin": "system_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "ctf_input.h",
+      "header": "string.h",
+      "include_style": "system",
+      "component_origin": "system_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "double_free_alias.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "double_free_cleanup.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "double_free_direct.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "double_free_error_path.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "format_string_fprintf.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "format_string_printf.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "format_string_snprintf.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "format_string_syslog_like.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "heap_overflow_integer_trunc.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "heap_overflow_integer_trunc.c",
+      "header": "stdint.h",
+      "include_style": "system",
+      "component_origin": "system_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "heap_overflow_memcpy_len.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "heap_overflow_off_by_one.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "heap_overflow_strcpy.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "stack_overflow_index.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "stack_overflow_loop.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "stack_overflow_sprintf.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "stack_overflow_strcpy.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "uaf_array_slot.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "uaf_cross_function.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "uaf_direct.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    },
+    {
+      "file": "uaf_struct_field.c",
+      "header": "ctf_input.h",
+      "include_style": "quoted",
+      "component_origin": "internal_header",
+      "reason": "system_or_internal_header_not_queried_for_cve"
+    }
+  ],
+  "integration": {
+    "components": []
+  }
+}

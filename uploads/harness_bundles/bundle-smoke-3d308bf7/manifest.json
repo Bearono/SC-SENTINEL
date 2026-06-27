@@ -1,0 +1,15 @@
+{
+  "task_id": "bundle-smoke-3d308bf7",
+  "bundle_root": "D:\\SC-SENTINEL\\uploads\\harness_bundles\\bundle-smoke-3d308bf7",
+  "packages": [
+    {
+      "package_id": "HARNESS-SMOKE-0001",
+      "finding_id": "finding-smoke-1",
+      "vuln_id": "vuln-smoke-1",
+      "cwe_id": "CWE-134",
+      "target_file": "fmt.c",
+      "target_function": "vuln_log",
+      "package_dir": "D:\\SC-SENTINEL\\uploads\\harness_bundles\\bundle-smoke-3d308bf7\\HARNESS-SMOKE-0001"
+    }
+  ]
+}

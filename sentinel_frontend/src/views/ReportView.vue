@@ -51,10 +51,16 @@
             <span class="vtag">{{ vulnTag(v.vuln_type) }}</span>
             <span class="vtit">{{ vulnTitle(v) }}</span>
             <span class="vloc">{{ v.file_path || 'unknown' }}<template v-if="v.line_number"> : {{ v.line_number }}</template></span>
+            <span v-if="v.ebpf_corrected" class="dbadge b-ebpf" style="font-size:11px;padding:3px 10px;margin-left:8px" title="eBPF自动纠正了LLM的误分类">⚡ eBPF Corrected</span>
             <span class="dbadge" :class="verifyBadge(v.verify_status)" style="font-size:11px;padding:3px 10px;margin-left:8px">{{ verifyText(v.verify_status) }}</span>
             <span class="vchev" :class="{ open: opened.has(v.id) }">▾</span>
           </div>
           <div v-show="opened.has(v.id)" class="vbody">
+            <!-- eBPF correction notice -->
+            <div v-if="v.ebpf_corrected && v.llm_original_type" class="corrbox">
+              <div class="corrh">⚡ eBPF Runtime Correction</div>
+              <div class="corrb">LLM静态分析初判为 <code>{{ v.llm_original_type }}</code>，但eBPF运行时证据显示实际为 <code>{{ v.vuln_type }}</code>。系统已自动纠正分类，展示eBPF+LLM协同验证能力。</div>
+            </div>
             <!-- code -->
             <div v-if="v.code_context" class="cblock">
               <div v-for="(ln, i) in codeLines(v)" :key="i" class="cln" :class="{ hl: ln.hl }">
@@ -153,18 +159,28 @@ function toggle(id: string) {
 
 function vulnTag(t: string) {
   const m: Record<string, string> = {
-    UAF: 'CWE-416 UAF', 'Use-After-Free': 'CWE-416 UAF',
-    heap_overflow: 'CWE-122 HEAP', Heap_Overflow: 'CWE-122 HEAP',
-    double_free: 'CWE-415 DBLF', Double_Free: 'CWE-415 DBLF',
-    stack_overflow: 'CWE-121 STK'
+    UAF: 'CWE-416 UAF',
+    'Use-After-Free': 'CWE-416 UAF',
+    use_after_free: 'CWE-416 UAF',
+    buffer_overflow: 'CWE-120 BUF',
+    heap_overflow: 'CWE-120 BUF',  // 兼容旧数据
+    Heap_Overflow: 'CWE-120 BUF',
+    stack_overflow: 'CWE-120 BUF',  // 兼容旧数据
+    double_free: 'CWE-415 DBLF',
+    Double_Free: 'CWE-415 DBLF',
   }
   return m[t] || t.toUpperCase()
 }
 function vulnTitle(v: Vulnerability) {
   const label: Record<string, string> = {
-    UAF: 'Use-After-Free', 'Use-After-Free': 'Use-After-Free',
-    heap_overflow: 'Heap Buffer Overflow', Heap_Overflow: 'Heap Buffer Overflow',
-    double_free: 'Double Free', stack_overflow: 'Stack Overflow'
+    UAF: 'Use-After-Free',
+    'Use-After-Free': 'Use-After-Free',
+    use_after_free: 'Use-After-Free',
+    buffer_overflow: 'Buffer Overflow',
+    heap_overflow: 'Buffer Overflow',  // 兼容
+    Heap_Overflow: 'Buffer Overflow',
+    stack_overflow: 'Buffer Overflow',  // 兼容
+    double_free: 'Double Free',
   }
   const base = label[v.vuln_type] || v.vuln_type
   return v.description ? `${base}` : base
@@ -205,7 +221,7 @@ async function handleExportPdf() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `SENTINEL_Report_${report.value?.summary.project_name ?? taskId}.pdf`
+    a.download = `SC-SENTINEL_Report_${report.value?.summary.project_name ?? taskId}.pdf`
     a.click()
     URL.revokeObjectURL(url)
   } catch { /* 拦截器已处理 */ } finally {
@@ -297,6 +313,12 @@ onMounted(async () => {
 .advico { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
 .advtxt { font-size: 12.5px; color: var(--grv); line-height: 1.6; }
 .advtxt strong { color: var(--obs); }
+/* eBPF纠正高亮框 */
+.corrbox { padding: 12px 15px; border-radius: 10px; background: linear-gradient(135deg, rgba(124, 58, 237, .08), rgba(192, 132, 252, .05)); border: 1px solid rgba(124, 58, 237, .25); margin-bottom: 12px; }
+.corrh { font-size: 11px; font-weight: 700; color: #7c3aed; margin-bottom: 6px; }
+.corrb { font-size: 12px; color: var(--grv); line-height: 1.6; }
+.corrb code { font-family: var(--fm); font-size: 11px; padding: 2px 6px; background: rgba(124, 58, 237, .1); border-radius: 4px; color: #7c3aed; }
+.b-ebpf { background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; font-weight: 600; }
 /* REP5 */
 .rtwrap { background: #fff; border-radius: 16px; border: 1px solid var(--ch); box-shadow: var(--sc); overflow: hidden; }
 .rtable { width: 100%; border-collapse: collapse; }

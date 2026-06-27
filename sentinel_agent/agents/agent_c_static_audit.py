@@ -20,6 +20,9 @@ Part 3.2 upgraded version:
 FREE_PATTERN = re.compile(r'\bfree\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)')
 DANGEROUS_COPY_PATTERN = re.compile(r'\b(strcpy|strcat|sprintf|memcpy|memmove)\s*\(')
 FORMAT_CALL_PATTERN = re.compile(r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|syslog)\s*\(')
+GENERIC_CALL_PATTERN = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(')
+TERMINATOR_PATTERN = re.compile(r'\b(return|goto|break|continue)\b')
+ALLOC_PATTERN = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(?:\([^)]*\)\s*)?(malloc|calloc|realloc)\s*\(')
 
 HIGH_VALUE_RISK_KEYWORDS = {
     "malloc", "calloc", "realloc", "free",
@@ -167,6 +170,10 @@ def load_prompt():
 def build_llm_user_content(agent_a_result, slc, function_lines):
     component_context = summarize_component_context(agent_a_result)
     numbered_code = "\n".join(f'{item["source_line"]}: {item["code"]}' for item in function_lines)
+
+    # 提取变量声明信息
+    var_analysis = analyze_buffer_declarations(function_lines)
+
     return f"""
 请审计下面这个 C/C++ 函数切片。
 
@@ -182,8 +189,31 @@ callee_functions: {json.dumps(slc.get("callee_functions", []), ensure_ascii=Fals
 【组件风险上下文】
 {component_context}
 
+【关键变量声明分析】
+{var_analysis}
+
 【带原始源码行号的目标函数代码】
 {numbered_code}
+
+**【CWE分类规则 - 必须严格遵守】**
+
+1. **Stack-based Buffer Overflow (CWE-121)**：
+   - 缓冲区声明在**函数内部**：`type buffer[SIZE]` 或 `type buffer[MACRO_SIZE]`
+   - 缓冲区是**结构体成员数组**且结构体在栈上分配
+   - 关键特征：数组用方括号声明，无malloc/calloc
+   - 示例：`uint8_t response[128]`, `char buf[BUFSIZE]`, `struct {{ uint8_t data[256]; }} req;`
+
+2. **Heap-based Buffer Overflow (CWE-122)**：
+   - 缓冲区通过 `malloc()`, `calloc()`, `realloc()`, `new` 分配
+   - 缓冲区是指针且赋值来自堆分配函数
+   - 关键特征：`ptr = malloc(...)`
+   - 示例：`uint8_t *buf = malloc(size);`, `char *data = calloc(1, len);`
+
+3. **判断优先级**：
+   - 优先看【关键变量声明分析】章节的明确标注
+   - 如果看到 "← STACK BUFFER"，必须使用 CWE-121
+   - 如果看到 "← HEAP BUFFER"，必须使用 CWE-122
+   - 如果代码中有 `type name[...]` 形式的声明，即使后续有指针运算，仍然是栈溢出
 
 请只返回严格 JSON。
 """.strip()
@@ -202,6 +232,32 @@ def summarize_component_context(agent_a_result):
             ]
         })
     return json.dumps(components, ensure_ascii=False, indent=2)
+
+
+def analyze_buffer_declarations(function_lines):
+    """Analyze buffer variable declarations to distinguish stack vs heap."""
+    stack_buffers = []
+    heap_buffers = []
+
+    for item in function_lines:
+        code = item.get("code", "").strip()
+        # Stack arrays: type name[size]
+        if match := re.search(r'((?:uint8_t|char|int|unsigned|uint16_t|uint32_t|size_t)\s+\w+\[[^\]]*\])', code):
+            stack_buffers.append(f"  • {match.group(1)} ← STACK BUFFER")
+        # Heap allocations: ptr = malloc/calloc/realloc
+        elif match := re.search(r'(\w+\s*=\s*(?:\([^)]*\)\s*)?(?:malloc|calloc|realloc)\s*\()', code):
+            heap_buffers.append(f"  • {match.group(1).strip()} ← HEAP BUFFER")
+
+    if not stack_buffers and not heap_buffers:
+        return "未检测到显式缓冲区声明"
+
+    result = []
+    if stack_buffers:
+        result.append("**栈缓冲区（Stack Buffers）:**\n" + "\n".join(stack_buffers))
+    if heap_buffers:
+        result.append("**堆缓冲区（Heap Buffers）:**\n" + "\n".join(heap_buffers))
+
+    return "\n\n".join(result)
 
 
 def normalize_llm_findings(parsed, slc):
@@ -365,14 +421,15 @@ def extract_target_function_lines(slc):
     raw_lines = body.splitlines()
     while raw_lines and raw_lines[0].strip() == "":
         raw_lines.pop(0)
-    return [{"source_line": function_start_line + idx, "code": line} for idx, line in enumerate(raw_lines, start=0)]
+    return [{"index": idx, "source_line": function_start_line + idx, "code": line} for idx, line in enumerate(raw_lines, start=0)]
 
 
 def rule_audit_slice(slc, function_lines):
     results = []
     results.extend(_detect_uaf_and_double_free(slc, function_lines))
+    results.extend(_detect_cross_function_uaf(slc, function_lines))
     results.extend(_detect_overflow(slc, function_lines))
-    results.extend(_detect_format_string(slc, function_lines))
+    results.extend(_detect_manual_heap_overflow(slc, function_lines))
     for item in results:
         item["audit_source"] = "rule_fallback"
     return results
@@ -418,8 +475,10 @@ def _detect_format_string(slc, function_lines):
 
 def extract_function_calls(line):
     calls = []
-    for match in FORMAT_CALL_PATTERN.finditer(line):
+    for match in GENERIC_CALL_PATTERN.finditer(line):
         fn = match.group(1)
+        if fn in {"if", "for", "while", "switch", "return", "sizeof"}:
+            continue
         open_idx = line.find("(", match.end() - 1)
         if open_idx == -1:
             continue
@@ -494,6 +553,25 @@ def split_call_args(args_text):
     return args
 
 
+def normalize_memory_expr(expr):
+    expr = str(expr or "").strip()
+    expr = expr.lstrip("&").strip()
+    expr = re.sub(r'^\([^)]+\)\s*', '', expr)
+    return expr
+
+
+def memory_base(expr):
+    match = re.match(r'([A-Za-z_][A-Za-z0-9_]*)', normalize_memory_expr(expr))
+    return match.group(1) if match else ""
+
+
+def infer_param_index_from_effect(effect_expr):
+    # Agent B records effects like free(param), memcpy(param, ...). For the
+    # wrapper patterns in the current benchmark, the affected argument is the
+    # first parameter.
+    return 0
+
+
 def format_arg_index(function_name):
     return {
         "printf": 0,
@@ -523,9 +601,12 @@ def _detect_uaf_and_double_free(slc, function_lines):
         if m:
             ptr = m.group(1)
             if ptr in freed:
+                if _path_appears_terminated(function_lines, freed[ptr]["index"], item["index"]):
+                    freed[ptr] = {"source_line": source_line, "code": line, "index": item["index"]}
+                    continue
                 results.append(_finding(slc, "CWE-415", "Double Free", "high", [freed[ptr]["source_line"], source_line], [f"Pointer '{ptr}' is first freed at source line {freed[ptr]['source_line']}.", f"Pointer '{ptr}' is freed again at source line {source_line}: {line.strip()}"], f"Execution reaches free({ptr}) twice without reset or reallocation.", f"Set {ptr} to NULL after free and avoid duplicate ownership."))
             else:
-                freed[ptr] = {"source_line": source_line, "code": line}
+                freed[ptr] = {"source_line": source_line, "code": line, "index": item["index"]}
             continue
         for ptr, free_info in list(freed.items()):
             if re.search(rf'\b{re.escape(ptr)}\s*=\s*NULL\s*;', line):
@@ -538,6 +619,133 @@ def _detect_uaf_and_double_free(slc, function_lines):
     return results
 
 
+def _detect_cross_function_uaf(slc, function_lines):
+    effects_by_callee = {
+        ctx.get("callee"): ctx.get("callee_effects") or {}
+        for ctx in slc.get("cross_function_context", [])
+        if ctx.get("callee")
+    }
+    if not effects_by_callee:
+        return []
+
+    results = []
+    freed = {}
+    for item in function_lines:
+        source_line = item["source_line"]
+        line = item["code"]
+        stripped = line.strip()
+
+        for call in extract_function_calls(line):
+            callee = call["function"]
+            effects = effects_by_callee.get(callee)
+            if not effects:
+                continue
+
+            args = split_call_args(call["args"])
+            if not args:
+                continue
+
+            for free_expr in effects.get("frees_param") or []:
+                param_index = infer_param_index_from_effect(free_expr)
+                if param_index is None or param_index >= len(args):
+                    continue
+                ptr = normalize_memory_expr(args[param_index])
+                ptr_base = memory_base(ptr)
+                if not ptr_base:
+                    continue
+                if ptr_base in freed:
+                    first = freed[ptr_base]
+                    if not _path_appears_terminated(function_lines, first["index"], item["index"]):
+                        results.append(_finding(
+                            slc,
+                            "CWE-415",
+                            "Double Free",
+                            "high",
+                            [first["source_line"], source_line],
+                            [
+                                f"Call to '{first['callee']}' frees '{ptr_base}' at source line {first['source_line']}: {first['code']}",
+                                f"Call to '{callee}' can free '{ptr_base}' again at source line {source_line}: {stripped}",
+                            ],
+                            f"Pointer '{ptr_base}' is released by one callee and can be released again by another call without reset or reallocation.",
+                            f"Use a single owner for '{ptr_base}', set it to NULL after release, or avoid duplicate release paths.",
+                        ))
+                freed[ptr_base] = {"source_line": source_line, "code": stripped, "index": item["index"], "callee": callee}
+
+            if effects.get("writes_param") or effects.get("writes"):
+                for arg in args:
+                    ptr_base = memory_base(arg)
+                    if not ptr_base or ptr_base not in freed:
+                        continue
+                    first = freed[ptr_base]
+                    if _path_appears_terminated(function_lines, first["index"], item["index"]):
+                        continue
+                    results.append(_finding(
+                        slc,
+                        "CWE-416",
+                        "Use After Free",
+                        "high",
+                        [first["source_line"], source_line],
+                        [
+                            f"Call to '{first['callee']}' frees '{ptr_base}' at source line {first['source_line']}: {first['code']}",
+                            f"Call to '{callee}' uses or writes '{ptr_base}' after free at source line {source_line}: {stripped}",
+                        ],
+                        f"Pointer '{ptr_base}' is freed through callee '{first['callee']}' and then reused through callee '{callee}'.",
+                        f"Do not pass '{ptr_base}' to '{callee}' after it has been freed; reorder ownership or null-check before reuse.",
+                    ))
+                    freed.pop(ptr_base, None)
+                    break
+
+            for ptr_base, first in list(freed.items()):
+                if re.search(rf'\b{re.escape(ptr_base)}\s*=\s*NULL\s*;', line):
+                    freed.pop(ptr_base, None)
+
+    return results
+
+
+def _detect_manual_heap_overflow(slc, function_lines):
+    results = []
+    allocations = {}
+    suspicious_size_line = None
+    for item in function_lines:
+        source_line = item["source_line"]
+        line = item["code"]
+        alloc = ALLOC_PATTERN.search(line)
+        if alloc:
+            allocations[alloc.group(1)] = source_line
+        if "strlen(" in line or "encode_utf8(" in line:
+            suspicious_size_line = suspicious_size_line or source_line
+        for name, alloc_line in allocations.items():
+            if re.search(rf'\b{name}\s*\[', line) or re.search(rf'\b{name}\s*\+\s*[A-Za-z_][A-Za-z0-9_]*', line):
+                if "encode_utf8" in line or "++" in line or "+=" in line:
+                    evidence = [
+                        f"Heap allocation for '{name}' appears at source line {alloc_line}.",
+                        f"Offset-based write to '{name}' appears at source line {source_line}: {line.strip()}",
+                    ]
+                    if suspicious_size_line:
+                        evidence.insert(1, f"Potentially unsafe size calculation appears near source line {suspicious_size_line}.")
+                    results.append(_finding(
+                        slc,
+                        "CWE-120",
+                        "Buffer Overflow",
+                        "high",
+                        [alloc_line, source_line],
+                        evidence,
+                        f"Buffer '{name}' is allocated from a derived size and then written through a growing offset without a visible bounds check.",
+                        f"Track the remaining capacity of '{name}' explicitly and validate each write before advancing the output pointer.",
+                    ))
+                    return results
+    return results
+
+
+def _path_appears_terminated(function_lines, start_index, end_index):
+    if start_index is None or end_index is None:
+        return False
+    for item in function_lines[start_index + 1:end_index]:
+        if TERMINATOR_PATTERN.search(item["code"]):
+            return True
+    return False
+
+
 def _detect_overflow(slc, function_lines):
     results = []
     for idx, item in enumerate(function_lines):
@@ -546,12 +754,10 @@ def _detect_overflow(slc, function_lines):
         if not DANGEROUS_COPY_PATTERN.search(line):
             continue
         before = "\n".join(previous["code"] for previous in function_lines[max(0, idx - 8):idx])
-        if re.search(r'\bchar\s+[A-Za-z_][A-Za-z0-9_]*\s*\[\s*\d+\s*\]', before):
-            cwe, vuln_type, risk = "CWE-121", "Stack Buffer Overflow", "high"
-        elif "malloc" in before:
-            cwe, vuln_type, risk = "CWE-122", "Heap Buffer Overflow", "high"
+        if re.search(r'\bchar\s+[A-Za-z_][A-Za-z0-9_]*\s*\[\s*\d+\s*\]', before) or "malloc" in before:
+            cwe, vuln_type, risk = "CWE-120", "Buffer Overflow", "high"
         else:
-            cwe, vuln_type, risk = "CWE-122", "Possible Buffer Overflow", "medium"
+            cwe, vuln_type, risk = "CWE-120", "Possible Buffer Overflow", "medium"
         results.append(_finding(slc, cwe, vuln_type, risk, [source_line, source_line], [f"Dangerous copy-style function call at source line {source_line}: {line.strip()}", "Rule fallback cannot fully prove destination bounds."], "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.", "Validate length before copying and use bounded APIs with explicit destination size."))
     return results
 

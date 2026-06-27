@@ -6,7 +6,7 @@
         <div class="tmeta">
           <span>{{ task?.project_name || '加载中…' }}</span>
           <span class="mono">{{ shortId }}</span>
-          <span>{{ statusLabel }}</span>
+          <span>{{ liveStatusLabel }}</span>
         </div>
       </div>
       <div class="pr-actions">
@@ -125,7 +125,6 @@ const SIM_LINES: Record<string, string[]> = {
     '▶ 加载 Harness，注入 eBPF uprobe 探针…',
     '▶ AFL++ 模糊测试运行中，监控内存异常…',
     '▶ eBPF 捕获内核级事件，关联崩溃堆栈…',
-    '✅ 动态验证完成，证据已写入报告…',
   ],
 }
 let simIndex   = 0
@@ -133,43 +132,37 @@ let simStage   = ''
 let simLineTimer: ReturnType<typeof setInterval> | null = null
 const pageLoadTime = Date.now()
 
+// ── 禁用模拟日志注入 ────────────────────────────────────────────────
 function injectSimLogs(stage: string) {
-  if (stage === simStage) return   // 同阶段不重复注入
-  simStage  = stage
-  simIndex  = 0
-  const lines = SIM_LINES[stage] ?? []
-  if (!lines.length) return
-  if (simLineTimer) { clearInterval(simLineTimer); simLineTimer = null }
-
-  // 如果任务已经在运行一段时间，立刻批量注入前几行模拟历史
-  const elapsed = Date.now() - pageLoadTime
-  const preload  = Math.min(Math.floor(elapsed / 3000), lines.length - 1)
-  for (let i = 0; i < preload; i++) {
-    const now = new Date().toLocaleTimeString('en-GB')
-    simLogs.value.push({ time: now, text: lines[i], cls: lines[i].startsWith('✅') ? 'lok' : 'linfo' })
-    simIndex++
-  }
-
-  // 剩余行继续按定时器注入
-  simLineTimer = setInterval(() => {
-    if (simIndex >= lines.length) { clearInterval(simLineTimer!); simLineTimer = null; return }
-    const now = new Date().toLocaleTimeString('en-GB')
-    simLogs.value.push({ time: now, text: lines[simIndex], cls: lines[simIndex].startsWith('✅') ? 'lok' : 'linfo' })
-    simIndex++
-  }, 2800)
+  // 模拟日志已禁用，完全依赖后端真实日志流
+  return
 }
 
 const wsConnected = computed(() => store.wsConnected)
 const percent     = computed(() => Math.round(displayPercent.value))
 const shortId     = computed(() => taskId.slice(0, 8))
 
-const isCompleted = computed(() => task.value?.status === 'completed' || targetPercent.value >= 100)
+const isCompleted = computed(() => task.value?.status === 'completed' || store.progressStage === 'done')
 const isFailed    = computed(() => task.value?.status === 'failed' || store.progressStage === 'failed')
 const isRunning   = computed(() => !isCompleted.value && !isFailed.value)
 
-// ── 日志流：WS 真实消息 + 模拟行合并展示 ──────────────────────────
+// 实时阶段描述
+const liveStatusLabel = computed(() => {
+  const st = task.value?.status
+  if (st === 'completed') return '✓ 审计完成'
+  if (st === 'failed') return '✕ 任务失败'
+  if (st === 'pending') return '⧗ 排队等待中'
+  if (st === 'analyzing_deps') return '▶ Agent A — 依赖风险扫描中'
+  if (st === 'llm_auditing') return '▶ Agent B-G — LLM 语义审计中'
+  if (st === 'fuzzing') return '▶ AFL++ + eBPF 动态验证中'
+  return statusLabel.value || '正在处理...'
+})
+
+// ── 日志流：展示真实WS消息 + 轮询时的阶段提示 ────────────────────
 const logLines = computed(() => {
   const out: { time: string; text: string; cls: string }[] = []
+
+  // 后端WebSocket日志
   for (const log of store.progressLogs) {
     const t = log.timestamp ? new Date(log.timestamp).toLocaleTimeString('en-GB') : ''
     if (log.message) out.push({ time: t, text: log.message, cls: lineClass(log.stage, log.message) })
@@ -179,8 +172,22 @@ const logLines = computed(() => {
       }
     }
   }
-  // 追加模拟日志行（与真实日志按时序混合展示）
-  for (const s of simLogs.value) out.push(s)
+
+  // 如果没有WS日志且任务正在运行，显示轮询状态
+  if (out.length === 0 && isRunning.value) {
+    const now = new Date().toLocaleTimeString('en-GB')
+    const st = task.value?.status
+    if (st === 'pending') {
+      out.push({ time: now, text: '⧗ 任务已提交，等待调度...', cls: 'lok' })
+    } else if (st === 'analyzing_deps') {
+      out.push({ time: now, text: '▶ Agent A 正在扫描依赖风险，解析 SBOM...', cls: 'linf' })
+    } else if (st === 'llm_auditing') {
+      out.push({ time: now, text: '▶ Agent B-G 正在进行语义审计，分析源码切片...', cls: 'linf' })
+    } else if (st === 'fuzzing') {
+      out.push({ time: now, text: '▶ AFL++ 模糊测试运行中，eBPF 监控内核事件...', cls: 'linf' })
+    }
+  }
+
   return out
 })
 
@@ -192,25 +199,32 @@ function lineClass(stage: string, text: string) {
   return 'lok'
 }
 
-// ── 四阶段流水线状态推导 ─────────────────────────────────────────
+// ── 五阶段流水线状态推导 ─────────────────────────────────────────
 const stages = computed(() => {
   const dynamic = task.value?.is_dynamic ?? true
-  // 当前运行阶段索引：0 deps, 1 llm, 2 fuzz, 3 report
+  // 当前运行阶段索引：0 deps, 1 slicing, 2 harness, 3 fuzz, 4 report
   let idx = 0
   const st = task.value?.status
+  const pct = percent.value
+
   if (st === 'analyzing_deps') idx = 0
-  else if (st === 'llm_auditing') idx = 1
-  else if (st === 'fuzzing') idx = 2
-  else if (st === 'completed') idx = 4
+  else if (st === 'llm_auditing') {
+    // 根据进度区分是分片阶段还是harness生成阶段
+    idx = pct < 40 ? 1 : 2
+  }
+  else if (st === 'fuzzing') idx = 3
+  else if (st === 'completed') idx = 5
   else if (st === 'pending') idx = -1
+
   // WS percent 兜底
-  if (idx < 4 && percent.value >= 100) idx = 4
+  if (idx < 5 && pct >= 100) idx = 5
 
   const rows = [
     { key: 'deps', name: 'Agent A — Dependency Risk Scan', descDone: '完成 · SBOM 依赖 CVE 扫描', descRun: '正在解析依赖树，比对 NVD/OSV…', descWait: '等待调度' },
-    { key: 'llm', name: 'Agent B-F — LLM Semantic Audit', descDone: '完成 · 静态语义漏洞审计（七 Agent 链路）', descRun: 'LLM 正在按函数切片审计源码，生成 Harness…', descWait: '等待依赖分析完成' },
-    { key: 'fuzz', name: 'Dynamic Verification — AFL++ + eBPF', descDone: '完成 · 动态验证结束', descRun: 'AFL++ fuzzing · eBPF uprobe 监控中…', descWait: dynamic ? '等待静态审计完成' : '已跳过（未启用动态验证）' },
-    { key: 'report', name: 'Agent G — Final Report Synthesis', descDone: '完成 · 最终报告已生成', descRun: '正在汇总七 Agent 输出，生成风险裁决报告…', descWait: '等待验证完成' }
+    { key: 'slicing', name: 'Agent B-C — Code Slicing & Triage', descDone: '完成 · 源码切片与静态预审', descRun: '正在按函数切片源码，应用静态规则预筛…', descWait: '等待依赖分析完成' },
+    { key: 'harness', name: 'Agent D-E — Harness Generation', descDone: '完成 · Fuzzing Harness 已生成', descRun: 'LLM 语义审计中，为可疑漏洞生成 Harness…', descWait: '等待切片完成' },
+    { key: 'fuzz', name: 'AFL++ + eBPF — Dynamic Verification', descDone: '完成 · 动态验证结束', descRun: 'AFL++ fuzzing · eBPF uprobe 监控中…', descWait: dynamic ? '等待 Harness 生成' : '已跳过（未启用动态验证）' },
+    { key: 'report', name: 'Agent F-G — Final Report', descDone: '完成 · 最终报告已生成', descRun: '正在汇总七 Agent 输出，生成风险裁决报告…', descWait: '等待验证完成' }
   ]
   return rows.map((r, i) => {
     let state: 'done' | 'run' | 'wait'

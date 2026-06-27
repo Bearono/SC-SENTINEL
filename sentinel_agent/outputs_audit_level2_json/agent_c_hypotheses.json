@@ -1,0 +1,86 @@
+{
+  "agent": "Agent C - Vulnerability Hypothesis Agent",
+  "hypotheses": [
+    {
+      "hypothesis_id": "HYP-0001",
+      "source_slice_id": "SLICE-0009",
+      "file": "src\\main.c",
+      "function": "main",
+      "line_range": [
+        33,
+        39
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free"
+      ],
+      "suspect_lines": [
+        33,
+        39
+      ],
+      "confidence": 0.78,
+      "reason": "Pointer 'buf' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 33.",
+        "Second free at line 39: free(buf);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 33,
+          "description": "First free at line 33."
+        },
+        {
+          "line": 39,
+          "description": "Second free at line 39: free(buf);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> json_free: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> format",
+        "argv -> free",
+        "argv -> pointer_access",
+        "file_read -> format",
+        "suspect_lines=[33, 39]",
+        "signals=double_free",
+        "Pointer 'buf' is freed more than once without reset or reallocation."
+      ],
+      "suggested_fix": "Set buf to NULL after free and enforce single ownership.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    }
+  ],
+  "skipped_slices": [
+    {
+      "slice_id": "SLICE-0006",
+      "target_file": "src\\json_parser.c",
+      "target_function": "json_free",
+      "reason": "No rule-level vulnerability hypothesis generated."
+    },
+    {
+      "slice_id": "SLICE-0008",
+      "target_file": "src\\json_parser.c",
+      "target_function": "json_print",
+      "reason": "No rule-level vulnerability hypothesis generated."
+    },
+    {
+      "slice_id": "SLICE-0005",
+      "target_file": "src\\json_parser.c",
+      "target_function": "parse_hex4",
+      "reason": "No rule-level vulnerability hypothesis generated."
+    }
+  ],
+  "summary": {
+    "total_input_slices": 9,
+    "candidate_slices": 4,
+    "low_priority_slices": 5,
+    "total_hypotheses": 1,
+    "hypotheses_by_cwe": {
+      "CWE-415": 1
+    },
+    "component_context_count": 1
+  }
+}

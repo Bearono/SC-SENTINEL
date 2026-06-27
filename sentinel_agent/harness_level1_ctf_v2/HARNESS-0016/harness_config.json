@@ -1,0 +1,38 @@
+{
+  "package_id": "HARNESS-0016",
+  "finding_id": "FINDING-0016",
+  "target_file": "uaf_cross_function.c",
+  "target_function": "edit_chunk",
+  "cwe_id": "CWE-122",
+  "vulnerability_type": "Possible Buffer Overflow",
+  "risk_level": "medium",
+  "line_range": [
+    18,
+    18
+  ],
+  "trigger_condition": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+  "strategy": {
+    "strategy_name": "oversized_string_input",
+    "argument_model": "const_char_ptr",
+    "min_input_size": 256,
+    "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+    "expected_sanitizer": "AddressSanitizer",
+    "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+  },
+  "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016",
+  "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016\\afl_harness.c",
+  "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016\\libfuzzer_harness.c",
+  "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016\\Makefile",
+  "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016\\seeds",
+  "seed_files": [
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016\\seeds\\seed_001.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016\\seeds\\seed_002_long_string.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_level1_ctf_v2\\HARNESS-0016\\seeds\\seed_003_pattern.bin"
+  ],
+  "asan_build_command": "make asan",
+  "afl_build_command": "make afl",
+  "libfuzzer_build_command": "make libfuzzer",
+  "asan_run_command": "./asan_target seeds/seed_001.bin",
+  "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+  "notes": "Part 4.1 generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+}

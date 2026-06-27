@@ -7,7 +7,7 @@
         <div>
           <div class="hbadge reveal"><span class="hbdot" />CISCN · Supply Chain Security</div>
           <h1 class="htitle reveal reveal-delay-1">LLM suspects.<br />eBPF <span class="accent">confirms.</span></h1>
-          <p class="hdesc reveal reveal-delay-2">SENTINEL 是面向 C/C++ 开发者的供应链安全左移工具。Multi-Agent 静态语义审计发现可疑漏洞，AFL++ 模糊测试 + eBPF 内核级监控将推测转化为可触发的崩溃铁证。</p>
+          <p class="hdesc reveal reveal-delay-2">SC-SENTINEL 是基于 Multi-Agent 的 C/C++ 智能安全管理系统。七 Agent 协同完成从依赖分析到动态验证的全流程审计，AFL++ + eBPF 将静态推测转化为可触发崩溃的确凿证据。</p>
           <div class="hactions reveal reveal-delay-3">
             <button class="bp bw" style="padding:11px 26px;font-size:14px" @click="router.push('/submit')">Submit Project →</button>
             <button class="bp bg" style="padding:11px 26px;font-size:14px" @click="router.push('/history')">View History</button>
@@ -65,11 +65,11 @@
     <!-- COMPARE -->
     <div class="cmp-section">
       <div class="cmp-inner">
-        <div class="eyebrow reveal">Why SENTINEL</div>
+        <div class="eyebrow reveal">Why SC-SENTINEL</div>
         <h2 class="sec-h reveal reveal-delay-1">不只是静态扫描，而是可触发的证据</h2>
-        <p class="sec-s reveal reveal-delay-2" style="margin-bottom:40px">对比纯 LLM 代码审计，SENTINEL 在每个核心维度都提供了更强的保障</p>
+        <p class="sec-s reveal reveal-delay-2" style="margin-bottom:40px">对比纯 LLM 代码审计，SC-SENTINEL 在每个核心维度都提供了更强的保障</p>
         <table class="cmp-table reveal reveal-delay-3">
-          <thead><tr><th>维度</th><th>纯 LLM 代码审计</th><th>SENTINEL</th></tr></thead>
+          <thead><tr><th>维度</th><th>纯 LLM 代码审计</th><th>SC-SENTINEL</th></tr></thead>
           <tbody>
             <tr><td>结果可信度</td><td>LLM 推测，误报率高</td><td>动态验证后输出，附崩溃证据 <span class="tw-pill">✓</span></td></tr>
             <tr><td>分析视角</td><td>仅看源码文本</td><td>源码 + 运行时内核事件双视角 <span class="tw-pill">✓</span></td></tr>

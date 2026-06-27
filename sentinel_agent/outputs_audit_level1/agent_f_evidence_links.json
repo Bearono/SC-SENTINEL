@@ -1,0 +1,740 @@
+{
+  "agent": "Agent F - Dynamic Evidence Attribution Agent",
+  "evidence_links": [
+    {
+      "finding_id": "FINDING-0001",
+      "hypothesis_id": "HYP-0001",
+      "source_slice_id": "SLICE-0043",
+      "package_id": "HARNESS-0001",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0002",
+      "hypothesis_id": "HYP-0002",
+      "source_slice_id": "SLICE-0043",
+      "package_id": "HARNESS-0002",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0003",
+      "hypothesis_id": "HYP-0003",
+      "source_slice_id": "SLICE-0027",
+      "package_id": "HARNESS-0003",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0004",
+      "hypothesis_id": "HYP-0004",
+      "source_slice_id": "SLICE-0023",
+      "package_id": "HARNESS-0004",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0005",
+      "hypothesis_id": "HYP-0005",
+      "source_slice_id": "SLICE-0025",
+      "package_id": "HARNESS-0005",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0006",
+      "hypothesis_id": "HYP-0006",
+      "source_slice_id": "SLICE-0021",
+      "package_id": "HARNESS-0006",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0007",
+      "hypothesis_id": "HYP-0007",
+      "source_slice_id": "SLICE-0004",
+      "package_id": "HARNESS-0007",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0008",
+      "hypothesis_id": "HYP-0008",
+      "source_slice_id": "SLICE-0045",
+      "package_id": "HARNESS-0008",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0009",
+      "hypothesis_id": "HYP-0009",
+      "source_slice_id": "SLICE-0041",
+      "package_id": "HARNESS-0009",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0010",
+      "hypothesis_id": "HYP-0010",
+      "source_slice_id": "SLICE-0037",
+      "package_id": "HARNESS-0010",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0011",
+      "hypothesis_id": "HYP-0011",
+      "source_slice_id": "SLICE-0010",
+      "package_id": "HARNESS-0011",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0012",
+      "hypothesis_id": "HYP-0012",
+      "source_slice_id": "SLICE-0010",
+      "package_id": "HARNESS-0012",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0013",
+      "hypothesis_id": "HYP-0013",
+      "source_slice_id": "SLICE-0009",
+      "package_id": "HARNESS-0013",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0014",
+      "hypothesis_id": "HYP-0014",
+      "source_slice_id": "SLICE-0035",
+      "package_id": "HARNESS-0014",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0015",
+      "hypothesis_id": "HYP-0015",
+      "source_slice_id": "SLICE-0033",
+      "package_id": "HARNESS-0015",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0016",
+      "hypothesis_id": "HYP-0016",
+      "source_slice_id": "SLICE-0016",
+      "package_id": "HARNESS-0016",
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "evidence_sources": [],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0017",
+      "hypothesis_id": "HYP-0017",
+      "source_slice_id": "SLICE-0018",
+      "package_id": "HARNESS-0017",
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "evidence_sources": [],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0018",
+      "hypothesis_id": "HYP-0018",
+      "source_slice_id": "SLICE-0014",
+      "package_id": "HARNESS-0018",
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "evidence_sources": [],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0019",
+      "hypothesis_id": "HYP-0019",
+      "source_slice_id": "SLICE-0012",
+      "package_id": "HARNESS-0019",
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "evidence_sources": [],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0020",
+      "hypothesis_id": "HYP-0020",
+      "source_slice_id": "SLICE-0031",
+      "package_id": "HARNESS-0020",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0021",
+      "hypothesis_id": "HYP-0021",
+      "source_slice_id": "SLICE-0029",
+      "package_id": "HARNESS-0021",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": []
+    },
+    {
+      "finding_id": "FINDING-0022",
+      "hypothesis_id": "HYP-0022",
+      "source_slice_id": "SLICE-0047",
+      "package_id": "HARNESS-0022",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0023",
+      "hypothesis_id": "HYP-0023",
+      "source_slice_id": "SLICE-0004",
+      "package_id": "HARNESS-0023",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0024",
+      "hypothesis_id": "HYP-0024",
+      "source_slice_id": "SLICE-0042",
+      "package_id": "HARNESS-0024",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0025",
+      "hypothesis_id": "HYP-0025",
+      "source_slice_id": "SLICE-0039",
+      "package_id": "HARNESS-0025",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0026",
+      "hypothesis_id": "HYP-0026",
+      "source_slice_id": "SLICE-0010",
+      "package_id": "HARNESS-0026",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0027",
+      "hypothesis_id": "HYP-0027",
+      "source_slice_id": "SLICE-0009",
+      "package_id": "HARNESS-0027",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    },
+    {
+      "finding_id": "FINDING-0028",
+      "hypothesis_id": "HYP-0028",
+      "source_slice_id": "SLICE-0007",
+      "package_id": "HARNESS-0028",
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "evidence_sources": [
+        "eBPF"
+      ],
+      "matched_asan": null,
+      "matched_afl": null,
+      "matched_ebpf": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_findings": 28,
+    "total_links": 28,
+    "confirmed_findings": 0,
+    "need_review_findings": 24,
+    "asan_confirmed_findings": 0
+  }
+}

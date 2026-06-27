@@ -27,6 +27,7 @@ class EbpfEventType(str, enum.Enum):
     NULL_DEREF = "null_deref"             # 空指针解引用
     STACK_OVERFLOW = "stack_overflow"     # 栈溢出
     OUT_OF_BOUNDS = "out_of_bounds"       # 内存越界读写
+    FORMAT_STRING = "format_string"       # CWE-134 格式化字符串 sink 触达
     OTHER = "other"                       # 其他异常
 
 

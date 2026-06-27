@@ -1,0 +1,53 @@
+{
+  "package_id": "HARNESS-0004",
+  "finding_id": "FINDING-0004",
+  "target_file": "heap_overflow_memcpy_len.c",
+  "target_function": "edit_chunk",
+  "cwe_id": "CWE-122",
+  "vulnerability_type": "Heap Buffer Overflow",
+  "risk_level": "high",
+  "line_range": [
+    8,
+    8
+  ],
+  "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+  "strategy": {
+    "strategy_name": "oversized_string_input",
+    "argument_model": "const_char_ptr",
+    "min_input_size": 256,
+    "description": "Read fuzzer-controlled bytes, ensure null termination, and pass them as a string argument to trigger unsafe copy operations.",
+    "expected_sanitizer": "AddressSanitizer",
+    "expected_symptom": "heap-buffer-overflow or stack-buffer-overflow"
+  },
+  "package_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004",
+  "afl_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004\\afl_harness.c",
+  "libfuzzer_harness_file": "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004\\libfuzzer_harness.c",
+  "makefile": "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004\\Makefile",
+  "seed_dir": "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004\\seeds",
+  "seed_files": [
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004\\seeds\\seed_001.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004\\seeds\\seed_002_long_string.bin",
+    "D:\\SC-SENTINEL\\sentinel_agent\\harness_audit_level1\\HARNESS-0004\\seeds\\seed_003_pattern.bin"
+  ],
+  "asan_build_command": "make asan",
+  "compile_command": "make asan",
+  "afl_build_command": "make afl",
+  "libfuzzer_build_command": "make libfuzzer",
+  "asan_run_command": "./asan_target seeds/seed_001.bin",
+  "afl_run_command": "afl-fuzz -i seeds -o findings -- ./afl_target @@",
+  "prototype_confidence": 0.78,
+  "build_ready": true,
+  "manual_adaptation_required": false,
+  "compile_check": {
+    "executed": false,
+    "status": "skipped",
+    "reason": "compile_check_disabled",
+    "stderr_excerpt": ""
+  },
+  "llm_fixer": {
+    "enabled": false,
+    "status": "reserved",
+    "notes": "Compile stderr is captured for a future LLM harness fixer, but automatic mutation is disabled by default."
+  },
+  "notes": "Agent E generated harness package. The target source and harness are compiled separately so -Dmain only affects the target source."
+}

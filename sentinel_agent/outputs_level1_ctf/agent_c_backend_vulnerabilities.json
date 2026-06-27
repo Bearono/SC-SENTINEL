@@ -1,0 +1,116 @@
+{
+  "vulnerabilities": [
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_direct.c",
+      "line_number": 8,
+      "code_context": "Pointer 'buf' is first freed at source line 8.\nPointer 'buf' is freed again at source line 10: free(buf);",
+      "trigger_cond": "Execution reaches free(buf) twice without reset or reallocation.",
+      "fix_advice": "Set buf to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_error_path.c",
+      "line_number": 9,
+      "code_context": "Pointer 'tmp' is first freed at source line 9.\nPointer 'tmp' is freed again at source line 13: free(tmp);",
+      "trigger_cond": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "fix_advice": "Set tmp to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "double_free",
+      "file_path": "double_free_error_path.c",
+      "line_number": 9,
+      "code_context": "Pointer 'tmp' is first freed at source line 9.\nPointer 'tmp' is freed again at source line 17: free(tmp);",
+      "trigger_cond": "Execution reaches free(tmp) twice without reset or reallocation.",
+      "fix_advice": "Set tmp to NULL after free and avoid duplicate ownership."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_fprintf.c",
+      "line_number": 3,
+      "code_context": "Function 'fprintf' uses a non-literal format argument at source line 3: fprintf(out, event);\nFormat argument expression: event",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_printf.c",
+      "line_number": 3,
+      "code_context": "Function 'printf' uses a non-literal format argument at source line 3: printf(msg);\nFormat argument expression: msg",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_snprintf.c",
+      "line_number": 3,
+      "code_context": "Function 'snprintf' uses a non-literal format argument at source line 3: snprintf(dst, dst_len, fmt);\nFormat argument expression: fmt",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "format_string",
+      "file_path": "format_string_syslog_like.c",
+      "line_number": 4,
+      "code_context": "Function 'printf' uses a non-literal format argument at source line 4: printf(fmt);\nFormat argument expression: fmt",
+      "trigger_cond": "Attacker-controlled input may be interpreted as a format string, enabling memory disclosure or arbitrary writes via %x/%s/%n tokens.",
+      "fix_advice": "Use a constant format string such as printf(\"%s\", input), fprintf(stream, \"%s\", input), or snprintf(buf, size, \"%s\", input)."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_integer_trunc.c",
+      "line_number": 11,
+      "code_context": "Dangerous copy-style function call at source line 11: memcpy(buf, msg, len);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_memcpy_len.c",
+      "line_number": 9,
+      "code_context": "Dangerous copy-style function call at source line 9: memcpy(buf, packet, packet_len);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_off_by_one.c",
+      "line_number": 10,
+      "code_context": "Dangerous copy-style function call at source line 10: memcpy(buf, token, len + 1);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "file_path": "heap_overflow_strcpy.c",
+      "line_number": 9,
+      "code_context": "Dangerous copy-style function call at source line 9: strcpy(badge, input);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "file_path": "stack_overflow_sprintf.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style function call at source line 4: sprintf(banner, \"player:%s\", name);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "file_path": "stack_overflow_strcpy.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style function call at source line 4: strcpy(local, name);\nRule fallback cannot fully prove destination bounds.",
+      "trigger_cond": "Oversized or attacker-controlled input may reach a copy operation without sufficient length validation.",
+      "fix_advice": "Validate length before copying and use bounded APIs with explicit destination size."
+    },
+    {
+      "vuln_type": "UAF",
+      "file_path": "uaf_direct.c",
+      "line_number": 10,
+      "code_context": "Pointer 'score' is freed at source line 10.\nPointer 'score' is used again at source line 13: printf(\"score=%d\\n\", *score);",
+      "trigger_cond": "Pointer 'score' is dereferenced or accessed after free.",
+      "fix_advice": "Do not access score after free; set it to NULL and guard future uses."
+    }
+  ]
+}

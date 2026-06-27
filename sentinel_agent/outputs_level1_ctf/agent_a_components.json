@@ -1,0 +1,15 @@
+{
+  "agent": "Agent A - Dependency Risk Identification",
+  "components": [],
+  "summary": {
+    "total_components": 0,
+    "high_risk_components": 0,
+    "queried_sources": [
+      "OSV",
+      "NVD"
+    ]
+  },
+  "integration": {
+    "components": []
+  }
+}

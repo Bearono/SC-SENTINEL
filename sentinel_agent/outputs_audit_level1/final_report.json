@@ -1,0 +1,4572 @@
+{
+  "agent": "Agent G - Final Risk Decision and Report Agent",
+  "project_name": "level1_testset",
+  "status": "completed",
+  "overall_risk": "high",
+  "summary": {
+    "total_components": 0,
+    "total_slices": 47,
+    "total_hypotheses": 28,
+    "total_static_findings": 28,
+    "total_harness_packages": 28,
+    "confirmed_findings": 0,
+    "need_review_findings": 24,
+    "untriggered_findings": 4,
+    "dependency_risk_only": 0,
+    "asan_confirmed_findings": 0
+  },
+  "component_risks": [],
+  "dependency_risk_only": [],
+  "hypotheses": [
+    {
+      "hypothesis_id": "HYP-0001",
+      "source_slice_id": "SLICE-0043",
+      "file": "uaf_direct.c",
+      "function": "run_note_machine",
+      "line_range": [
+        17,
+        20
+      ],
+      "cwe_candidates": [
+        "CWE-416"
+      ],
+      "risk_signals": [
+        "free_then_deref"
+      ],
+      "suspect_lines": [
+        17,
+        20
+      ],
+      "confidence": 0.8,
+      "reason": "Pointer 'note' is accessed after free.",
+      "evidence": [
+        "Pointer 'note' is freed at line 17.",
+        "Pointer 'note' is used again at line 20: puts(note->text);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 17,
+          "description": "Pointer 'note' is freed at line 17."
+        },
+        {
+          "line": 20,
+          "description": "Pointer 'note' is used again at line 20: puts(note->text);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> run_note_machine"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[17, 20]",
+        "signals=free_then_deref",
+        "Pointer 'note' is accessed after free."
+      ],
+      "suggested_fix": "Do not access note after free; set it to NULL and guard future uses.",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0002",
+      "source_slice_id": "SLICE-0043",
+      "file": "uaf_direct.c",
+      "function": "run_note_machine",
+      "line_range": [
+        14,
+        14
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "heap_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        14
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 14: memcpy(note->text, \"created\", 8);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 14,
+          "description": "Dangerous copy-style call at line 14: memcpy(note->text, \"created\", 8);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> run_note_machine"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[14]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0003",
+      "source_slice_id": "SLICE-0027",
+      "file": "heap_overflow_strcpy.c",
+      "function": "create_and_edit",
+      "line_range": [
+        8,
+        8
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "heap_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        8
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 8: strcpy(name, (const char *)data);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 8,
+          "description": "Dangerous copy-style call at line 8: strcpy(name, (const char *)data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> create_and_edit"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[8]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0004",
+      "source_slice_id": "SLICE-0023",
+      "file": "heap_overflow_memcpy_len.c",
+      "function": "edit_chunk",
+      "line_range": [
+        8,
+        8
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "heap_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        8
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 8: memcpy(chunk, packet, packet_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 8,
+          "description": "Dangerous copy-style call at line 8: memcpy(chunk, packet, packet_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> edit_chunk",
+        "main -> edit_chunk"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[8]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0005",
+      "source_slice_id": "SLICE-0025",
+      "file": "heap_overflow_off_by_one.c",
+      "function": "rename_chunk",
+      "line_range": [
+        9,
+        9
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "heap_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        9
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 9: memcpy(name, data, name_len + 1);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 9,
+          "description": "Dangerous copy-style call at line 9: memcpy(name, data, name_len + 1);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> rename_chunk"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[9]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0006",
+      "source_slice_id": "SLICE-0021",
+      "file": "heap_overflow_integer_trunc.c",
+      "function": "resize_then_write",
+      "line_range": [
+        10,
+        10
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "heap_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        10
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 10: memcpy(buf, msg, len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 10,
+          "description": "Dangerous copy-style call at line 10: memcpy(buf, msg, len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> resize_then_write"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[10]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0007",
+      "source_slice_id": "SLICE-0004",
+      "file": "double_free_alias.c",
+      "function": "main",
+      "line_range": [
+        15,
+        27
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free"
+      ],
+      "suspect_lines": [
+        15,
+        27
+      ],
+      "confidence": 0.78,
+      "reason": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 15.",
+        "Second free at line 27: free(data);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 15,
+          "description": "First free at line 15."
+        },
+        {
+          "line": 27,
+          "description": "Second free at line 27: free(data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> release_alias: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[15, 27]",
+        "signals=double_free",
+        "Pointer 'data' is freed more than once without reset or reallocation."
+      ],
+      "suggested_fix": "Set data to NULL after free and enforce single ownership.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0008",
+      "source_slice_id": "SLICE-0045",
+      "file": "uaf_struct_field.c",
+      "function": "player_init",
+      "line_range": [
+        12,
+        12
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "heap_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        12
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 12: memcpy(p->memo, data, copy_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 12,
+          "description": "Dangerous copy-style call at line 12: memcpy(p->memo, data, copy_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> player_init"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[12]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0009",
+      "source_slice_id": "SLICE-0041",
+      "file": "uaf_cross_function.c",
+      "function": "edit_chunk",
+      "line_range": [
+        18,
+        18
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "copy_without_bounds"
+      ],
+      "suspect_lines": [
+        18
+      ],
+      "confidence": 0.62,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 18: memcpy(chunk, data, copy_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 18,
+          "description": "Dangerous copy-style call at line 18: memcpy(chunk, data, copy_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> edit_chunk",
+        "main -> edit_chunk"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[18]",
+        "signals=copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Possible Buffer Overflow",
+      "risk_level": "medium"
+    },
+    {
+      "hypothesis_id": "HYP-0010",
+      "source_slice_id": "SLICE-0037",
+      "file": "uaf_array_slot.c",
+      "function": "create_slot",
+      "line_range": [
+        6,
+        6
+      ],
+      "cwe_candidates": [
+        "CWE-122"
+      ],
+      "risk_signals": [
+        "heap_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        6
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 6: memcpy(slots[idx], data, copy_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 6,
+          "description": "Dangerous copy-style call at line 6: memcpy(slots[idx], data, copy_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> create_slot"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[6]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0011",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        9,
+        13
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free"
+      ],
+      "suspect_lines": [
+        9,
+        13
+      ],
+      "confidence": 0.78,
+      "reason": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 9.",
+        "Second free at line 13: free(profile);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 9,
+          "description": "First free at line 9."
+        },
+        {
+          "line": 13,
+          "description": "Second free at line 13: free(profile);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> update_profile"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[9, 13]",
+        "signals=double_free",
+        "Pointer 'profile' is freed more than once without reset or reallocation."
+      ],
+      "suggested_fix": "Set profile to NULL after free and enforce single ownership.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0012",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        9,
+        17
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free"
+      ],
+      "suspect_lines": [
+        9,
+        17
+      ],
+      "confidence": 0.78,
+      "reason": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 9.",
+        "Second free at line 17: free(profile);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 9,
+          "description": "First free at line 9."
+        },
+        {
+          "line": 17,
+          "description": "Second free at line 17: free(profile);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> update_profile"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[9, 17]",
+        "signals=double_free",
+        "Pointer 'profile' is freed more than once without reset or reallocation."
+      ],
+      "suggested_fix": "Set profile to NULL after free and enforce single ownership.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0013",
+      "source_slice_id": "SLICE-0009",
+      "file": "double_free_direct.c",
+      "function": "main",
+      "line_range": [
+        15,
+        24
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free"
+      ],
+      "suspect_lines": [
+        15,
+        24
+      ],
+      "confidence": 0.78,
+      "reason": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 15.",
+        "Second free at line 24: free(data);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 15,
+          "description": "First free at line 15."
+        },
+        {
+          "line": 24,
+          "description": "Second free at line 24: free(data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> delete_note: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[15, 24]",
+        "signals=double_free",
+        "Pointer 'data' is freed more than once without reset or reallocation."
+      ],
+      "suggested_fix": "Set data to NULL after free and enforce single ownership.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0014",
+      "source_slice_id": "SLICE-0035",
+      "file": "stack_overflow_strcpy.c",
+      "function": "set_player_name",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_candidates": [
+        "CWE-121"
+      ],
+      "risk_signals": [
+        "stack_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        4
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 4: strcpy(name, (const char *)data);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Dangerous copy-style call at line 4: strcpy(name, (const char *)data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> set_player_name"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[4]",
+        "signals=stack_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0015",
+      "source_slice_id": "SLICE-0033",
+      "file": "stack_overflow_sprintf.c",
+      "function": "make_banner",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_candidates": [
+        "CWE-121"
+      ],
+      "risk_signals": [
+        "stack_copy_without_bounds"
+      ],
+      "suspect_lines": [
+        4
+      ],
+      "confidence": 0.7,
+      "reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 4: sprintf(banner, \"player:%s\", (const char *)name);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Dangerous copy-style call at line 4: sprintf(banner, \"player:%s\", (const char *)name);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> make_banner"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[4]",
+        "signals=stack_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0016",
+      "source_slice_id": "SLICE-0016",
+      "file": "format_string_snprintf.c",
+      "function": "render",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_candidates": [
+        "CWE-134"
+      ],
+      "risk_signals": [
+        "nonliteral_format_string"
+      ],
+      "suspect_lines": [
+        3
+      ],
+      "confidence": 0.76,
+      "reason": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 3: snprintf(dst, dst_len, fmt);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 3,
+          "description": "Format sink at line 3: snprintf(dst, dst_len, fmt);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> render"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[3]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0017",
+      "source_slice_id": "SLICE-0018",
+      "file": "format_string_syslog_like.c",
+      "function": "tiny_syslog",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_candidates": [
+        "CWE-134"
+      ],
+      "risk_signals": [
+        "nonliteral_format_string"
+      ],
+      "suspect_lines": [
+        4
+      ],
+      "confidence": 0.76,
+      "reason": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 4: printf(fmt);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Format sink at line 4: printf(fmt);"
+        }
+      ],
+      "cross_function_trace": [
+        "dispatch_log -> tiny_syslog"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[4]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0018",
+      "source_slice_id": "SLICE-0014",
+      "file": "format_string_printf.c",
+      "function": "say",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_candidates": [
+        "CWE-134"
+      ],
+      "risk_signals": [
+        "nonliteral_format_string"
+      ],
+      "suspect_lines": [
+        3
+      ],
+      "confidence": 0.76,
+      "reason": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 3: printf(msg);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 3,
+          "description": "Format sink at line 3: printf(msg);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> say"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[3]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0019",
+      "source_slice_id": "SLICE-0012",
+      "file": "format_string_fprintf.c",
+      "function": "log_event",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_candidates": [
+        "CWE-134"
+      ],
+      "risk_signals": [
+        "nonliteral_format_string"
+      ],
+      "suspect_lines": [
+        3
+      ],
+      "confidence": 0.76,
+      "reason": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 3: fprintf(out, event);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 3,
+          "description": "Format sink at line 3: fprintf(out, event);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> log_event"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[3]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0020",
+      "source_slice_id": "SLICE-0031",
+      "file": "stack_overflow_loop.c",
+      "function": "copy_loop",
+      "line_range": [
+        5,
+        5
+      ],
+      "cwe_candidates": [
+        "CWE-121"
+      ],
+      "risk_signals": [
+        "stack_index_or_loop_write"
+      ],
+      "suspect_lines": [
+        5
+      ],
+      "confidence": 0.72,
+      "reason": "Stack array 'dst[10]' is written with an index that is not locally bounded.",
+      "evidence": [
+        "Potential out-of-bounds stack write at line 5: dst[i] = (char)src[i % len];"
+      ],
+      "evidence_lines": [
+        {
+          "line": 5,
+          "description": "Potential out-of-bounds stack write at line 5: dst[i] = (char)src[i % len];"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> copy_loop"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> pointer_access",
+        "suspect_lines=[5]",
+        "signals=stack_index_or_loop_write",
+        "Stack array 'dst[10]' is written with an index that is not locally bounded."
+      ],
+      "suggested_fix": "Validate the index against the stack buffer length before writing.",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0021",
+      "source_slice_id": "SLICE-0029",
+      "file": "stack_overflow_index.c",
+      "function": "set_checkpoint",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_candidates": [
+        "CWE-121"
+      ],
+      "risk_signals": [
+        "stack_index_or_loop_write"
+      ],
+      "suspect_lines": [
+        4
+      ],
+      "confidence": 0.72,
+      "reason": "Stack array 'checkpoints[4]' is written with an index that is not locally bounded.",
+      "evidence": [
+        "Potential out-of-bounds stack write at line 4: checkpoints[idx] = 31337;"
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Potential out-of-bounds stack write at line 4: checkpoints[idx] = 31337;"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> set_checkpoint"
+      ],
+      "dataflow_trace": [
+        "suspect_lines=[4]",
+        "signals=stack_index_or_loop_write",
+        "Stack array 'checkpoints[4]' is written with an index that is not locally bounded."
+      ],
+      "suggested_fix": "Validate the index against the stack buffer length before writing.",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0022",
+      "source_slice_id": "SLICE-0047",
+      "file": "uaf_struct_field.c",
+      "function": "main",
+      "line_range": [
+        31,
+        34
+      ],
+      "cwe_candidates": [
+        "CWE-416"
+      ],
+      "risk_signals": [
+        "cross_function_free_then_use",
+        "use_via_local_use"
+      ],
+      "suspect_lines": [
+        31,
+        34
+      ],
+      "confidence": 0.84,
+      "reason": "Expression 'p' is freed and later used through 'local_use'.",
+      "evidence": [
+        "Free/ownership release at line 31: player_reset(&p);",
+        "Use after release at line 34: printf(\"%s:%d\\n\", p.memo, p.score);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 31,
+          "description": "Free/ownership release at line 31: player_reset(&p);"
+        },
+        {
+          "line": 34,
+          "description": "Use after release at line 34: printf(\"%s:%d\\n\", p.memo, p.score);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> player_init: callee_writes_argument",
+        "main -> player_reset: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> format",
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[31, 34]",
+        "signals=cross_function_free_then_use,use_via_local_use",
+        "Expression 'p' is freed and later used through 'local_use'."
+      ],
+      "suggested_fix": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0023",
+      "source_slice_id": "SLICE-0004",
+      "file": "double_free_alias.c",
+      "function": "main",
+      "line_range": [
+        21,
+        24
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free",
+        "direct_free"
+      ],
+      "suspect_lines": [
+        21,
+        24
+      ],
+      "confidence": 0.82,
+      "reason": "Memory expression 'owner' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 21: release_alias(slot_alias);",
+        "Second free at line 24: free(owner);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 21,
+          "description": "First free at line 21: release_alias(slot_alias);"
+        },
+        {
+          "line": 24,
+          "description": "Second free at line 24: free(owner);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> release_alias: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[21, 24]",
+        "signals=double_free,direct_free",
+        "Memory expression 'owner' is freed after an equivalent expression was already freed."
+      ],
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0024",
+      "source_slice_id": "SLICE-0042",
+      "file": "uaf_cross_function.c",
+      "function": "main",
+      "line_range": [
+        31,
+        32
+      ],
+      "cwe_candidates": [
+        "CWE-416"
+      ],
+      "risk_signals": [
+        "cross_function_free_then_use",
+        "use_via_edit_chunk"
+      ],
+      "suspect_lines": [
+        31,
+        32
+      ],
+      "confidence": 0.84,
+      "reason": "Expression 'chunk' is freed and later used through 'edit_chunk'.",
+      "evidence": [
+        "Free/ownership release at line 31: delete_chunk(chunk);",
+        "Use after release at line 32: edit_chunk(chunk, data, len);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 31,
+          "description": "Free/ownership release at line 31: delete_chunk(chunk);"
+        },
+        {
+          "line": 32,
+          "description": "Use after release at line 32: edit_chunk(chunk, data, len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> delete_chunk: callee_frees_argument",
+        "main -> edit_chunk: callee_writes_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[31, 32]",
+        "signals=cross_function_free_then_use,use_via_edit_chunk",
+        "Expression 'chunk' is freed and later used through 'edit_chunk'."
+      ],
+      "suggested_fix": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0025",
+      "source_slice_id": "SLICE-0039",
+      "file": "uaf_array_slot.c",
+      "function": "main",
+      "line_range": [
+        26,
+        28
+      ],
+      "cwe_candidates": [
+        "CWE-416"
+      ],
+      "risk_signals": [
+        "cross_function_free_then_use",
+        "use_via_local_use"
+      ],
+      "suspect_lines": [
+        26,
+        28
+      ],
+      "confidence": 0.84,
+      "reason": "Expression 'slots' is freed and later used through 'local_use'.",
+      "evidence": [
+        "Free/ownership release at line 26: delete_slot(slots, idx);",
+        "Use after release at line 28: if (has_byte(data, len, 'V') && slots[idx]) {"
+      ],
+      "evidence_lines": [
+        {
+          "line": 26,
+          "description": "Free/ownership release at line 26: delete_slot(slots, idx);"
+        },
+        {
+          "line": 28,
+          "description": "Use after release at line 28: if (has_byte(data, len, 'V') && slots[idx]) {"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> create_slot: callee_writes_argument",
+        "main -> delete_slot: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[26, 28]",
+        "signals=cross_function_free_then_use,use_via_local_use",
+        "Expression 'slots' is freed and later used through 'local_use'."
+      ],
+      "suggested_fix": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0026",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        13,
+        17
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free",
+        "direct_free"
+      ],
+      "suspect_lines": [
+        13,
+        17
+      ],
+      "confidence": 0.82,
+      "reason": "Memory expression 'profile' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 13: free(profile);",
+        "Second free at line 17: free(profile);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 13,
+          "description": "First free at line 13: free(profile);"
+        },
+        {
+          "line": 17,
+          "description": "Second free at line 17: free(profile);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> update_profile"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[13, 17]",
+        "signals=double_free,direct_free",
+        "Memory expression 'profile' is freed after an equivalent expression was already freed."
+      ],
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0027",
+      "source_slice_id": "SLICE-0009",
+      "file": "double_free_direct.c",
+      "function": "main",
+      "line_range": [
+        19,
+        21
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free",
+        "delete_note_frees_argument"
+      ],
+      "suspect_lines": [
+        19,
+        21
+      ],
+      "confidence": 0.82,
+      "reason": "Memory expression 'note' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 19: delete_note(note);",
+        "Second free at line 21: delete_note(note);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 19,
+          "description": "First free at line 19: delete_note(note);"
+        },
+        {
+          "line": 21,
+          "description": "Second free at line 21: delete_note(note);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> delete_note: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[19, 21]",
+        "signals=double_free,delete_note_frees_argument",
+        "Memory expression 'note' is freed after an equivalent expression was already freed."
+      ],
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    },
+    {
+      "hypothesis_id": "HYP-0028",
+      "source_slice_id": "SLICE-0007",
+      "file": "double_free_cleanup.c",
+      "function": "main",
+      "line_range": [
+        26,
+        29
+      ],
+      "cwe_candidates": [
+        "CWE-415"
+      ],
+      "risk_signals": [
+        "double_free",
+        "chunk_delete_frees_argument"
+      ],
+      "suspect_lines": [
+        26,
+        29
+      ],
+      "confidence": 0.82,
+      "reason": "Memory expression 'chunk' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 26: chunk_delete(&chunk);",
+        "Second free at line 29: chunk_delete(&chunk);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 26,
+          "description": "First free at line 26: chunk_delete(&chunk);"
+        },
+        {
+          "line": 29,
+          "description": "Second free at line 29: chunk_delete(&chunk);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> chunk_delete: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[26, 29]",
+        "signals=double_free,chunk_delete_frees_argument",
+        "Memory expression 'chunk' is freed after an equivalent expression was already freed."
+      ],
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high"
+    }
+  ],
+  "final_findings": [
+    {
+      "finding_id": "FINDING-0001",
+      "hypothesis_id": "HYP-0001",
+      "source_slice_id": "SLICE-0043",
+      "file": "uaf_direct.c",
+      "function": "run_note_machine",
+      "line_range": [
+        17,
+        20
+      ],
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'note' is accessed after free.",
+      "evidence": [
+        "Pointer 'note' is freed at line 17.",
+        "Pointer 'note' is used again at line 20: puts(note->text);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 17,
+          "description": "Pointer 'note' is freed at line 17."
+        },
+        {
+          "line": 20,
+          "description": "Pointer 'note' is used again at line 20: puts(note->text);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> run_note_machine"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[17, 20]",
+        "signals=free_then_deref",
+        "Pointer 'note' is accessed after free."
+      ],
+      "confidence": 0.8,
+      "suggested_fix": "Do not access note after free; set it to NULL and guard future uses.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Pointer 'note' is accessed after free.",
+      "hypothesis_confidence": 0.8,
+      "quality_control": {
+        "original_confidence": 0.8,
+        "calibrated_confidence": 0.8,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0001",
+      "trace": {
+        "source_slice_id": "SLICE-0043",
+        "hypothesis_id": "HYP-0001",
+        "finding_id": "FINDING-0001",
+        "package_id": "HARNESS-0001",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Pointer 'note' is accessed after free.",
+        "cross_function_trace": [
+          "main -> run_note_machine"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[17, 20]",
+          "signals=free_then_deref",
+          "Pointer 'note' is accessed after free."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0043 -> hypothesis=HYP-0001 -> finding=FINDING-0001 -> harness=HARNESS-0001 -> dynamic=need_review -> trace=main -> run_note_machine",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0002",
+      "hypothesis_id": "HYP-0002",
+      "source_slice_id": "SLICE-0043",
+      "file": "uaf_direct.c",
+      "function": "run_note_machine",
+      "line_range": [
+        14,
+        14
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 14: memcpy(note->text, \"created\", 8);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 14,
+          "description": "Dangerous copy-style call at line 14: memcpy(note->text, \"created\", 8);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> run_note_machine"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[14]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0002",
+      "trace": {
+        "source_slice_id": "SLICE-0043",
+        "hypothesis_id": "HYP-0002",
+        "finding_id": "FINDING-0002",
+        "package_id": "HARNESS-0002",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> run_note_machine"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[14]",
+          "signals=heap_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0043 -> hypothesis=HYP-0002 -> finding=FINDING-0002 -> harness=HARNESS-0002 -> dynamic=need_review -> trace=main -> run_note_machine",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0003",
+      "hypothesis_id": "HYP-0003",
+      "source_slice_id": "SLICE-0027",
+      "file": "heap_overflow_strcpy.c",
+      "function": "create_and_edit",
+      "line_range": [
+        8,
+        8
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 8: strcpy(name, (const char *)data);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 8,
+          "description": "Dangerous copy-style call at line 8: strcpy(name, (const char *)data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> create_and_edit"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[8]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0003",
+      "trace": {
+        "source_slice_id": "SLICE-0027",
+        "hypothesis_id": "HYP-0003",
+        "finding_id": "FINDING-0003",
+        "package_id": "HARNESS-0003",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> create_and_edit"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[8]",
+          "signals=heap_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0027 -> hypothesis=HYP-0003 -> finding=FINDING-0003 -> harness=HARNESS-0003 -> dynamic=need_review -> trace=main -> create_and_edit",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0004",
+      "hypothesis_id": "HYP-0004",
+      "source_slice_id": "SLICE-0023",
+      "file": "heap_overflow_memcpy_len.c",
+      "function": "edit_chunk",
+      "line_range": [
+        8,
+        8
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 8: memcpy(chunk, packet, packet_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 8,
+          "description": "Dangerous copy-style call at line 8: memcpy(chunk, packet, packet_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> edit_chunk",
+        "main -> edit_chunk"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[8]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0004",
+      "trace": {
+        "source_slice_id": "SLICE-0023",
+        "hypothesis_id": "HYP-0004",
+        "finding_id": "FINDING-0004",
+        "package_id": "HARNESS-0004",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> edit_chunk",
+          "main -> edit_chunk"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[8]",
+          "signals=heap_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0023 -> hypothesis=HYP-0004 -> finding=FINDING-0004 -> harness=HARNESS-0004 -> dynamic=need_review -> trace=main -> edit_chunk | main -> edit_chunk",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0005",
+      "hypothesis_id": "HYP-0005",
+      "source_slice_id": "SLICE-0025",
+      "file": "heap_overflow_off_by_one.c",
+      "function": "rename_chunk",
+      "line_range": [
+        9,
+        9
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 9: memcpy(name, data, name_len + 1);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 9,
+          "description": "Dangerous copy-style call at line 9: memcpy(name, data, name_len + 1);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> rename_chunk"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[9]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0005",
+      "trace": {
+        "source_slice_id": "SLICE-0025",
+        "hypothesis_id": "HYP-0005",
+        "finding_id": "FINDING-0005",
+        "package_id": "HARNESS-0005",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> rename_chunk"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[9]",
+          "signals=heap_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0025 -> hypothesis=HYP-0005 -> finding=FINDING-0005 -> harness=HARNESS-0005 -> dynamic=need_review -> trace=main -> rename_chunk",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0006",
+      "hypothesis_id": "HYP-0006",
+      "source_slice_id": "SLICE-0021",
+      "file": "heap_overflow_integer_trunc.c",
+      "function": "resize_then_write",
+      "line_range": [
+        10,
+        10
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 10: memcpy(buf, msg, len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 10,
+          "description": "Dangerous copy-style call at line 10: memcpy(buf, msg, len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> resize_then_write"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[10]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0006",
+      "trace": {
+        "source_slice_id": "SLICE-0021",
+        "hypothesis_id": "HYP-0006",
+        "finding_id": "FINDING-0006",
+        "package_id": "HARNESS-0006",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> resize_then_write"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[10]",
+          "signals=heap_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0021 -> hypothesis=HYP-0006 -> finding=FINDING-0006 -> harness=HARNESS-0006 -> dynamic=need_review -> trace=main -> resize_then_write",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0007",
+      "hypothesis_id": "HYP-0007",
+      "source_slice_id": "SLICE-0004",
+      "file": "double_free_alias.c",
+      "function": "main",
+      "line_range": [
+        15,
+        27
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 15.",
+        "Second free at line 27: free(data);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 15,
+          "description": "First free at line 15."
+        },
+        {
+          "line": 27,
+          "description": "Second free at line 27: free(data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> release_alias: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[15, 27]",
+        "signals=double_free",
+        "Pointer 'data' is freed more than once without reset or reallocation."
+      ],
+      "confidence": 0.78,
+      "suggested_fix": "Set data to NULL after free and enforce single ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "hypothesis_confidence": 0.78,
+      "quality_control": {
+        "original_confidence": 0.78,
+        "calibrated_confidence": 0.78,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0007",
+      "trace": {
+        "source_slice_id": "SLICE-0004",
+        "hypothesis_id": "HYP-0007",
+        "finding_id": "FINDING-0007",
+        "package_id": "HARNESS-0007",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Pointer 'data' is freed more than once without reset or reallocation.",
+        "cross_function_trace": [
+          "main -> release_alias: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[15, 27]",
+          "signals=double_free",
+          "Pointer 'data' is freed more than once without reset or reallocation."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0004 -> hypothesis=HYP-0007 -> finding=FINDING-0007 -> harness=HARNESS-0007 -> dynamic=need_review -> trace=main -> release_alias: callee_frees_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0008",
+      "hypothesis_id": "HYP-0008",
+      "source_slice_id": "SLICE-0045",
+      "file": "uaf_struct_field.c",
+      "function": "player_init",
+      "line_range": [
+        12,
+        12
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 12: memcpy(p->memo, data, copy_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 12,
+          "description": "Dangerous copy-style call at line 12: memcpy(p->memo, data, copy_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> player_init"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[12]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0008",
+      "trace": {
+        "source_slice_id": "SLICE-0045",
+        "hypothesis_id": "HYP-0008",
+        "finding_id": "FINDING-0008",
+        "package_id": "HARNESS-0008",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> player_init"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[12]",
+          "signals=heap_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0045 -> hypothesis=HYP-0008 -> finding=FINDING-0008 -> harness=HARNESS-0008 -> dynamic=need_review -> trace=main -> player_init",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0009",
+      "hypothesis_id": "HYP-0009",
+      "source_slice_id": "SLICE-0041",
+      "file": "uaf_cross_function.c",
+      "function": "edit_chunk",
+      "line_range": [
+        18,
+        18
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Possible Buffer Overflow",
+      "risk_level": "medium",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 18: memcpy(chunk, data, copy_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 18,
+          "description": "Dangerous copy-style call at line 18: memcpy(chunk, data, copy_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> edit_chunk",
+        "main -> edit_chunk"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[18]",
+        "signals=copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.62,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.62,
+      "quality_control": {
+        "original_confidence": 0.62,
+        "calibrated_confidence": 0.62,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0009",
+      "trace": {
+        "source_slice_id": "SLICE-0041",
+        "hypothesis_id": "HYP-0009",
+        "finding_id": "FINDING-0009",
+        "package_id": "HARNESS-0009",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> edit_chunk",
+          "main -> edit_chunk"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[18]",
+          "signals=copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0041 -> hypothesis=HYP-0009 -> finding=FINDING-0009 -> harness=HARNESS-0009 -> dynamic=need_review -> trace=main -> edit_chunk | main -> edit_chunk",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0010",
+      "hypothesis_id": "HYP-0010",
+      "source_slice_id": "SLICE-0037",
+      "file": "uaf_array_slot.c",
+      "function": "create_slot",
+      "line_range": [
+        6,
+        6
+      ],
+      "cwe_id": "CWE-122",
+      "vulnerability_type": "Heap Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 6: memcpy(slots[idx], data, copy_len);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 6,
+          "description": "Dangerous copy-style call at line 6: memcpy(slots[idx], data, copy_len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> create_slot"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[6]",
+        "signals=heap_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:33",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "malloc",
+          "event_type": "malloc",
+          "address": "0x603000000040",
+          "size": 32
+        }
+      ],
+      "package_id": "HARNESS-0010",
+      "trace": {
+        "source_slice_id": "SLICE-0037",
+        "hypothesis_id": "HYP-0010",
+        "finding_id": "FINDING-0010",
+        "package_id": "HARNESS-0010",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> create_slot"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[6]",
+          "signals=heap_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0037 -> hypothesis=HYP-0010 -> finding=FINDING-0010 -> harness=HARNESS-0010 -> dynamic=need_review -> trace=main -> create_slot",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0011",
+      "hypothesis_id": "HYP-0011",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        9,
+        13
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 9.",
+        "Second free at line 13: free(profile);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 9,
+          "description": "First free at line 9."
+        },
+        {
+          "line": 13,
+          "description": "Second free at line 13: free(profile);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> update_profile"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[9, 13]",
+        "signals=double_free",
+        "Pointer 'profile' is freed more than once without reset or reallocation."
+      ],
+      "confidence": 0.78,
+      "suggested_fix": "Set profile to NULL after free and enforce single ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "hypothesis_confidence": 0.78,
+      "quality_control": {
+        "original_confidence": 0.78,
+        "calibrated_confidence": 0.78,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0011",
+      "trace": {
+        "source_slice_id": "SLICE-0010",
+        "hypothesis_id": "HYP-0011",
+        "finding_id": "FINDING-0011",
+        "package_id": "HARNESS-0011",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Pointer 'profile' is freed more than once without reset or reallocation.",
+        "cross_function_trace": [
+          "main -> update_profile"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[9, 13]",
+          "signals=double_free",
+          "Pointer 'profile' is freed more than once without reset or reallocation."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0010 -> hypothesis=HYP-0011 -> finding=FINDING-0011 -> harness=HARNESS-0011 -> dynamic=need_review -> trace=main -> update_profile",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0012",
+      "hypothesis_id": "HYP-0012",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        9,
+        17
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 9.",
+        "Second free at line 17: free(profile);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 9,
+          "description": "First free at line 9."
+        },
+        {
+          "line": 17,
+          "description": "Second free at line 17: free(profile);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> update_profile"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[9, 17]",
+        "signals=double_free",
+        "Pointer 'profile' is freed more than once without reset or reallocation."
+      ],
+      "confidence": 0.78,
+      "suggested_fix": "Set profile to NULL after free and enforce single ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "hypothesis_confidence": 0.78,
+      "quality_control": {
+        "original_confidence": 0.78,
+        "calibrated_confidence": 0.78,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0012",
+      "trace": {
+        "source_slice_id": "SLICE-0010",
+        "hypothesis_id": "HYP-0012",
+        "finding_id": "FINDING-0012",
+        "package_id": "HARNESS-0012",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Pointer 'profile' is freed more than once without reset or reallocation.",
+        "cross_function_trace": [
+          "main -> update_profile"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[9, 17]",
+          "signals=double_free",
+          "Pointer 'profile' is freed more than once without reset or reallocation."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0010 -> hypothesis=HYP-0012 -> finding=FINDING-0012 -> harness=HARNESS-0012 -> dynamic=need_review -> trace=main -> update_profile",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0013",
+      "hypothesis_id": "HYP-0013",
+      "source_slice_id": "SLICE-0009",
+      "file": "double_free_direct.c",
+      "function": "main",
+      "line_range": [
+        15,
+        24
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 15.",
+        "Second free at line 24: free(data);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 15,
+          "description": "First free at line 15."
+        },
+        {
+          "line": 24,
+          "description": "Second free at line 24: free(data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> delete_note: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[15, 24]",
+        "signals=double_free",
+        "Pointer 'data' is freed more than once without reset or reallocation."
+      ],
+      "confidence": 0.78,
+      "suggested_fix": "Set data to NULL after free and enforce single ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "hypothesis_confidence": 0.78,
+      "quality_control": {
+        "original_confidence": 0.78,
+        "calibrated_confidence": 0.78,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0013",
+      "trace": {
+        "source_slice_id": "SLICE-0009",
+        "hypothesis_id": "HYP-0013",
+        "finding_id": "FINDING-0013",
+        "package_id": "HARNESS-0013",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Pointer 'data' is freed more than once without reset or reallocation.",
+        "cross_function_trace": [
+          "main -> delete_note: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[15, 24]",
+          "signals=double_free",
+          "Pointer 'data' is freed more than once without reset or reallocation."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0009 -> hypothesis=HYP-0013 -> finding=FINDING-0013 -> harness=HARNESS-0013 -> dynamic=need_review -> trace=main -> delete_note: callee_frees_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0014",
+      "hypothesis_id": "HYP-0014",
+      "source_slice_id": "SLICE-0035",
+      "file": "stack_overflow_strcpy.c",
+      "function": "set_player_name",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 4: strcpy(name, (const char *)data);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Dangerous copy-style call at line 4: strcpy(name, (const char *)data);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> set_player_name"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[4]",
+        "signals=stack_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0014",
+      "trace": {
+        "source_slice_id": "SLICE-0035",
+        "hypothesis_id": "HYP-0014",
+        "finding_id": "FINDING-0014",
+        "package_id": "HARNESS-0014",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> set_player_name"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[4]",
+          "signals=stack_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0035 -> hypothesis=HYP-0014 -> finding=FINDING-0014 -> harness=HARNESS-0014 -> dynamic=need_review -> trace=main -> set_player_name",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++ and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0015",
+      "hypothesis_id": "HYP-0015",
+      "source_slice_id": "SLICE-0033",
+      "file": "stack_overflow_sprintf.c",
+      "function": "make_banner",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Dangerous copy-style operation may write beyond destination bounds.",
+      "evidence": [
+        "Dangerous copy-style call at line 4: sprintf(banner, \"player:%s\", (const char *)name);",
+        "Destination bounds are not proven by the local slice."
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Dangerous copy-style call at line 4: sprintf(banner, \"player:%s\", (const char *)name);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> make_banner"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> copy",
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[4]",
+        "signals=stack_copy_without_bounds",
+        "Dangerous copy-style operation may write beyond destination bounds."
+      ],
+      "confidence": 0.7,
+      "suggested_fix": "Validate input length and use bounded APIs with explicit destination size.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+      "hypothesis_confidence": 0.7,
+      "quality_control": {
+        "original_confidence": 0.7,
+        "calibrated_confidence": 0.7,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0015",
+      "trace": {
+        "source_slice_id": "SLICE-0033",
+        "hypothesis_id": "HYP-0015",
+        "finding_id": "FINDING-0015",
+        "package_id": "HARNESS-0015",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++"
+        ],
+        "hypothesis_reason": "Dangerous copy-style operation may write beyond destination bounds.",
+        "cross_function_trace": [
+          "main -> make_banner"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> copy",
+          "function_parameter -> format",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[4]",
+          "signals=stack_copy_without_bounds",
+          "Dangerous copy-style operation may write beyond destination bounds."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0033 -> hypothesis=HYP-0015 -> finding=FINDING-0015 -> harness=HARNESS-0015 -> dynamic=need_review -> trace=main -> make_banner",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++ and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0016",
+      "hypothesis_id": "HYP-0016",
+      "source_slice_id": "SLICE-0016",
+      "file": "format_string_snprintf.c",
+      "function": "render",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 3: snprintf(dst, dst_len, fmt);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 3,
+          "description": "Format sink at line 3: snprintf(dst, dst_len, fmt);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> render"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[3]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "confidence": 0.76,
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+      "hypothesis_confidence": 0.76,
+      "quality_control": {
+        "original_confidence": 0.76,
+        "calibrated_confidence": 0.76,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0016",
+      "trace": {
+        "source_slice_id": "SLICE-0016",
+        "hypothesis_id": "HYP-0016",
+        "finding_id": "FINDING-0016",
+        "package_id": "HARNESS-0016",
+        "dynamic_status": "untriggered",
+        "evidence_sources": [],
+        "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+        "cross_function_trace": [
+          "main -> render"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> format",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[3]",
+          "signals=nonliteral_format_string",
+          "A printf-style function appears to use a non-literal format argument."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0016 -> hypothesis=HYP-0016 -> finding=FINDING-0016 -> harness=HARNESS-0016 -> dynamic=untriggered -> trace=main -> render",
+      "final_status": "untriggered",
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0017",
+      "hypothesis_id": "HYP-0017",
+      "source_slice_id": "SLICE-0018",
+      "file": "format_string_syslog_like.c",
+      "function": "tiny_syslog",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 4: printf(fmt);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Format sink at line 4: printf(fmt);"
+        }
+      ],
+      "cross_function_trace": [
+        "dispatch_log -> tiny_syslog"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[4]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "confidence": 0.76,
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+      "hypothesis_confidence": 0.76,
+      "quality_control": {
+        "original_confidence": 0.76,
+        "calibrated_confidence": 0.76,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0017",
+      "trace": {
+        "source_slice_id": "SLICE-0018",
+        "hypothesis_id": "HYP-0017",
+        "finding_id": "FINDING-0017",
+        "package_id": "HARNESS-0017",
+        "dynamic_status": "untriggered",
+        "evidence_sources": [],
+        "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+        "cross_function_trace": [
+          "dispatch_log -> tiny_syslog"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> format",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[4]",
+          "signals=nonliteral_format_string",
+          "A printf-style function appears to use a non-literal format argument."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0018 -> hypothesis=HYP-0017 -> finding=FINDING-0017 -> harness=HARNESS-0017 -> dynamic=untriggered -> trace=dispatch_log -> tiny_syslog",
+      "final_status": "untriggered",
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0018",
+      "hypothesis_id": "HYP-0018",
+      "source_slice_id": "SLICE-0014",
+      "file": "format_string_printf.c",
+      "function": "say",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 3: printf(msg);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 3,
+          "description": "Format sink at line 3: printf(msg);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> say"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[3]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "confidence": 0.76,
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+      "hypothesis_confidence": 0.76,
+      "quality_control": {
+        "original_confidence": 0.76,
+        "calibrated_confidence": 0.76,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0018",
+      "trace": {
+        "source_slice_id": "SLICE-0014",
+        "hypothesis_id": "HYP-0018",
+        "finding_id": "FINDING-0018",
+        "package_id": "HARNESS-0018",
+        "dynamic_status": "untriggered",
+        "evidence_sources": [],
+        "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+        "cross_function_trace": [
+          "main -> say"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> format",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[3]",
+          "signals=nonliteral_format_string",
+          "A printf-style function appears to use a non-literal format argument."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0014 -> hypothesis=HYP-0018 -> finding=FINDING-0018 -> harness=HARNESS-0018 -> dynamic=untriggered -> trace=main -> say",
+      "final_status": "untriggered",
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0019",
+      "hypothesis_id": "HYP-0019",
+      "source_slice_id": "SLICE-0012",
+      "file": "format_string_fprintf.c",
+      "function": "log_event",
+      "line_range": [
+        3,
+        3
+      ],
+      "cwe_id": "CWE-134",
+      "vulnerability_type": "Format String Vulnerability",
+      "risk_level": "high",
+      "trigger_condition": "A printf-style function appears to use a non-literal format argument.",
+      "evidence": [
+        "Format sink at line 3: fprintf(out, event);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 3,
+          "description": "Format sink at line 3: fprintf(out, event);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> log_event"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> format",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[3]",
+        "signals=nonliteral_format_string",
+        "A printf-style function appears to use a non-literal format argument."
+      ],
+      "confidence": 0.76,
+      "suggested_fix": "Use a constant format string, for example printf(\"%s\", input).",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+      "hypothesis_confidence": 0.76,
+      "quality_control": {
+        "original_confidence": 0.76,
+        "calibrated_confidence": 0.76,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "untriggered",
+      "evidence_level": "weak",
+      "dynamic_evidence_sources": [],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0019",
+      "trace": {
+        "source_slice_id": "SLICE-0012",
+        "hypothesis_id": "HYP-0019",
+        "finding_id": "FINDING-0019",
+        "package_id": "HARNESS-0019",
+        "dynamic_status": "untriggered",
+        "evidence_sources": [],
+        "hypothesis_reason": "A printf-style function appears to use a non-literal format argument.",
+        "cross_function_trace": [
+          "main -> log_event"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> format",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[3]",
+          "signals=nonliteral_format_string",
+          "A printf-style function appears to use a non-literal format argument."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0012 -> hypothesis=HYP-0019 -> finding=FINDING-0019 -> harness=HARNESS-0019 -> dynamic=untriggered -> trace=main -> log_event",
+      "final_status": "untriggered",
+      "final_conclusion": "This suspected vulnerability was not triggered in the current dynamic validation run."
+    },
+    {
+      "finding_id": "FINDING-0020",
+      "hypothesis_id": "HYP-0020",
+      "source_slice_id": "SLICE-0031",
+      "file": "stack_overflow_loop.c",
+      "function": "copy_loop",
+      "line_range": [
+        5,
+        5
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Stack array 'dst[10]' is written with an index that is not locally bounded.",
+      "evidence": [
+        "Potential out-of-bounds stack write at line 5: dst[i] = (char)src[i % len];"
+      ],
+      "evidence_lines": [
+        {
+          "line": 5,
+          "description": "Potential out-of-bounds stack write at line 5: dst[i] = (char)src[i % len];"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> copy_loop"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> pointer_access",
+        "suspect_lines=[5]",
+        "signals=stack_index_or_loop_write",
+        "Stack array 'dst[10]' is written with an index that is not locally bounded."
+      ],
+      "confidence": 0.72,
+      "suggested_fix": "Validate the index against the stack buffer length before writing.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Stack array 'dst[10]' is written with an index that is not locally bounded.",
+      "hypothesis_confidence": 0.72,
+      "quality_control": {
+        "original_confidence": 0.72,
+        "calibrated_confidence": 0.72,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0020",
+      "trace": {
+        "source_slice_id": "SLICE-0031",
+        "hypothesis_id": "HYP-0020",
+        "finding_id": "FINDING-0020",
+        "package_id": "HARNESS-0020",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++"
+        ],
+        "hypothesis_reason": "Stack array 'dst[10]' is written with an index that is not locally bounded.",
+        "cross_function_trace": [
+          "main -> copy_loop"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> pointer_access",
+          "suspect_lines=[5]",
+          "signals=stack_index_or_loop_write",
+          "Stack array 'dst[10]' is written with an index that is not locally bounded."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0031 -> hypothesis=HYP-0020 -> finding=FINDING-0020 -> harness=HARNESS-0020 -> dynamic=need_review -> trace=main -> copy_loop",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++ and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0021",
+      "hypothesis_id": "HYP-0021",
+      "source_slice_id": "SLICE-0029",
+      "file": "stack_overflow_index.c",
+      "function": "set_checkpoint",
+      "line_range": [
+        4,
+        4
+      ],
+      "cwe_id": "CWE-121",
+      "vulnerability_type": "Stack Buffer Overflow",
+      "risk_level": "high",
+      "trigger_condition": "Stack array 'checkpoints[4]' is written with an index that is not locally bounded.",
+      "evidence": [
+        "Potential out-of-bounds stack write at line 4: checkpoints[idx] = 31337;"
+      ],
+      "evidence_lines": [
+        {
+          "line": 4,
+          "description": "Potential out-of-bounds stack write at line 4: checkpoints[idx] = 31337;"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> set_checkpoint"
+      ],
+      "dataflow_trace": [
+        "suspect_lines=[4]",
+        "signals=stack_index_or_loop_write",
+        "Stack array 'checkpoints[4]' is written with an index that is not locally bounded."
+      ],
+      "confidence": 0.72,
+      "suggested_fix": "Validate the index against the stack buffer length before writing.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Stack array 'checkpoints[4]' is written with an index that is not locally bounded.",
+      "hypothesis_confidence": 0.72,
+      "quality_control": {
+        "original_confidence": 0.72,
+        "calibrated_confidence": 0.72,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [],
+      "package_id": "HARNESS-0021",
+      "trace": {
+        "source_slice_id": "SLICE-0029",
+        "hypothesis_id": "HYP-0021",
+        "finding_id": "FINDING-0021",
+        "package_id": "HARNESS-0021",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++"
+        ],
+        "hypothesis_reason": "Stack array 'checkpoints[4]' is written with an index that is not locally bounded.",
+        "cross_function_trace": [
+          "main -> set_checkpoint"
+        ],
+        "dataflow_trace": [
+          "suspect_lines=[4]",
+          "signals=stack_index_or_loop_write",
+          "Stack array 'checkpoints[4]' is written with an index that is not locally bounded."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0029 -> hypothesis=HYP-0021 -> finding=FINDING-0021 -> harness=HARNESS-0021 -> dynamic=need_review -> trace=main -> set_checkpoint",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++ and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0022",
+      "hypothesis_id": "HYP-0022",
+      "source_slice_id": "SLICE-0047",
+      "file": "uaf_struct_field.c",
+      "function": "main",
+      "line_range": [
+        31,
+        34
+      ],
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "trigger_condition": "Expression 'p' is freed and later used through 'local_use'.",
+      "evidence": [
+        "Free/ownership release at line 31: player_reset(&p);",
+        "Use after release at line 34: printf(\"%s:%d\\n\", p.memo, p.score);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 31,
+          "description": "Free/ownership release at line 31: player_reset(&p);"
+        },
+        {
+          "line": 34,
+          "description": "Use after release at line 34: printf(\"%s:%d\\n\", p.memo, p.score);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> player_init: callee_writes_argument",
+        "main -> player_reset: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> format",
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[31, 34]",
+        "signals=cross_function_free_then_use,use_via_local_use",
+        "Expression 'p' is freed and later used through 'local_use'."
+      ],
+      "confidence": 0.84,
+      "suggested_fix": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Expression 'p' is freed and later used through 'local_use'.",
+      "hypothesis_confidence": 0.84,
+      "quality_control": {
+        "original_confidence": 0.84,
+        "calibrated_confidence": 0.84,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0022",
+      "trace": {
+        "source_slice_id": "SLICE-0047",
+        "hypothesis_id": "HYP-0022",
+        "finding_id": "FINDING-0022",
+        "package_id": "HARNESS-0022",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Expression 'p' is freed and later used through 'local_use'.",
+        "cross_function_trace": [
+          "main -> player_init: callee_writes_argument",
+          "main -> player_reset: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> format",
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[31, 34]",
+          "signals=cross_function_free_then_use,use_via_local_use",
+          "Expression 'p' is freed and later used through 'local_use'."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0047 -> hypothesis=HYP-0022 -> finding=FINDING-0022 -> harness=HARNESS-0022 -> dynamic=need_review -> trace=main -> player_init: callee_writes_argument | main -> player_reset: callee_frees_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0023",
+      "hypothesis_id": "HYP-0023",
+      "source_slice_id": "SLICE-0004",
+      "file": "double_free_alias.c",
+      "function": "main",
+      "line_range": [
+        21,
+        24
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Memory expression 'owner' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 21: release_alias(slot_alias);",
+        "Second free at line 24: free(owner);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 21,
+          "description": "First free at line 21: release_alias(slot_alias);"
+        },
+        {
+          "line": 24,
+          "description": "Second free at line 24: free(owner);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> release_alias: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[21, 24]",
+        "signals=double_free,direct_free",
+        "Memory expression 'owner' is freed after an equivalent expression was already freed."
+      ],
+      "confidence": 0.82,
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Memory expression 'owner' is freed after an equivalent expression was already freed.",
+      "hypothesis_confidence": 0.82,
+      "quality_control": {
+        "original_confidence": 0.82,
+        "calibrated_confidence": 0.82,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0023",
+      "trace": {
+        "source_slice_id": "SLICE-0004",
+        "hypothesis_id": "HYP-0023",
+        "finding_id": "FINDING-0023",
+        "package_id": "HARNESS-0023",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Memory expression 'owner' is freed after an equivalent expression was already freed.",
+        "cross_function_trace": [
+          "main -> release_alias: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[21, 24]",
+          "signals=double_free,direct_free",
+          "Memory expression 'owner' is freed after an equivalent expression was already freed."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0004 -> hypothesis=HYP-0023 -> finding=FINDING-0023 -> harness=HARNESS-0023 -> dynamic=need_review -> trace=main -> release_alias: callee_frees_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0024",
+      "hypothesis_id": "HYP-0024",
+      "source_slice_id": "SLICE-0042",
+      "file": "uaf_cross_function.c",
+      "function": "main",
+      "line_range": [
+        31,
+        32
+      ],
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "trigger_condition": "Expression 'chunk' is freed and later used through 'edit_chunk'.",
+      "evidence": [
+        "Free/ownership release at line 31: delete_chunk(chunk);",
+        "Use after release at line 32: edit_chunk(chunk, data, len);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 31,
+          "description": "Free/ownership release at line 31: delete_chunk(chunk);"
+        },
+        {
+          "line": 32,
+          "description": "Use after release at line 32: edit_chunk(chunk, data, len);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> delete_chunk: callee_frees_argument",
+        "main -> edit_chunk: callee_writes_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[31, 32]",
+        "signals=cross_function_free_then_use,use_via_edit_chunk",
+        "Expression 'chunk' is freed and later used through 'edit_chunk'."
+      ],
+      "confidence": 0.84,
+      "suggested_fix": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Expression 'chunk' is freed and later used through 'edit_chunk'.",
+      "hypothesis_confidence": 0.84,
+      "quality_control": {
+        "original_confidence": 0.84,
+        "calibrated_confidence": 0.84,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0024",
+      "trace": {
+        "source_slice_id": "SLICE-0042",
+        "hypothesis_id": "HYP-0024",
+        "finding_id": "FINDING-0024",
+        "package_id": "HARNESS-0024",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Expression 'chunk' is freed and later used through 'edit_chunk'.",
+        "cross_function_trace": [
+          "main -> delete_chunk: callee_frees_argument",
+          "main -> edit_chunk: callee_writes_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[31, 32]",
+          "signals=cross_function_free_then_use,use_via_edit_chunk",
+          "Expression 'chunk' is freed and later used through 'edit_chunk'."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0042 -> hypothesis=HYP-0024 -> finding=FINDING-0024 -> harness=HARNESS-0024 -> dynamic=need_review -> trace=main -> delete_chunk: callee_frees_argument | main -> edit_chunk: callee_writes_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0025",
+      "hypothesis_id": "HYP-0025",
+      "source_slice_id": "SLICE-0039",
+      "file": "uaf_array_slot.c",
+      "function": "main",
+      "line_range": [
+        26,
+        28
+      ],
+      "cwe_id": "CWE-416",
+      "vulnerability_type": "Use After Free",
+      "risk_level": "high",
+      "trigger_condition": "Expression 'slots' is freed and later used through 'local_use'.",
+      "evidence": [
+        "Free/ownership release at line 26: delete_slot(slots, idx);",
+        "Use after release at line 28: if (has_byte(data, len, 'V') && slots[idx]) {"
+      ],
+      "evidence_lines": [
+        {
+          "line": 26,
+          "description": "Free/ownership release at line 26: delete_slot(slots, idx);"
+        },
+        {
+          "line": 28,
+          "description": "Use after release at line 28: if (has_byte(data, len, 'V') && slots[idx]) {"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> create_slot: callee_writes_argument",
+        "main -> delete_slot: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[26, 28]",
+        "signals=cross_function_free_then_use,use_via_local_use",
+        "Expression 'slots' is freed and later used through 'local_use'."
+      ],
+      "confidence": 0.84,
+      "suggested_fix": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Expression 'slots' is freed and later used through 'local_use'.",
+      "hypothesis_confidence": 0.84,
+      "quality_control": {
+        "original_confidence": 0.84,
+        "calibrated_confidence": 0.84,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "AFL++",
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": {
+        "crash_found": true,
+        "crash_file": "id:000001,sig:06,src:000000,time:1200,execs:2048,op:havoc",
+        "signal": "SIGABRT",
+        "asan_bug_type": null,
+        "stderr_excerpt": "AddressSanitizer: heap-use-after-free or buffer-overflow detected",
+        "notes": "Part 0 mock AFL++ result. Backend will replace this with real dynamic validation output."
+      },
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        },
+        {
+          "timestamp": "2026-05-30T10:21:35",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "memory_write",
+          "event_type": "use_after_free_suspected",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0025",
+      "trace": {
+        "source_slice_id": "SLICE-0039",
+        "hypothesis_id": "HYP-0025",
+        "finding_id": "FINDING-0025",
+        "package_id": "HARNESS-0025",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "AFL++",
+          "eBPF"
+        ],
+        "hypothesis_reason": "Expression 'slots' is freed and later used through 'local_use'.",
+        "cross_function_trace": [
+          "main -> create_slot: callee_writes_argument",
+          "main -> delete_slot: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[26, 28]",
+          "signals=cross_function_free_then_use,use_via_local_use",
+          "Expression 'slots' is freed and later used through 'local_use'."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0039 -> hypothesis=HYP-0025 -> finding=FINDING-0025 -> harness=HARNESS-0025 -> dynamic=need_review -> trace=main -> create_slot: callee_writes_argument | main -> delete_slot: callee_frees_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from AFL++, eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0026",
+      "hypothesis_id": "HYP-0026",
+      "source_slice_id": "SLICE-0010",
+      "file": "double_free_error_path.c",
+      "function": "update_profile",
+      "line_range": [
+        13,
+        17
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Memory expression 'profile' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 13: free(profile);",
+        "Second free at line 17: free(profile);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 13,
+          "description": "First free at line 13: free(profile);"
+        },
+        {
+          "line": 17,
+          "description": "Second free at line 17: free(profile);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> update_profile"
+      ],
+      "dataflow_trace": [
+        "function_parameter -> free",
+        "function_parameter -> pointer_access",
+        "suspect_lines=[13, 17]",
+        "signals=double_free,direct_free",
+        "Memory expression 'profile' is freed after an equivalent expression was already freed."
+      ],
+      "confidence": 0.82,
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Memory expression 'profile' is freed after an equivalent expression was already freed.",
+      "hypothesis_confidence": 0.82,
+      "quality_control": {
+        "original_confidence": 0.82,
+        "calibrated_confidence": 0.82,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0026",
+      "trace": {
+        "source_slice_id": "SLICE-0010",
+        "hypothesis_id": "HYP-0026",
+        "finding_id": "FINDING-0026",
+        "package_id": "HARNESS-0026",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Memory expression 'profile' is freed after an equivalent expression was already freed.",
+        "cross_function_trace": [
+          "main -> update_profile"
+        ],
+        "dataflow_trace": [
+          "function_parameter -> free",
+          "function_parameter -> pointer_access",
+          "suspect_lines=[13, 17]",
+          "signals=double_free,direct_free",
+          "Memory expression 'profile' is freed after an equivalent expression was already freed."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0010 -> hypothesis=HYP-0026 -> finding=FINDING-0026 -> harness=HARNESS-0026 -> dynamic=need_review -> trace=main -> update_profile",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0027",
+      "hypothesis_id": "HYP-0027",
+      "source_slice_id": "SLICE-0009",
+      "file": "double_free_direct.c",
+      "function": "main",
+      "line_range": [
+        19,
+        21
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Memory expression 'note' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 19: delete_note(note);",
+        "Second free at line 21: delete_note(note);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 19,
+          "description": "First free at line 19: delete_note(note);"
+        },
+        {
+          "line": 21,
+          "description": "Second free at line 21: delete_note(note);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> delete_note: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[19, 21]",
+        "signals=double_free,delete_note_frees_argument",
+        "Memory expression 'note' is freed after an equivalent expression was already freed."
+      ],
+      "confidence": 0.82,
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Memory expression 'note' is freed after an equivalent expression was already freed.",
+      "hypothesis_confidence": 0.82,
+      "quality_control": {
+        "original_confidence": 0.82,
+        "calibrated_confidence": 0.82,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0027",
+      "trace": {
+        "source_slice_id": "SLICE-0009",
+        "hypothesis_id": "HYP-0027",
+        "finding_id": "FINDING-0027",
+        "package_id": "HARNESS-0027",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Memory expression 'note' is freed after an equivalent expression was already freed.",
+        "cross_function_trace": [
+          "main -> delete_note: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[19, 21]",
+          "signals=double_free,delete_note_frees_argument",
+          "Memory expression 'note' is freed after an equivalent expression was already freed."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0009 -> hypothesis=HYP-0027 -> finding=FINDING-0027 -> harness=HARNESS-0027 -> dynamic=need_review -> trace=main -> delete_note: callee_frees_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    },
+    {
+      "finding_id": "FINDING-0028",
+      "hypothesis_id": "HYP-0028",
+      "source_slice_id": "SLICE-0007",
+      "file": "double_free_cleanup.c",
+      "function": "main",
+      "line_range": [
+        26,
+        29
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Memory expression 'chunk' is freed after an equivalent expression was already freed.",
+      "evidence": [
+        "First free at line 26: chunk_delete(&chunk);",
+        "Second free at line 29: chunk_delete(&chunk);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 26,
+          "description": "First free at line 26: chunk_delete(&chunk);"
+        },
+        {
+          "line": 29,
+          "description": "Second free at line 29: chunk_delete(&chunk);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> chunk_delete: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> free",
+        "argv -> pointer_access",
+        "suspect_lines=[26, 29]",
+        "signals=double_free,chunk_delete_frees_argument",
+        "Memory expression 'chunk' is freed after an equivalent expression was already freed."
+      ],
+      "confidence": 0.82,
+      "suggested_fix": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Memory expression 'chunk' is freed after an equivalent expression was already freed.",
+      "hypothesis_confidence": 0.82,
+      "quality_control": {
+        "original_confidence": 0.82,
+        "calibrated_confidence": 0.82,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      },
+      "dynamic_status": "need_review",
+      "evidence_level": "medium",
+      "dynamic_evidence_sources": [
+        "eBPF"
+      ],
+      "asan_evidence": null,
+      "afl_evidence": null,
+      "ebpf_evidence": [
+        {
+          "timestamp": "2026-05-30T10:21:34",
+          "pid": 12345,
+          "process": "fuzz_target",
+          "function": "free",
+          "event_type": "free",
+          "address": "0x603000000040"
+        }
+      ],
+      "package_id": "HARNESS-0028",
+      "trace": {
+        "source_slice_id": "SLICE-0007",
+        "hypothesis_id": "HYP-0028",
+        "finding_id": "FINDING-0028",
+        "package_id": "HARNESS-0028",
+        "dynamic_status": "need_review",
+        "evidence_sources": [
+          "eBPF"
+        ],
+        "hypothesis_reason": "Memory expression 'chunk' is freed after an equivalent expression was already freed.",
+        "cross_function_trace": [
+          "main -> chunk_delete: callee_frees_argument"
+        ],
+        "dataflow_trace": [
+          "argv -> free",
+          "argv -> pointer_access",
+          "suspect_lines=[26, 29]",
+          "signals=double_free,chunk_delete_frees_argument",
+          "Memory expression 'chunk' is freed after an equivalent expression was already freed."
+        ]
+      },
+      "trace_summary": "slice=SLICE-0007 -> hypothesis=HYP-0028 -> finding=FINDING-0028 -> harness=HARNESS-0028 -> dynamic=need_review -> trace=main -> chunk_delete: callee_frees_argument",
+      "final_status": "need_review",
+      "final_conclusion": "This suspected vulnerability has partial runtime evidence from eBPF and needs manual review."
+    }
+  ],
+  "backend_components": [],
+  "backend_vulnerabilities": [
+    {
+      "vuln_type": "UAF",
+      "vuln_type_display": "Use After Free",
+      "file_path": "uaf_direct.c",
+      "line_number": 17,
+      "code_context": "Pointer 'note' is freed at line 17.\nPointer 'note' is used again at line 20: puts(note->text);",
+      "trigger_cond": "Pointer 'note' is accessed after free.",
+      "fix_advice": "Do not access note after free; set it to NULL and guard future uses.",
+      "confidence": 0.8,
+      "source_slice_id": "SLICE-0043",
+      "hypothesis_id": "HYP-0001",
+      "finding_id": "FINDING-0001",
+      "trace_summary": "main -> run_note_machine",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "uaf_direct.c",
+      "line_number": 14,
+      "code_context": "Dangerous copy-style call at line 14: memcpy(note->text, \"created\", 8);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0043",
+      "hypothesis_id": "HYP-0002",
+      "finding_id": "FINDING-0002",
+      "trace_summary": "main -> run_note_machine",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "heap_overflow_strcpy.c",
+      "line_number": 8,
+      "code_context": "Dangerous copy-style call at line 8: strcpy(name, (const char *)data);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0027",
+      "hypothesis_id": "HYP-0003",
+      "finding_id": "FINDING-0003",
+      "trace_summary": "main -> create_and_edit",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "heap_overflow_memcpy_len.c",
+      "line_number": 8,
+      "code_context": "Dangerous copy-style call at line 8: memcpy(chunk, packet, packet_len);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0023",
+      "hypothesis_id": "HYP-0004",
+      "finding_id": "FINDING-0004",
+      "trace_summary": "main -> edit_chunk -> main -> edit_chunk",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "heap_overflow_off_by_one.c",
+      "line_number": 9,
+      "code_context": "Dangerous copy-style call at line 9: memcpy(name, data, name_len + 1);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0025",
+      "hypothesis_id": "HYP-0005",
+      "finding_id": "FINDING-0005",
+      "trace_summary": "main -> rename_chunk",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "heap_overflow_integer_trunc.c",
+      "line_number": 10,
+      "code_context": "Dangerous copy-style call at line 10: memcpy(buf, msg, len);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0021",
+      "hypothesis_id": "HYP-0006",
+      "finding_id": "FINDING-0006",
+      "trace_summary": "main -> resize_then_write",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_alias.c",
+      "line_number": 15,
+      "code_context": "First free at line 15.\nSecond free at line 27: free(data);",
+      "trigger_cond": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "fix_advice": "Set data to NULL after free and enforce single ownership.",
+      "confidence": 0.78,
+      "source_slice_id": "SLICE-0004",
+      "hypothesis_id": "HYP-0007",
+      "finding_id": "FINDING-0007",
+      "trace_summary": "main -> release_alias: callee_frees_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "uaf_struct_field.c",
+      "line_number": 12,
+      "code_context": "Dangerous copy-style call at line 12: memcpy(p->memo, data, copy_len);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0045",
+      "hypothesis_id": "HYP-0008",
+      "finding_id": "FINDING-0008",
+      "trace_summary": "main -> player_init",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "uaf_cross_function.c",
+      "line_number": 18,
+      "code_context": "Dangerous copy-style call at line 18: memcpy(chunk, data, copy_len);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.62,
+      "source_slice_id": "SLICE-0041",
+      "hypothesis_id": "HYP-0009",
+      "finding_id": "FINDING-0009",
+      "trace_summary": "main -> edit_chunk -> main -> edit_chunk",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "heap_overflow",
+      "vuln_type_display": "Heap Buffer Overflow",
+      "file_path": "uaf_array_slot.c",
+      "line_number": 6,
+      "code_context": "Dangerous copy-style call at line 6: memcpy(slots[idx], data, copy_len);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0037",
+      "hypothesis_id": "HYP-0010",
+      "finding_id": "FINDING-0010",
+      "trace_summary": "main -> create_slot",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_error_path.c",
+      "line_number": 9,
+      "code_context": "First free at line 9.\nSecond free at line 13: free(profile);",
+      "trigger_cond": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "fix_advice": "Set profile to NULL after free and enforce single ownership.",
+      "confidence": 0.78,
+      "source_slice_id": "SLICE-0010",
+      "hypothesis_id": "HYP-0011",
+      "finding_id": "FINDING-0011",
+      "trace_summary": "main -> update_profile",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_error_path.c",
+      "line_number": 9,
+      "code_context": "First free at line 9.\nSecond free at line 17: free(profile);",
+      "trigger_cond": "Pointer 'profile' is freed more than once without reset or reallocation.",
+      "fix_advice": "Set profile to NULL after free and enforce single ownership.",
+      "confidence": 0.78,
+      "source_slice_id": "SLICE-0010",
+      "hypothesis_id": "HYP-0012",
+      "finding_id": "FINDING-0012",
+      "trace_summary": "main -> update_profile",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_direct.c",
+      "line_number": 15,
+      "code_context": "First free at line 15.\nSecond free at line 24: free(data);",
+      "trigger_cond": "Pointer 'data' is freed more than once without reset or reallocation.",
+      "fix_advice": "Set data to NULL after free and enforce single ownership.",
+      "confidence": 0.78,
+      "source_slice_id": "SLICE-0009",
+      "hypothesis_id": "HYP-0013",
+      "finding_id": "FINDING-0013",
+      "trace_summary": "main -> delete_note: callee_frees_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "vuln_type_display": "Stack Buffer Overflow",
+      "file_path": "stack_overflow_strcpy.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style call at line 4: strcpy(name, (const char *)data);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0035",
+      "hypothesis_id": "HYP-0014",
+      "finding_id": "FINDING-0014",
+      "trace_summary": "main -> set_player_name",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "vuln_type_display": "Stack Buffer Overflow",
+      "file_path": "stack_overflow_sprintf.c",
+      "line_number": 4,
+      "code_context": "Dangerous copy-style call at line 4: sprintf(banner, \"player:%s\", (const char *)name);\nDestination bounds are not proven by the local slice.",
+      "trigger_cond": "Dangerous copy-style operation may write beyond destination bounds.",
+      "fix_advice": "Validate input length and use bounded APIs with explicit destination size.",
+      "confidence": 0.7,
+      "source_slice_id": "SLICE-0033",
+      "hypothesis_id": "HYP-0015",
+      "finding_id": "FINDING-0015",
+      "trace_summary": "main -> make_banner",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "format_string",
+      "vuln_type_display": "Format String",
+      "file_path": "format_string_snprintf.c",
+      "line_number": 3,
+      "code_context": "Format sink at line 3: snprintf(dst, dst_len, fmt);",
+      "trigger_cond": "A printf-style function appears to use a non-literal format argument.",
+      "fix_advice": "Use a constant format string, for example printf(\"%s\", input).",
+      "confidence": 0.76,
+      "source_slice_id": "SLICE-0016",
+      "hypothesis_id": "HYP-0016",
+      "finding_id": "FINDING-0016",
+      "trace_summary": "main -> render",
+      "dynamic_status": "untriggered",
+      "final_status": "untriggered"
+    },
+    {
+      "vuln_type": "format_string",
+      "vuln_type_display": "Format String",
+      "file_path": "format_string_syslog_like.c",
+      "line_number": 4,
+      "code_context": "Format sink at line 4: printf(fmt);",
+      "trigger_cond": "A printf-style function appears to use a non-literal format argument.",
+      "fix_advice": "Use a constant format string, for example printf(\"%s\", input).",
+      "confidence": 0.76,
+      "source_slice_id": "SLICE-0018",
+      "hypothesis_id": "HYP-0017",
+      "finding_id": "FINDING-0017",
+      "trace_summary": "dispatch_log -> tiny_syslog",
+      "dynamic_status": "untriggered",
+      "final_status": "untriggered"
+    },
+    {
+      "vuln_type": "format_string",
+      "vuln_type_display": "Format String",
+      "file_path": "format_string_printf.c",
+      "line_number": 3,
+      "code_context": "Format sink at line 3: printf(msg);",
+      "trigger_cond": "A printf-style function appears to use a non-literal format argument.",
+      "fix_advice": "Use a constant format string, for example printf(\"%s\", input).",
+      "confidence": 0.76,
+      "source_slice_id": "SLICE-0014",
+      "hypothesis_id": "HYP-0018",
+      "finding_id": "FINDING-0018",
+      "trace_summary": "main -> say",
+      "dynamic_status": "untriggered",
+      "final_status": "untriggered"
+    },
+    {
+      "vuln_type": "format_string",
+      "vuln_type_display": "Format String",
+      "file_path": "format_string_fprintf.c",
+      "line_number": 3,
+      "code_context": "Format sink at line 3: fprintf(out, event);",
+      "trigger_cond": "A printf-style function appears to use a non-literal format argument.",
+      "fix_advice": "Use a constant format string, for example printf(\"%s\", input).",
+      "confidence": 0.76,
+      "source_slice_id": "SLICE-0012",
+      "hypothesis_id": "HYP-0019",
+      "finding_id": "FINDING-0019",
+      "trace_summary": "main -> log_event",
+      "dynamic_status": "untriggered",
+      "final_status": "untriggered"
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "vuln_type_display": "Stack Buffer Overflow",
+      "file_path": "stack_overflow_loop.c",
+      "line_number": 5,
+      "code_context": "Potential out-of-bounds stack write at line 5: dst[i] = (char)src[i % len];",
+      "trigger_cond": "Stack array 'dst[10]' is written with an index that is not locally bounded.",
+      "fix_advice": "Validate the index against the stack buffer length before writing.",
+      "confidence": 0.72,
+      "source_slice_id": "SLICE-0031",
+      "hypothesis_id": "HYP-0020",
+      "finding_id": "FINDING-0020",
+      "trace_summary": "main -> copy_loop",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "stack_overflow",
+      "vuln_type_display": "Stack Buffer Overflow",
+      "file_path": "stack_overflow_index.c",
+      "line_number": 4,
+      "code_context": "Potential out-of-bounds stack write at line 4: checkpoints[idx] = 31337;",
+      "trigger_cond": "Stack array 'checkpoints[4]' is written with an index that is not locally bounded.",
+      "fix_advice": "Validate the index against the stack buffer length before writing.",
+      "confidence": 0.72,
+      "source_slice_id": "SLICE-0029",
+      "hypothesis_id": "HYP-0021",
+      "finding_id": "FINDING-0021",
+      "trace_summary": "main -> set_checkpoint",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "UAF",
+      "vuln_type_display": "Use After Free",
+      "file_path": "uaf_struct_field.c",
+      "line_number": 31,
+      "code_context": "Free/ownership release at line 31: player_reset(&p);\nUse after release at line 34: printf(\"%s:%d\\n\", p.memo, p.score);",
+      "trigger_cond": "Expression 'p' is freed and later used through 'local_use'.",
+      "fix_advice": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "confidence": 0.84,
+      "source_slice_id": "SLICE-0047",
+      "hypothesis_id": "HYP-0022",
+      "finding_id": "FINDING-0022",
+      "trace_summary": "main -> player_init: callee_writes_argument -> main -> player_reset: callee_frees_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_alias.c",
+      "line_number": 21,
+      "code_context": "First free at line 21: release_alias(slot_alias);\nSecond free at line 24: free(owner);",
+      "trigger_cond": "Memory expression 'owner' is freed after an equivalent expression was already freed.",
+      "fix_advice": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "confidence": 0.82,
+      "source_slice_id": "SLICE-0004",
+      "hypothesis_id": "HYP-0023",
+      "finding_id": "FINDING-0023",
+      "trace_summary": "main -> release_alias: callee_frees_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "UAF",
+      "vuln_type_display": "Use After Free",
+      "file_path": "uaf_cross_function.c",
+      "line_number": 31,
+      "code_context": "Free/ownership release at line 31: delete_chunk(chunk);\nUse after release at line 32: edit_chunk(chunk, data, len);",
+      "trigger_cond": "Expression 'chunk' is freed and later used through 'edit_chunk'.",
+      "fix_advice": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "confidence": 0.84,
+      "source_slice_id": "SLICE-0042",
+      "hypothesis_id": "HYP-0024",
+      "finding_id": "FINDING-0024",
+      "trace_summary": "main -> delete_chunk: callee_frees_argument -> main -> edit_chunk: callee_writes_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "UAF",
+      "vuln_type_display": "Use After Free",
+      "file_path": "uaf_array_slot.c",
+      "line_number": 26,
+      "code_context": "Free/ownership release at line 26: delete_slot(slots, idx);\nUse after release at line 28: if (has_byte(data, len, 'V') && slots[idx]) {",
+      "trigger_cond": "Expression 'slots' is freed and later used through 'local_use'.",
+      "fix_advice": "Do not use the object after ownership release; null out aliases or restructure the control flow.",
+      "confidence": 0.84,
+      "source_slice_id": "SLICE-0039",
+      "hypothesis_id": "HYP-0025",
+      "finding_id": "FINDING-0025",
+      "trace_summary": "main -> create_slot: callee_writes_argument -> main -> delete_slot: callee_frees_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_error_path.c",
+      "line_number": 13,
+      "code_context": "First free at line 13: free(profile);\nSecond free at line 17: free(profile);",
+      "trigger_cond": "Memory expression 'profile' is freed after an equivalent expression was already freed.",
+      "fix_advice": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "confidence": 0.82,
+      "source_slice_id": "SLICE-0010",
+      "hypothesis_id": "HYP-0026",
+      "finding_id": "FINDING-0026",
+      "trace_summary": "main -> update_profile",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_direct.c",
+      "line_number": 19,
+      "code_context": "First free at line 19: delete_note(note);\nSecond free at line 21: delete_note(note);",
+      "trigger_cond": "Memory expression 'note' is freed after an equivalent expression was already freed.",
+      "fix_advice": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "confidence": 0.82,
+      "source_slice_id": "SLICE-0009",
+      "hypothesis_id": "HYP-0027",
+      "finding_id": "FINDING-0027",
+      "trace_summary": "main -> delete_note: callee_frees_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    },
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "double_free_cleanup.c",
+      "line_number": 26,
+      "code_context": "First free at line 26: chunk_delete(&chunk);\nSecond free at line 29: chunk_delete(&chunk);",
+      "trigger_cond": "Memory expression 'chunk' is freed after an equivalent expression was already freed.",
+      "fix_advice": "Enforce single ownership, clear aliases after free, and avoid freeing the same allocation on multiple paths.",
+      "confidence": 0.82,
+      "source_slice_id": "SLICE-0007",
+      "hypothesis_id": "HYP-0028",
+      "finding_id": "FINDING-0028",
+      "trace_summary": "main -> chunk_delete: callee_frees_argument",
+      "dynamic_status": "need_review",
+      "final_status": "need_review"
+    }
+  ],
+  "recommendations": [
+    "Prioritize findings confirmed by ASan/AFL++/eBPF runtime evidence.",
+    "Review high-risk dependency CVEs before release.",
+    "Use generated harness packages as reproducible validation artifacts.",
+    "Treat untriggered high-confidence findings as review candidates, not confirmed vulnerabilities."
+  ],
+  "agent_summaries": {
+    "agent_a": {
+      "total_components": 0,
+      "high_risk_components": 0,
+      "queried_sources": [
+        "OSV",
+        "NVD"
+      ]
+    },
+    "agent_b": {
+      "total_slices": 47,
+      "total_source_files": 21,
+      "slices_with_risk_keywords": 42,
+      "high_priority_slices": 24,
+      "medium_priority_slices": 23,
+      "cross_function_slices": 41
+    },
+    "agent_c": {
+      "total_input_slices": 47,
+      "candidate_slices": 47,
+      "low_priority_slices": 0,
+      "total_hypotheses": 28,
+      "hypotheses_by_cwe": {
+        "CWE-416": 4,
+        "CWE-122": 8,
+        "CWE-415": 8,
+        "CWE-121": 4,
+        "CWE-134": 4
+      },
+      "component_context_count": 0
+    },
+    "agent_d": {
+      "total_hypotheses": 28,
+      "audited_hypotheses": 28,
+      "total_findings": 28,
+      "high_risk_findings": 27,
+      "llm_available": false,
+      "llm_error_count": 0,
+      "llm_findings": 0,
+      "rule_fallback_findings": 28
+    },
+    "agent_e": {
+      "total_packages": 28,
+      "packages_by_cwe": {
+        "CWE-416": 4,
+        "CWE-122": 8,
+        "CWE-415": 8,
+        "CWE-121": 4,
+        "CWE-134": 4
+      },
+      "build_ready_packages": 28,
+      "manual_adaptation_required": 0,
+      "compile_checks_executed": 0
+    },
+    "agent_f": {
+      "total_findings": 28,
+      "total_links": 28,
+      "confirmed_findings": 0,
+      "need_review_findings": 24,
+      "asan_confirmed_findings": 0
+    }
+  }
+}

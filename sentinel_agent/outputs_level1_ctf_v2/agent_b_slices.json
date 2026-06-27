@@ -1,0 +1,1863 @@
+{
+  "agent": "Agent B - Context Pruning and Code Slicing",
+  "slices": [
+    {
+      "slice_id": "SLICE-0001",
+      "target_file": "ctf_input.h",
+      "target_function": "has_byte",
+      "line_range": [
+        43,
+        51
+      ],
+      "related_includes": [
+        {
+          "line": 4,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 5,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 6,
+          "code": "#include <string.h>"
+        }
+      ],
+      "related_macros": [
+        {
+          "line_range": [
+            2,
+            2
+          ],
+          "code": "#define SENTINEL_LEVEL1_CTF_INPUT_H"
+        }
+      ],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 10,
+          "code": "unsigned char *buf = NULL;"
+        },
+        {
+          "line": 11,
+          "code": "size_t cap = 0;"
+        },
+        {
+          "line": 12,
+          "code": "size_t len = 0;"
+        },
+        {
+          "line": 34,
+          "code": "const char *fallback = \"SC\";"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "double_free_alias.c",
+          "line_range": [
+            6,
+            30
+          ]
+        },
+        {
+          "function": "main",
+          "file": "double_free_cleanup.c",
+          "line_range": [
+            16,
+            35
+          ]
+        },
+        {
+          "function": "main",
+          "file": "double_free_direct.c",
+          "line_range": [
+            6,
+            27
+          ]
+        },
+        {
+          "function": "update_profile",
+          "file": "double_free_error_path.c",
+          "line_range": [
+            2,
+            20
+          ]
+        },
+        {
+          "function": "main",
+          "file": "uaf_array_slot.c",
+          "line_range": [
+            15,
+            35
+          ]
+        },
+        {
+          "function": "main",
+          "file": "uaf_cross_function.c",
+          "line_range": [
+            22,
+            38
+          ]
+        },
+        {
+          "function": "run_note_machine",
+          "file": "uaf_direct.c",
+          "line_range": [
+            6,
+            23
+          ]
+        },
+        {
+          "function": "main",
+          "file": "uaf_struct_field.c",
+          "line_range": [
+            21,
+            40
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: ctf_input.h */\n/* Target Function: has_byte */\n/* Line Range: 43-51 */\n/* Risk Keywords: none */\n/* Upstream Callers: main, main, main, update_profile, main, main, run_note_machine, main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n/* ===== Related Macros ===== */\n#define SENTINEL_LEVEL1_CTF_INPUT_H\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nunsigned char *buf = NULL;\nsize_t cap = 0;\nsize_t len = 0;\nconst char *fallback = \"SC\";\n\n/* ===== Target Function Body ===== */\n\nstatic int has_byte(const unsigned char *data, size_t len, unsigned char needle) {\n    for (size_t i = 0; i < len; i++) {\n        if (data[i] == needle) {\n            return 1;\n        }\n    }\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0002",
+      "target_file": "ctf_input.h",
+      "target_function": "byte_or",
+      "line_range": [
+        52,
+        58
+      ],
+      "related_includes": [
+        {
+          "line": 4,
+          "code": "#include <stdio.h>"
+        },
+        {
+          "line": 5,
+          "code": "#include <stdlib.h>"
+        },
+        {
+          "line": 6,
+          "code": "#include <string.h>"
+        }
+      ],
+      "related_macros": [
+        {
+          "line_range": [
+            2,
+            2
+          ],
+          "code": "#define SENTINEL_LEVEL1_CTF_INPUT_H"
+        }
+      ],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 10,
+          "code": "unsigned char *buf = NULL;"
+        },
+        {
+          "line": 11,
+          "code": "size_t cap = 0;"
+        },
+        {
+          "line": 12,
+          "code": "size_t len = 0;"
+        },
+        {
+          "line": 34,
+          "code": "const char *fallback = \"SC\";"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "heap_overflow_memcpy_len.c",
+          "line_range": [
+            12,
+            27
+          ]
+        },
+        {
+          "function": "main",
+          "file": "stack_overflow_index.c",
+          "line_range": [
+            7,
+            19
+          ]
+        },
+        {
+          "function": "main",
+          "file": "stack_overflow_loop.c",
+          "line_range": [
+            9,
+            24
+          ]
+        },
+        {
+          "function": "main",
+          "file": "uaf_array_slot.c",
+          "line_range": [
+            15,
+            35
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: ctf_input.h */\n/* Target Function: byte_or */\n/* Line Range: 52-58 */\n/* Risk Keywords: none */\n/* Upstream Callers: main, main, main, main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n/* ===== Related Macros ===== */\n#define SENTINEL_LEVEL1_CTF_INPUT_H\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nunsigned char *buf = NULL;\nsize_t cap = 0;\nsize_t len = 0;\nconst char *fallback = \"SC\";\n\n/* ===== Target Function Body ===== */\n\nstatic size_t byte_or(const unsigned char *data, size_t len, size_t idx, size_t fallback) {\n    if (idx < len) {\n        return (size_t)data[idx];\n    }\n    return fallback;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0003",
+      "target_file": "double_free_alias.c",
+      "target_function": "release_alias",
+      "line_range": [
+        2,
+        5
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "double_free_alias.c",
+          "line_range": [
+            6,
+            30
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_alias.c */\n/* Target Function: release_alias */\n/* Line Range: 2-5 */\n/* Risk Keywords: free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void release_alias(char *alias) {\n    free(alias);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0004",
+      "target_file": "double_free_alias.c",
+      "target_function": "main",
+      "line_range": [
+        6,
+        30
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "has_byte",
+        "release_alias"
+      ],
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_alias.c */\n/* Target Function: main */\n/* Line Range: 6-30 */\n/* Risk Keywords: malloc, free */\n/* Upstream Callers: none */\n/* Callees: has_byte, release_alias */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    char *owner = (char *)malloc(40);\n    if (!owner) {\n        free(data);\n        return 1;\n    }\n\n    char *slot_alias = owner;\n    if (has_byte(data, len, 'A')) {\n        release_alias(slot_alias);\n    }\n    if (has_byte(data, len, 'O')) {\n        free(owner);\n    }\n\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0005",
+      "target_file": "double_free_cleanup.c",
+      "target_function": "chunk_create",
+      "line_range": [
+        7,
+        11
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            6
+          ],
+          "code": "struct Chunk {\n    char *data;\n    size_t size;\n};"
+        },
+        {
+          "line_range": [
+            24,
+            24
+          ],
+          "code": "struct Chunk chunk;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char *data;"
+        },
+        {
+          "line": 5,
+          "code": "size_t size;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "double_free_cleanup.c",
+          "line_range": [
+            16,
+            35
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_cleanup.c */\n/* Target Function: chunk_create */\n/* Line Range: 7-11 */\n/* Risk Keywords: malloc */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Chunk {\n    char *data;\n    size_t size;\n};\nstruct Chunk chunk;\n\n/* ===== Related Global Variables ===== */\nchar *data;\nsize_t size;\n\n/* ===== Target Function Body ===== */\n\nstatic void chunk_create(struct Chunk *chunk, size_t size) {\n    chunk->data = (char *)malloc(size);\n    chunk->size = size;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0006",
+      "target_file": "double_free_cleanup.c",
+      "target_function": "chunk_delete",
+      "line_range": [
+        12,
+        15
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            6
+          ],
+          "code": "struct Chunk {\n    char *data;\n    size_t size;\n};"
+        },
+        {
+          "line_range": [
+            24,
+            24
+          ],
+          "code": "struct Chunk chunk;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char *data;"
+        },
+        {
+          "line": 5,
+          "code": "size_t size;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "double_free_cleanup.c",
+          "line_range": [
+            16,
+            35
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_cleanup.c */\n/* Target Function: chunk_delete */\n/* Line Range: 12-15 */\n/* Risk Keywords: free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Chunk {\n    char *data;\n    size_t size;\n};\nstruct Chunk chunk;\n\n/* ===== Related Global Variables ===== */\nchar *data;\nsize_t size;\n\n/* ===== Target Function Body ===== */\n\nstatic void chunk_delete(struct Chunk *chunk) {\n    free(chunk->data);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0007",
+      "target_file": "double_free_cleanup.c",
+      "target_function": "main",
+      "line_range": [
+        16,
+        35
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            6
+          ],
+          "code": "struct Chunk {\n    char *data;\n    size_t size;\n};"
+        },
+        {
+          "line_range": [
+            24,
+            24
+          ],
+          "code": "struct Chunk chunk;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char *data;"
+        },
+        {
+          "line": 5,
+          "code": "size_t size;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "chunk_create",
+        "chunk_delete",
+        "has_byte"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_cleanup.c */\n/* Target Function: main */\n/* Line Range: 16-35 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: chunk_create, chunk_delete, has_byte */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Chunk {\n    char *data;\n    size_t size;\n};\nstruct Chunk chunk;\n\n/* ===== Related Global Variables ===== */\nchar *data;\nsize_t size;\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    struct Chunk chunk;\n    chunk_create(&chunk, 32);\n    if (has_byte(data, len, '1')) {\n        chunk_delete(&chunk);\n    }\n    if (has_byte(data, len, '2')) {\n        chunk_delete(&chunk);\n    }\n\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0008",
+      "target_file": "double_free_direct.c",
+      "target_function": "delete_note",
+      "line_range": [
+        2,
+        5
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "double_free_direct.c",
+          "line_range": [
+            6,
+            27
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_direct.c */\n/* Target Function: delete_note */\n/* Line Range: 2-5 */\n/* Risk Keywords: free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void delete_note(char *note) {\n    free(note);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0009",
+      "target_file": "double_free_direct.c",
+      "target_function": "main",
+      "line_range": [
+        6,
+        27
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "delete_note",
+        "has_byte"
+      ],
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_direct.c */\n/* Target Function: main */\n/* Line Range: 6-27 */\n/* Risk Keywords: malloc, free */\n/* Upstream Callers: none */\n/* Callees: delete_note, has_byte */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    char *note = (char *)malloc(48);\n    if (!note) {\n        free(data);\n        return 1;\n    }\n\n    delete_note(note);\n    if (has_byte(data, len, 'D')) {\n        delete_note(note);\n    }\n\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0010",
+      "target_file": "double_free_error_path.c",
+      "target_function": "update_profile",
+      "line_range": [
+        2,
+        20
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "double_free_error_path.c",
+          "line_range": [
+            21,
+            32
+          ]
+        }
+      ],
+      "callee_functions": [
+        "has_byte"
+      ],
+      "risk_keywords": [
+        "malloc",
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_error_path.c */\n/* Target Function: update_profile */\n/* Line Range: 2-20 */\n/* Risk Keywords: malloc, free */\n/* Upstream Callers: main */\n/* Callees: has_byte */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic int update_profile(const unsigned char *data, size_t len) {\n    char *profile = (char *)malloc(64);\n    if (!profile) {\n        return -1;\n    }\n\n    if (has_byte(data, len, '!')) {\n        free(profile);\n        goto reject;\n    }\n\n    free(profile);\n    return 0;\n\nreject:\n    free(profile);\n    return -2;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0011",
+      "target_file": "double_free_error_path.c",
+      "target_function": "main",
+      "line_range": [
+        21,
+        32
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "update_profile"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: double_free_error_path.c */\n/* Target Function: main */\n/* Line Range: 21-32 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: update_profile */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    (void)update_profile(data, len);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0012",
+      "target_file": "format_string_fprintf.c",
+      "target_function": "log_event",
+      "line_range": [
+        2,
+        5
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "format_string_fprintf.c",
+          "line_range": [
+            6,
+            17
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "fprintf"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_fprintf.c */\n/* Target Function: log_event */\n/* Line Range: 2-5 */\n/* Risk Keywords: fprintf */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void log_event(FILE *out, const char *event) {\n    fprintf(out, event);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0013",
+      "target_file": "format_string_fprintf.c",
+      "target_function": "main",
+      "line_range": [
+        6,
+        17
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "log_event"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_fprintf.c */\n/* Target Function: main */\n/* Line Range: 6-17 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: log_event */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    log_event(stdout, (const char *)data);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0014",
+      "target_file": "format_string_printf.c",
+      "target_function": "say",
+      "line_range": [
+        2,
+        5
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "format_string_printf.c",
+          "line_range": [
+            6,
+            17
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "printf"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_printf.c */\n/* Target Function: say */\n/* Line Range: 2-5 */\n/* Risk Keywords: printf */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void say(const char *msg) {\n    printf(msg);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0015",
+      "target_file": "format_string_printf.c",
+      "target_function": "main",
+      "line_range": [
+        6,
+        17
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "say"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_printf.c */\n/* Target Function: main */\n/* Line Range: 6-17 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: say */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    say((const char *)data);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0016",
+      "target_file": "format_string_snprintf.c",
+      "target_function": "render",
+      "line_range": [
+        2,
+        5
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "format_string_snprintf.c",
+          "line_range": [
+            6,
+            19
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "snprintf"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_snprintf.c */\n/* Target Function: render */\n/* Line Range: 2-5 */\n/* Risk Keywords: snprintf */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void render(char *dst, size_t dst_len, const char *fmt) {\n    snprintf(dst, dst_len, fmt);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0017",
+      "target_file": "format_string_snprintf.c",
+      "target_function": "main",
+      "line_range": [
+        6,
+        19
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "render"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_snprintf.c */\n/* Target Function: main */\n/* Line Range: 6-19 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: render */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    char out[64];\n    render(out, sizeof(out), (const char *)data);\n    puts(out);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0018",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "tiny_syslog",
+      "line_range": [
+        2,
+        6
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "dispatch_log",
+          "file": "format_string_syslog_like.c",
+          "line_range": [
+            7,
+            10
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "printf"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_syslog_like.c */\n/* Target Function: tiny_syslog */\n/* Line Range: 2-6 */\n/* Risk Keywords: printf */\n/* Upstream Callers: dispatch_log */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void tiny_syslog(int level, const char *fmt) {\n    (void)level;\n    printf(fmt);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0019",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "dispatch_log",
+      "line_range": [
+        7,
+        10
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "format_string_syslog_like.c",
+          "line_range": [
+            11,
+            22
+          ]
+        }
+      ],
+      "callee_functions": [
+        "tiny_syslog"
+      ],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_syslog_like.c */\n/* Target Function: dispatch_log */\n/* Line Range: 7-10 */\n/* Risk Keywords: none */\n/* Upstream Callers: main */\n/* Callees: tiny_syslog */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void dispatch_log(const char *user_line) {\n    tiny_syslog(3, user_line);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0020",
+      "target_file": "format_string_syslog_like.c",
+      "target_function": "main",
+      "line_range": [
+        11,
+        22
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "dispatch_log"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: format_string_syslog_like.c */\n/* Target Function: main */\n/* Line Range: 11-22 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: dispatch_log */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    dispatch_log((const char *)data);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0021",
+      "target_file": "heap_overflow_integer_trunc.c",
+      "target_function": "resize_then_write",
+      "line_range": [
+        3,
+        13
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        },
+        {
+          "line": 2,
+          "code": "#include <stdint.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "heap_overflow_integer_trunc.c",
+          "line_range": [
+            14,
+            25
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "memcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_integer_trunc.c */\n/* Target Function: resize_then_write */\n/* Line Range: 3-13 */\n/* Risk Keywords: malloc, free, memcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n#include <stdint.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void resize_then_write(const unsigned char *msg, size_t len) {\n    unsigned char small_len = (unsigned char)len;\n    char *buf = (char *)malloc(small_len);\n    if (!buf) {\n        return;\n    }\n\n    memcpy(buf, msg, len);\n    free(buf);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0022",
+      "target_file": "heap_overflow_integer_trunc.c",
+      "target_function": "main",
+      "line_range": [
+        14,
+        25
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        },
+        {
+          "line": 2,
+          "code": "#include <stdint.h>"
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "resize_then_write"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_integer_trunc.c */\n/* Target Function: main */\n/* Line Range: 14-25 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: resize_then_write */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n#include <stdint.h>\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    resize_then_write(data, len);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0023",
+      "target_file": "heap_overflow_memcpy_len.c",
+      "target_function": "edit_chunk",
+      "line_range": [
+        2,
+        11
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "heap_overflow_memcpy_len.c",
+          "line_range": [
+            12,
+            27
+          ]
+        },
+        {
+          "function": "main",
+          "file": "uaf_cross_function.c",
+          "line_range": [
+            22,
+            38
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "memcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_memcpy_len.c */\n/* Target Function: edit_chunk */\n/* Line Range: 2-11 */\n/* Risk Keywords: malloc, free, memcpy */\n/* Upstream Callers: main, main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void edit_chunk(const unsigned char *packet, size_t packet_len) {\n    char *chunk = (char *)malloc(24);\n    if (!chunk) {\n        return;\n    }\n\n    memcpy(chunk, packet, packet_len);\n    free(chunk);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0024",
+      "target_file": "heap_overflow_memcpy_len.c",
+      "target_function": "main",
+      "line_range": [
+        12,
+        27
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "byte_or",
+        "edit_chunk"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_memcpy_len.c */\n/* Target Function: main */\n/* Line Range: 12-27 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: byte_or, edit_chunk */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    size_t copy_len = byte_or(data, len, 0, 64);\n    if (copy_len > len) {\n        copy_len = len;\n    }\n    edit_chunk(data, copy_len);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0025",
+      "target_file": "heap_overflow_off_by_one.c",
+      "target_function": "rename_chunk",
+      "line_range": [
+        2,
+        12
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "heap_overflow_off_by_one.c",
+          "line_range": [
+            13,
+            24
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "memcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_off_by_one.c */\n/* Target Function: rename_chunk */\n/* Line Range: 2-12 */\n/* Risk Keywords: malloc, free, memcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void rename_chunk(const unsigned char *data, size_t len) {\n    size_t name_len = len > 0 ? len : 1;\n    char *name = (char *)malloc(name_len);\n    if (!name) {\n        return;\n    }\n\n    memcpy(name, data, name_len + 1);\n    free(name);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0026",
+      "target_file": "heap_overflow_off_by_one.c",
+      "target_function": "main",
+      "line_range": [
+        13,
+        24
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "rename_chunk"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_off_by_one.c */\n/* Target Function: main */\n/* Line Range: 13-24 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: rename_chunk */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    rename_chunk(data, len);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0027",
+      "target_file": "heap_overflow_strcpy.c",
+      "target_function": "create_and_edit",
+      "line_range": [
+        2,
+        11
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "heap_overflow_strcpy.c",
+          "line_range": [
+            12,
+            23
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "strcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_strcpy.c */\n/* Target Function: create_and_edit */\n/* Line Range: 2-11 */\n/* Risk Keywords: malloc, free, strcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void create_and_edit(const unsigned char *data, size_t len) {\n    char *name = (char *)malloc(16);\n    if (!name) {\n        return;\n    }\n\n    strcpy(name, (const char *)data);\n    free(name);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0028",
+      "target_file": "heap_overflow_strcpy.c",
+      "target_function": "main",
+      "line_range": [
+        12,
+        23
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "create_and_edit"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: heap_overflow_strcpy.c */\n/* Target Function: main */\n/* Line Range: 12-23 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: create_and_edit */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    create_and_edit(data, len);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0029",
+      "target_file": "stack_overflow_index.c",
+      "target_function": "set_checkpoint",
+      "line_range": [
+        2,
+        6
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "stack_overflow_index.c",
+          "line_range": [
+            7,
+            19
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_index.c */\n/* Target Function: set_checkpoint */\n/* Line Range: 2-6 */\n/* Risk Keywords: none */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void set_checkpoint(int idx) {\n    int checkpoints[4] = {0, 1, 2, 3};\n    checkpoints[idx] = 31337;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0030",
+      "target_file": "stack_overflow_index.c",
+      "target_function": "main",
+      "line_range": [
+        7,
+        19
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "byte_or",
+        "set_checkpoint"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_index.c */\n/* Target Function: main */\n/* Line Range: 7-19 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: byte_or, set_checkpoint */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    int idx = (int)byte_or(data, len, 0, 8);\n    set_checkpoint(idx);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0031",
+      "target_file": "stack_overflow_loop.c",
+      "target_function": "copy_loop",
+      "line_range": [
+        2,
+        8
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "stack_overflow_loop.c",
+          "line_range": [
+            9,
+            24
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_loop.c */\n/* Target Function: copy_loop */\n/* Line Range: 2-8 */\n/* Risk Keywords: none */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void copy_loop(const unsigned char *src, size_t len) {\n    char dst[10];\n    for (size_t i = 0; i <= len; i++) {\n        dst[i] = (char)src[i % len];\n    }\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0032",
+      "target_file": "stack_overflow_loop.c",
+      "target_function": "main",
+      "line_range": [
+        9,
+        24
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "byte_or",
+        "copy_loop"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_loop.c */\n/* Target Function: main */\n/* Line Range: 9-24 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: byte_or, copy_loop */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    size_t copy_len = byte_or(data, len, 0, 16);\n    if (copy_len < 12) {\n        copy_len = len > 12 ? 12 : len;\n    }\n    copy_loop(data, copy_len);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0033",
+      "target_file": "stack_overflow_sprintf.c",
+      "target_function": "make_banner",
+      "line_range": [
+        2,
+        6
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "stack_overflow_sprintf.c",
+          "line_range": [
+            7,
+            18
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "sprintf"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_sprintf.c */\n/* Target Function: make_banner */\n/* Line Range: 2-6 */\n/* Risk Keywords: sprintf */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void make_banner(const unsigned char *name) {\n    char banner[16];\n    sprintf(banner, \"player:%s\", (const char *)name);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0034",
+      "target_file": "stack_overflow_sprintf.c",
+      "target_function": "main",
+      "line_range": [
+        7,
+        18
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "make_banner"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_sprintf.c */\n/* Target Function: main */\n/* Line Range: 7-18 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: make_banner */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    make_banner(data);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0035",
+      "target_file": "stack_overflow_strcpy.c",
+      "target_function": "set_player_name",
+      "line_range": [
+        2,
+        6
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "stack_overflow_strcpy.c",
+          "line_range": [
+            7,
+            18
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "strcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_strcpy.c */\n/* Target Function: set_player_name */\n/* Line Range: 2-6 */\n/* Risk Keywords: strcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void set_player_name(const unsigned char *data) {\n    char name[16];\n    strcpy(name, (const char *)data);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0036",
+      "target_file": "stack_overflow_strcpy.c",
+      "target_function": "main",
+      "line_range": [
+        7,
+        18
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "set_player_name"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: stack_overflow_strcpy.c */\n/* Target Function: main */\n/* Line Range: 7-18 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: set_player_name */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    set_player_name(data);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0037",
+      "target_file": "uaf_array_slot.c",
+      "target_function": "create_slot",
+      "line_range": [
+        2,
+        10
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "uaf_array_slot.c",
+          "line_range": [
+            15,
+            35
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "memcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_array_slot.c */\n/* Target Function: create_slot */\n/* Line Range: 2-10 */\n/* Risk Keywords: malloc, memcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void create_slot(char **slots, int idx, const unsigned char *data, size_t len) {\n    slots[idx] = (char *)malloc(32);\n    if (slots[idx]) {\n        size_t copy_len = len < 31 ? len : 31;\n        memcpy(slots[idx], data, copy_len);\n        slots[idx][copy_len] = '\\0';\n    }\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0038",
+      "target_file": "uaf_array_slot.c",
+      "target_function": "delete_slot",
+      "line_range": [
+        11,
+        14
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "uaf_array_slot.c",
+          "line_range": [
+            15,
+            35
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_array_slot.c */\n/* Target Function: delete_slot */\n/* Line Range: 11-14 */\n/* Risk Keywords: free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nstatic void delete_slot(char **slots, int idx) {\n    free(slots[idx]);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0039",
+      "target_file": "uaf_array_slot.c",
+      "target_function": "main",
+      "line_range": [
+        15,
+        35
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "byte_or",
+        "create_slot",
+        "delete_slot",
+        "has_byte"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_array_slot.c */\n/* Target Function: main */\n/* Line Range: 15-35 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: byte_or, create_slot, delete_slot, has_byte */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\n/* none */\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    char *slots[4] = {0};\n    int idx = (int)(byte_or(data, len, 0, 1) % 4);\n    create_slot(slots, idx, data, len);\n    if (has_byte(data, len, 'D')) {\n        delete_slot(slots, idx);\n    }\n    if (has_byte(data, len, 'V') && slots[idx]) {\n        puts(slots[idx]);\n    }\n\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0040",
+      "target_file": "uaf_cross_function.c",
+      "target_function": "delete_chunk",
+      "line_range": [
+        12,
+        15
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 6,
+          "code": "size_t copy_len = len < 31 ? len : 31;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "uaf_cross_function.c",
+          "line_range": [
+            22,
+            38
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_cross_function.c */\n/* Target Function: delete_chunk */\n/* Line Range: 12-15 */\n/* Risk Keywords: free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t copy_len = len < 31 ? len : 31;\n\n/* ===== Target Function Body ===== */\n\nstatic void delete_chunk(char *chunk) {\n    free(chunk);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0041",
+      "target_file": "uaf_cross_function.c",
+      "target_function": "edit_chunk",
+      "line_range": [
+        16,
+        21
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 6,
+          "code": "size_t copy_len = len < 31 ? len : 31;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "heap_overflow_memcpy_len.c",
+          "line_range": [
+            12,
+            27
+          ]
+        },
+        {
+          "function": "main",
+          "file": "uaf_cross_function.c",
+          "line_range": [
+            22,
+            38
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "memcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_cross_function.c */\n/* Target Function: edit_chunk */\n/* Line Range: 16-21 */\n/* Risk Keywords: memcpy */\n/* Upstream Callers: main, main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t copy_len = len < 31 ? len : 31;\n\n/* ===== Target Function Body ===== */\n\nstatic void edit_chunk(char *chunk, const unsigned char *data, size_t len) {\n    size_t copy_len = len < 31 ? len : 31;\n    memcpy(chunk, data, copy_len);\n    chunk[copy_len] = '\\0';\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0042",
+      "target_file": "uaf_cross_function.c",
+      "target_function": "main",
+      "line_range": [
+        22,
+        38
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [],
+      "related_globals": [
+        {
+          "line": 6,
+          "code": "size_t copy_len = len < 31 ? len : 31;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "delete_chunk",
+        "edit_chunk",
+        "has_byte"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_cross_function.c */\n/* Target Function: main */\n/* Line Range: 22-38 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: delete_chunk, edit_chunk, has_byte */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\n/* none */\n\n/* ===== Related Global Variables ===== */\nsize_t copy_len = len < 31 ? len : 31;\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    char *chunk = create_chunk(data, len);\n    if (has_byte(data, len, 'X')) {\n        delete_chunk(chunk);\n        edit_chunk(chunk, data, len);\n    }\n\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0043",
+      "target_file": "uaf_direct.c",
+      "target_function": "run_note_machine",
+      "line_range": [
+        6,
+        23
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            5
+          ],
+          "code": "struct Note {\n    char text[32];\n};"
+        },
+        {
+          "line_range": [
+            8,
+            8
+          ],
+          "code": "struct Note *note = NULL;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char text[32];"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "uaf_direct.c",
+          "line_range": [
+            24,
+            34
+          ]
+        }
+      ],
+      "callee_functions": [
+        "has_byte"
+      ],
+      "risk_keywords": [
+        "malloc",
+        "free",
+        "memcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_direct.c */\n/* Target Function: run_note_machine */\n/* Line Range: 6-23 */\n/* Risk Keywords: malloc, free, memcpy */\n/* Upstream Callers: main */\n/* Callees: has_byte */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Note {\n    char text[32];\n};\nstruct Note *note = NULL;\n\n/* ===== Related Global Variables ===== */\nchar text[32];\n\n/* ===== Target Function Body ===== */\n\nstatic void run_note_machine(const unsigned char *data, size_t len) {\n    struct Note *note = NULL;\n\n    if (has_byte(data, len, 'C')) {\n        note = (struct Note *)malloc(sizeof(struct Note));\n        if (!note) {\n            return;\n        }\n        memcpy(note->text, \"created\", 8);\n    }\n    if (has_byte(data, len, 'D')) {\n        free(note);\n    }\n    if (has_byte(data, len, 'S')) {\n        puts(note->text);\n    }\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0044",
+      "target_file": "uaf_direct.c",
+      "target_function": "main",
+      "line_range": [
+        24,
+        34
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            5
+          ],
+          "code": "struct Note {\n    char text[32];\n};"
+        },
+        {
+          "line_range": [
+            8,
+            8
+          ],
+          "code": "struct Note *note = NULL;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char text[32];"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "run_note_machine"
+      ],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_direct.c */\n/* Target Function: main */\n/* Line Range: 24-34 */\n/* Risk Keywords: free */\n/* Upstream Callers: none */\n/* Callees: run_note_machine */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Note {\n    char text[32];\n};\nstruct Note *note = NULL;\n\n/* ===== Related Global Variables ===== */\nchar text[32];\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n    run_note_machine(data, len);\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0045",
+      "target_file": "uaf_struct_field.c",
+      "target_function": "player_init",
+      "line_range": [
+        7,
+        16
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            6
+          ],
+          "code": "struct Player {\n    char *memo;\n    int score;\n};"
+        },
+        {
+          "line_range": [
+            29,
+            29
+          ],
+          "code": "struct Player p;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char *memo;"
+        },
+        {
+          "line": 5,
+          "code": "int score;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "uaf_struct_field.c",
+          "line_range": [
+            21,
+            40
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "malloc",
+        "memcpy"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_struct_field.c */\n/* Target Function: player_init */\n/* Line Range: 7-16 */\n/* Risk Keywords: malloc, memcpy */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Player {\n    char *memo;\n    int score;\n};\nstruct Player p;\n\n/* ===== Related Global Variables ===== */\nchar *memo;\nint score;\n\n/* ===== Target Function Body ===== */\n\nstatic void player_init(struct Player *p, const unsigned char *data, size_t len) {\n    p->memo = (char *)malloc(24);\n    p->score = 100;\n    if (p->memo) {\n        size_t copy_len = len < 23 ? len : 23;\n        memcpy(p->memo, data, copy_len);\n        p->memo[copy_len] = '\\0';\n    }\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0046",
+      "target_file": "uaf_struct_field.c",
+      "target_function": "player_reset",
+      "line_range": [
+        17,
+        20
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            6
+          ],
+          "code": "struct Player {\n    char *memo;\n    int score;\n};"
+        },
+        {
+          "line_range": [
+            29,
+            29
+          ],
+          "code": "struct Player p;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char *memo;"
+        },
+        {
+          "line": 5,
+          "code": "int score;"
+        }
+      ],
+      "call_chain_upstream": [
+        {
+          "function": "main",
+          "file": "uaf_struct_field.c",
+          "line_range": [
+            21,
+            40
+          ]
+        }
+      ],
+      "callee_functions": [],
+      "risk_keywords": [
+        "free"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_struct_field.c */\n/* Target Function: player_reset */\n/* Line Range: 17-20 */\n/* Risk Keywords: free */\n/* Upstream Callers: main */\n/* Callees: none */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Player {\n    char *memo;\n    int score;\n};\nstruct Player p;\n\n/* ===== Related Global Variables ===== */\nchar *memo;\nint score;\n\n/* ===== Target Function Body ===== */\n\nstatic void player_reset(struct Player *p) {\n    free(p->memo);\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    },
+    {
+      "slice_id": "SLICE-0047",
+      "target_file": "uaf_struct_field.c",
+      "target_function": "main",
+      "line_range": [
+        21,
+        40
+      ],
+      "related_includes": [
+        {
+          "line": 1,
+          "code": "#include \"ctf_input.h\""
+        }
+      ],
+      "related_macros": [],
+      "related_types": [
+        {
+          "line_range": [
+            3,
+            6
+          ],
+          "code": "struct Player {\n    char *memo;\n    int score;\n};"
+        },
+        {
+          "line_range": [
+            29,
+            29
+          ],
+          "code": "struct Player p;"
+        }
+      ],
+      "related_globals": [
+        {
+          "line": 4,
+          "code": "char *memo;"
+        },
+        {
+          "line": 5,
+          "code": "int score;"
+        }
+      ],
+      "call_chain_upstream": [],
+      "callee_functions": [
+        "has_byte",
+        "player_init",
+        "player_reset"
+      ],
+      "risk_keywords": [
+        "free",
+        "printf"
+      ],
+      "code": "/* ===== SENTINEL Agent B Slice ===== */\n/* File: uaf_struct_field.c */\n/* Target Function: main */\n/* Line Range: 21-40 */\n/* Risk Keywords: free, printf */\n/* Upstream Callers: none */\n/* Callees: has_byte, player_init, player_reset */\n\n/* ===== Related Includes ===== */\n#include \"ctf_input.h\"\n\n/* ===== Related Macros ===== */\n/* none */\n\n/* ===== Related Types typedef / struct / enum ===== */\nstruct Player {\n    char *memo;\n    int score;\n};\nstruct Player p;\n\n/* ===== Related Global Variables ===== */\nchar *memo;\nint score;\n\n/* ===== Target Function Body ===== */\n\nint main(int argc, char **argv) {\n    size_t len = 0;\n    unsigned char *data = read_challenge_input(argc, argv, &len);\n    if (!data) {\n        return 1;\n    }\n\n    struct Player p;\n    player_init(&p, data, len);\n    if (has_byte(data, len, 'R')) {\n        player_reset(&p);\n    }\n    if (has_byte(data, len, 'P')) {\n        printf(\"%s:%d\\n\", p.memo, p.score);\n    }\n\n    free(data);\n    return 0;\n}",
+      "notes": "Part 1 slice: function body + file-level context + simple call graph + memory-risk keywords."
+    }
+  ],
+  "summary": {
+    "total_slices": 47,
+    "total_source_files": 21,
+    "slices_with_risk_keywords": 42
+  }
+}

@@ -279,6 +279,8 @@ _VULN_TYPE_LABELS = {
     "uaf": "UAF",
     "use-after-free": "UAF",
     "use_after_free": "UAF",
+    "buffer_overflow": "Buffer Overflow",
+    "buffer-overflow": "Buffer Overflow",
     "heap_overflow": "Heap Overflow",
     "double_free": "Double Free",
     "stack_overflow": "Stack Overflow",

@@ -1,0 +1,131 @@
+{
+  "agent": "Agent D - LLM Audit and Cross-Check Agent",
+  "audit_mode": "rule_fallback_only",
+  "static_findings": [
+    {
+      "finding_id": "FINDING-0001",
+      "hypothesis_id": "HYP-0001",
+      "source_slice_id": "SLICE-0009",
+      "file": "src\\main.c",
+      "function": "main",
+      "line_range": [
+        33,
+        39
+      ],
+      "cwe_id": "CWE-415",
+      "vulnerability_type": "Double Free",
+      "risk_level": "high",
+      "trigger_condition": "Pointer 'buf' is freed more than once without reset or reallocation.",
+      "evidence": [
+        "First free at line 33.",
+        "Second free at line 39: free(buf);"
+      ],
+      "evidence_lines": [
+        {
+          "line": 33,
+          "description": "First free at line 33."
+        },
+        {
+          "line": 39,
+          "description": "Second free at line 39: free(buf);"
+        }
+      ],
+      "cross_function_trace": [
+        "main -> json_free: callee_frees_argument"
+      ],
+      "dataflow_trace": [
+        "argv -> format",
+        "argv -> free",
+        "argv -> pointer_access",
+        "file_read -> format",
+        "suspect_lines=[33, 39]",
+        "signals=double_free",
+        "Pointer 'buf' is freed more than once without reset or reallocation."
+      ],
+      "confidence": 0.78,
+      "suggested_fix": "Set buf to NULL after free and enforce single ownership.",
+      "static_status": "suspected",
+      "audit_source": "rule_fallback",
+      "hypothesis_reason": "Pointer 'buf' is freed more than once without reset or reallocation.",
+      "hypothesis_confidence": 0.78,
+      "quality_control": {
+        "original_confidence": 0.78,
+        "calibrated_confidence": 0.78,
+        "confidence_adjusted": false,
+        "rule_consistency": "rule_only",
+        "semantic_consistency": "consistent",
+        "warnings": [],
+        "fallback_reason": "llm_not_configured"
+      }
+    }
+  ],
+  "audited_hypotheses": [
+    {
+      "hypothesis_id": "HYP-0001",
+      "source_slice_id": "SLICE-0009",
+      "file": "src\\main.c",
+      "function": "main",
+      "cwe_candidates": [
+        "CWE-415"
+      ]
+    }
+  ],
+  "llm_errors": [],
+  "quality_events": [],
+  "quality_summary": {
+    "total_quality_events": 0,
+    "json_retry_events": 0,
+    "confidence_adjusted_count": 0,
+    "consistent_with_rule_count": 0,
+    "cwe_conflict_count": 0,
+    "llm_error_count": 0
+  },
+  "summary": {
+    "total_hypotheses": 1,
+    "audited_hypotheses": 1,
+    "total_findings": 1,
+    "high_risk_findings": 1,
+    "llm_available": false,
+    "llm_error_count": 0,
+    "llm_findings": 0,
+    "rule_fallback_findings": 1
+  },
+  "vulnerabilities": [
+    {
+      "vuln_type": "double_free",
+      "vuln_type_display": "Double Free",
+      "file_path": "src\\main.c",
+      "line_number": 33,
+      "code_context": "First free at line 33.\nSecond free at line 39: free(buf);",
+      "trigger_cond": "Pointer 'buf' is freed more than once without reset or reallocation.",
+      "fix_advice": "Set buf to NULL after free and enforce single ownership.",
+      "confidence": 0.78,
+      "source_slice_id": "SLICE-0009",
+      "hypothesis_id": "HYP-0001",
+      "finding_id": "FINDING-0001",
+      "trace_summary": "main -> json_free: callee_frees_argument",
+      "dynamic_status": "untriggered",
+      "final_status": "need_review"
+    }
+  ],
+  "integration": {
+    "vulnerabilities": [
+      {
+        "vuln_type": "double_free",
+        "vuln_type_display": "Double Free",
+        "file_path": "src\\main.c",
+        "line_number": 33,
+        "code_context": "First free at line 33.\nSecond free at line 39: free(buf);",
+        "trigger_cond": "Pointer 'buf' is freed more than once without reset or reallocation.",
+        "fix_advice": "Set buf to NULL after free and enforce single ownership.",
+        "confidence": 0.78,
+        "source_slice_id": "SLICE-0009",
+        "hypothesis_id": "HYP-0001",
+        "finding_id": "FINDING-0001",
+        "trace_summary": "main -> json_free: callee_frees_argument",
+        "dynamic_status": "untriggered",
+        "final_status": "need_review"
+      }
+    ]
+  }
+}

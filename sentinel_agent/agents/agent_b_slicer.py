@@ -21,7 +21,7 @@ Part 1 upgraded version:
 
 FUNCTION_SIGNATURE_PATTERN = re.compile(
     r'^\s*(?:static\s+)?(?:inline\s+)?(?:extern\s+)?'
-    r'(?:[A-Za-z_][\w\s\*\(\)]*?)\s+'
+    r'(?:[A-Za-z_][\w\s\*\(\)]*?|\*)\s*'
     r'([A-Za-z_][A-Za-z0-9_]*)\s*\([^;]*\)\s*\{'
 )
 
@@ -62,6 +62,11 @@ PRIORITY_ORDER = {"high": 3, "medium": 2, "low": 1}
 CONTROL_KEYWORDS = {
     "if", "for", "while", "switch", "return", "sizeof"
 }
+
+HEAP_WRITE_PATTERN = re.compile(
+    r'\b([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]+\])?\s*(?:\+\+|--|\+=|-=|=)'
+)
+SIZE_CALC_PATTERN = re.compile(r'\b(strlen|sizeof|encode_utf8)\s*\(')
 
 
 def run_agent_b(source_files):
@@ -515,6 +520,12 @@ def score_slice_risk(function_obj, risk_keywords, cross_function_context=None):
     effects = function_obj.get("effect_summary", {})
     if any(effects.get(key) for key in ("frees_param", "frees_field", "writes_param", "stores_alias", "uses_after_call")):
         score += 2
+    if effects.get("allocates") and effects.get("buffer_writes"):
+        score += 4
+    if effects.get("suspicious_size_calculations"):
+        score += min(len(effects["suspicious_size_calculations"]), 3)
+    if "unsafe_copy_sink" in infer_dataflow_hints(function_obj):
+        score += 2
     if cross_function_context:
         score += min(len(cross_function_context), 4)
     return score
@@ -700,13 +711,27 @@ def infer_effect_summary(function_obj):
     frees = re.findall(r'\bfree\s*\(\s*([^)]+?)\s*\)', body)
     aliases = re.findall(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*=\s*([A-Za-z_][A-Za-z0-9_]*(?:\[[^\]]+\]|->[A-Za-z_][A-Za-z0-9_]*|\.[A-Za-z_][A-Za-z0-9_]*)?)\s*;', body)
     writes = re.findall(r'\b(?:strcpy|strcat|sprintf|snprintf|memcpy|memmove|gets)\s*\(\s*([^,\)]+)', body)
+    allocations = extract_allocations(body)
+    buffer_writes = []
+    for line in body.splitlines():
+        m = HEAP_WRITE_PATTERN.search(line)
+        if not m:
+            continue
+        target = m.group(1)
+        if target in allocations:
+            buffer_writes.append(line.strip())
+    suspicious_size_calculations = [
+        line.strip()
+        for line in body.splitlines()
+        if SIZE_CALC_PATTERN.search(line)
+    ]
     return_expr = None
     m = re.search(r'\breturn\s+([^;]+);', body)
     if m:
         return_expr = m.group(1).strip()
 
     return {
-        "allocates": extract_allocations(body),
+        "allocates": allocations,
         "frees": [expr.strip() for expr in frees],
         "frees_param": [expr.strip() for expr in frees if base_identifier(expr) in params],
         "frees_field": [expr.strip() for expr in frees if "->" in expr or "." in expr or "[" in expr],
@@ -717,6 +742,8 @@ def infer_effect_summary(function_obj):
         "stores_alias": [{"target": left, "source": right} for left, right in aliases],
         "uses_after_call": [],
         "format_sinks": re.findall(r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|syslog)\s*\(', body),
+        "buffer_writes": buffer_writes,
+        "suspicious_size_calculations": suspicious_size_calculations,
     }
 
 

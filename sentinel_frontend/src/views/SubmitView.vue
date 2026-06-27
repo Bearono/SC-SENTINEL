@@ -115,15 +115,14 @@ const isDynamic = ref(true)
 const submitting = ref(false)
 const errorMsg = ref('')
 
-// 目标漏洞类型映射到对接规范的标准缩写
+// 简化漏洞类型：合并heap/stack overflow为buffer_overflow
 const cweList = [
-  { code: 'UAF', label: 'CWE-416 Use-After-Free', panel: { tag: 'UAF', title: 'Use-After-Free', severity: 'Critical', bar: 88, desc: '释放内存后继续使用已释放的指针，可能导致远程代码执行。CVSS 常达 9.0+。', exTitle: '经典案例', exText: 'CVE-2021-1782 · iOS Kernel UAF — 触发内核对象释放后重用，实现本地提权至 root。' } },
-  { code: 'heap_overflow', label: 'CWE-122 Heap Overflow', panel: { tag: 'HEAP', title: 'Heap Overflow', severity: 'Critical', bar: 76, desc: '堆上的缓冲区写入超出分配边界，覆盖相邻内存结构，常被用于 tcache/fastbin 攻击。', exTitle: '经典案例', exText: 'CVE-2022-37434 · zlib — 超大 gzip header 触发堆溢出，CVSS 9.8。' } },
+  { code: 'buffer_overflow', label: 'CWE-120 Buffer Overflow', panel: { tag: 'BUF', title: 'Buffer Overflow', severity: 'Critical', bar: 85, desc: '缓冲区写入超出边界(堆/栈)，覆盖相邻内存结构。eBPF统一监控heap/stack溢出事件。', exTitle: '经典案例', exText: 'CVE-2022-37434 · zlib — 超大gzip header触发堆溢出，CVSS 9.8。CVE-2021-3156 · sudo — 栈溢出实现本地提权。' } },
+  { code: 'use_after_free', label: 'CWE-416 Use-After-Free', panel: { tag: 'UAF', title: 'Use-After-Free', severity: 'Critical', bar: 88, desc: '释放内存后继续使用已释放的指针，可能导致远程代码执行。CVSS 常达 9.0+。', exTitle: '经典案例', exText: 'CVE-2021-1782 · iOS Kernel UAF — 触发内核对象释放后重用，实现本地提权至 root。' } },
   { code: 'double_free', label: 'CWE-415 Double Free', panel: { tag: 'DBLF', title: 'Double Free', severity: 'High', bar: 65, desc: '同一指针被 free() 调用两次，破坏堆分配器元数据，可被利用为任意写原语。', exTitle: '检测方式', exText: 'eBPF uprobe 挂载 free()，记录每次释放地址 → 发现重复 free 同一地址时告警。' } },
-  { code: 'stack_overflow', label: 'CWE-121 Stack Overflow', panel: { tag: 'STK', title: 'Stack Overflow', severity: 'High', bar: 54, desc: '栈上缓冲区超出边界，覆盖返回地址或 canary，通常通过 ROP 链实现代码执行。', exTitle: '防御建议', exText: '编译时启用 -fstack-protector-strong 和 ASLR；避免使用 gets()、scanf()。' } }
 ]
 
-const selected = ref(new Set<string>(['UAF', 'heap_overflow', 'double_free']))
+const selected = ref(new Set<string>(['buffer_overflow', 'use_after_free', 'double_free']))
 const leftPanel = ref<(typeof cweList)[number]['panel'] | null>(null)
 const rightPanel = ref<{ tag: string; title: string; body: string } | null>(null)
 
